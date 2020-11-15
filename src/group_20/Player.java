@@ -7,7 +7,7 @@ public class Player {
 	private boolean doubleMove;
 	private Board board;
 	private SilkBag silkBag;
-	private Stack<Location> previousLocations;
+	private LocationList previousLocations;
 	private Boolean hasBeenBacktracked;
 	
 	/**
@@ -18,7 +18,7 @@ public class Player {
 	 * @param inventory
 	 * @param previousLocations
 	 */
-	public Player(Board board, SilkBag silkbag, Location location, ArrayList<ActionTile> inventory, Stack<Location> previousLocations) {
+	public Player(Board board, SilkBag silkbag, Location location, ArrayList<ActionTile> inventory, LocationList previousLocations) {
 		this.board = board;
 		this.silkBag = silkbag;
 		this.location = location;
@@ -37,7 +37,7 @@ public class Player {
 		this.silkBag = silkBag;
 		this.location = startingLocation;
 		this.inventory = new ArrayList<ActionTile>();
-		this.previousLocations = new Stack<Location>();
+		this.previousLocations = new LocationList();
 	}
 	
 	public void takeTurn() {
@@ -66,7 +66,7 @@ public class Player {
 		//Skip step 2 if inventory is empty
 		if (!this.inventory.isEmpty()) {
 			//Allow the user to select a tile
-			ActionTile chosenTile = new ActionTile();//TEMP
+			ActionTile chosenTile = new ActionTile();//TODO: Change to user input
 			chosenTile.play(this.board, this);
 		}
 	}
@@ -79,7 +79,7 @@ public class Player {
 	public void stepThree() {
 		//Skip method if player can't make any valid moves
 		if (this.canMove()) {
-			Direction d = Direction.EAST;//User input
+			Direction d = Direction.EAST;//TODO: change to user input
 		
 			//Loop until input is valid
 			while (!canMove(d)) {
@@ -174,15 +174,19 @@ public class Player {
 		this.inventory.add(t);
 	}
 	
-	public void setPreviousLocations(Stack<Location> previousLocations) {
+	/**
+	 * For setting entire list of previous locations
+	 * @param previousLocations New list of previous locations
+	 */
+	public void setPreviousLocations(LocationList previousLocations) {
 		this.previousLocations = previousLocations;
 	}
 	
 	public void addPreviousLocation(Location l) {
-		this.previousLocations.push(l);
+		this.previousLocations.add(l);
 	}
 	
-	public Stack<Location> getPreviousLocations() {
+	public LocationList getPreviousLocations() {
 		return this.previousLocations;
 	}
 }
