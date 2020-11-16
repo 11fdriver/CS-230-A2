@@ -1,13 +1,40 @@
 import java.util.ArrayList;
-import java.util.Stack;
 
 public class Player {
+	/**
+	 * location of player
+	 */
 	private Location location;
+	
+	/**
+	 * Inventory of player
+	 */
 	private ArrayList<ActionTile> inventory;
+	
+	/**
+	 * True if player can move twice
+	 */
 	private boolean doubleMove;
+	
+	/**
+	 * Reference to the current game board
+	 */
 	private Board board;
+	
+	/**
+	 * Reference to the current silk bag
+	 */
 	private SilkBag silkBag;
+	
+	/**
+	 * List of up to last 3 previous locations
+	 */
 	private LocationList previousLocations;
+	
+	/**
+	 * True if player has been backtracked
+	 * Players can't be backtracked twice per game
+	 */
 	private Boolean hasBeenBacktracked;
 	
 	/**
@@ -18,12 +45,13 @@ public class Player {
 	 * @param inventory
 	 * @param previousLocations
 	 */
-	public Player(Board board, SilkBag silkbag, Location location, ArrayList<ActionTile> inventory, LocationList previousLocations) {
+	public Player(Board board, SilkBag silkbag, Location location, ArrayList<ActionTile> inventory, LocationList previousLocations, boolean hasBeenBacktracked) {
 		this.board = board;
 		this.silkBag = silkbag;
 		this.location = location;
 		this.inventory = inventory;
 		this.previousLocations = previousLocations;
+		this.hasBeenBacktracked = hasBeenBacktracked;
 	}
 	
 	/**
@@ -38,6 +66,7 @@ public class Player {
 		this.location = startingLocation;
 		this.inventory = new ArrayList<ActionTile>();
 		this.previousLocations = new LocationList();
+		this.hasBeenBacktracked = false;
 	}
 	
 	public void takeTurn() {
@@ -150,26 +179,50 @@ public class Player {
 		return null;
 	}
 	
+	/**
+	 * Allows the player to move in a direction
+	 * @param d Direction to move
+	 */
 	public void move(Direction d) {
 		this.location.update(d);
 	}
 	
+	/**
+	 * Setter for current location
+	 * @param location New location
+	 */
 	public void setLocation(Location location) {
 		this.location = location;
 	}
 	
+	/**
+	 * Getter for current location
+	 * @return current location
+	 */
 	public Location getLocation() {
 		return this.location;
 	}
 	
+	/**
+	 * Getter for player's inventory of ActionTile's
+	 * @return
+	 */
 	public ArrayList<ActionTile> getInventory() {
 		return this.inventory;
 	}
 	
+	/**
+	 * Setter for inventory
+	 * @param inventory New inventory
+	 */
 	public void setInventory(ArrayList<ActionTile> inventory) {
 		this.inventory = inventory;
 	}
 	
+	/**
+	 * Adds a tile to the player's inventory
+	 * @param t Tile to add
+	 */
 	public void addToInventory(ActionTile t) {
 		this.inventory.add(t);
 	}
@@ -182,11 +235,35 @@ public class Player {
 		this.previousLocations = previousLocations;
 	}
 	
+	/**
+	 * Adds a location to the player's list of previous locations
+	 * @param l Location to add
+	 */
 	public void addPreviousLocation(Location l) {
 		this.previousLocations.add(l);
 	}
 	
+	/**
+	 * Getter for previous locations
+	 * @return list of previous locations
+	 */
 	public LocationList getPreviousLocations() {
 		return this.previousLocations;
+	}
+	
+	/**
+	 * Setter for hasBeenBacktracked
+	 * @param hasBeenBacktracked New value
+	 */
+	public void setHasBeenBacktracked(boolean hasBeenBacktracked) {
+		this.hasBeenBacktracked = hasBeenBacktracked;
+	}
+	
+	/**
+	 * Getter for hasBeenBackTracked
+	 * @return True if player has not been backtracked this game, else false
+	 */
+	public boolean getHasBeenBacktracked() {
+		return this.hasBeenBacktracked;
 	}
 }
