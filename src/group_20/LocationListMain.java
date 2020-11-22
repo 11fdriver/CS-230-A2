@@ -1,3 +1,5 @@
+package group_20;
+
 
 public class LocationListMain {
 	public static void main(String[] agrs) {
