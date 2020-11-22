@@ -15,9 +15,9 @@ public class Player {
 	private ArrayList<ActionTile> inventory;
 	
 	/**
-	 * True if player can move twice
+	 * Keeps track of the number of moves a player can make
 	 */
-	private boolean doubleMove;
+	private int numMoves;
 	
 	/**
 	 * Reference to the current game board
@@ -74,6 +74,11 @@ public class Player {
 	
 	public void takeTurn() {
 		this.drawTile();
+		//this.stepTwo();
+		while (this.numMoves > 0) {
+			this.decNumMoves(1);
+			this.stepThree();
+		}
 	}
 	
 	/**
@@ -122,12 +127,6 @@ public class Player {
 			this.addPreviousLocation(this.getLocation());
 			this.getLocation().update(d);
 			this.board.setPlayer(this, this.getLocation());
-			
-			//If player has a double move then recurse stepThree()
-			if (this.doubleMove == true) {
-				this.doubleMove = false;
-				stepThree();
-			}
 		}
 	}
 	
@@ -275,6 +274,38 @@ public class Player {
 	 */
 	public boolean getHasBeenBacktracked() {
 		return this.hasBeenBacktracked;
+	}
+	
+	/**
+	 * Setter for numMoves
+	 * @param numMoves New value for numMoves
+	 */
+	public void setNumMoves(int numMoves) {
+		this.numMoves = numMoves;
+	}
+	
+	/**
+	 * Getter for numMoves
+	 * @return numMoves
+	 */
+	public int getNumMoves() {
+		return this.numMoves;
+	}
+	
+	/**
+	 * Increases numMoves by a given amount
+	 * @param incAmount Amount to increase by
+	 */
+	public void incNumMoves(int incAmount) {
+		this.numMoves += incAmount;
+	}
+	
+	/**
+	 * Decreases numMoves by a given amount
+	 * @param decAmount Amount to decrease by
+	 */
+	public void decNumMoves(int decAmount) {
+		this.numMoves -= decAmount;
 	}
 	
 	public void draw(GraphicsContext gc, int tileWidth) {
