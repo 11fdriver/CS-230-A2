@@ -1,4 +1,7 @@
 import java.util.ArrayList;
+import java.util.Random;
+
+import javafx.scene.canvas.GraphicsContext;
 
 public class Player {
 	/**
@@ -12,9 +15,9 @@ public class Player {
 	private ArrayList<ActionTile> inventory;
 	
 	/**
-	 * True if player can move twice
+	 * Keeps track of the number of moves a player can make
 	 */
-	private boolean doubleMove;
+	private int numMoves;
 	
 	/**
 	 * Reference to the current game board
@@ -71,6 +74,11 @@ public class Player {
 	
 	public void takeTurn() {
 		this.drawTile();
+		//this.stepTwo();
+		while (this.numMoves > 0) {
+			this.decNumMoves(1);
+			this.stepThree();
+		}
 	}
 	
 	/**
@@ -119,12 +127,6 @@ public class Player {
 			this.addPreviousLocation(this.getLocation());
 			this.getLocation().update(d);
 			this.board.setPlayer(this, this.getLocation());
-			
-			//If player has a double move then recurse stepThree()
-			if (this.doubleMove == true) {
-				this.doubleMove = false;
-				stepThree();
-			}
 		}
 	}
 	
@@ -184,7 +186,14 @@ public class Player {
 	 * @param d Direction to move
 	 */
 	public void move(Direction d) {
-		this.location.update(d);
+		Location newLocation = new Location(this.location.getX(), this.location.getY());
+		newLocation.update(d);
+		
+		//Only update location if new position is in bounds of Board
+		if (this.board.isInBounds(newLocation)) {
+			this.location = newLocation;
+		}
+		//this.location.update(d);
 	}
 	
 	/**
@@ -265,5 +274,50 @@ public class Player {
 	 */
 	public boolean getHasBeenBacktracked() {
 		return this.hasBeenBacktracked;
+	}
+	
+	/**
+	 * Setter for numMoves
+	 * @param numMoves New value for numMoves
+	 */
+	public void setNumMoves(int numMoves) {
+		this.numMoves = numMoves;
+	}
+	
+	/**
+	 * Getter for numMoves
+	 * @return numMoves
+	 */
+	public int getNumMoves() {
+		return this.numMoves;
+	}
+	
+	/**
+	 * Increases numMoves by a given amount
+	 * @param incAmount Amount to increase by
+	 */
+	public void incNumMoves(int incAmount) {
+		this.numMoves += incAmount;
+	}
+	
+	/**
+	 * Decreases numMoves by a given amount
+	 * @param decAmount Amount to decrease by
+	 */
+	public void decNumMoves(int decAmount) {
+		this.numMoves -= decAmount;
+	}
+	
+	public void draw(GraphicsContext gc, int tileWidth) {
+		int x = this.getLocation().getX()*tileWidth + (tileWidth/4);
+		int y = this.getLocation().getY()*tileWidth + (tileWidth/4);
+		gc.strokeOval(x, y, (tileWidth/2), (tileWidth/2));
+	}
+	
+	public void randomizeLocation(int boardWidth, int boardLength) {
+		Random r = new Random();
+		int x = r.nextInt(boardWidth - 1);
+		int y = r.nextInt(boardLength - 1);
+		this.setLocation(new Location(x,y));
 	}
 }
