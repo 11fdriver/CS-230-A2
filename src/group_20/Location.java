@@ -40,6 +40,17 @@ public class Location {
 		this.x--;
 	}
 	
+	public Location check(Direction d) {
+		Location temp = new Location(this.x, this.y);
+		temp.update(d);
+		return temp;
+	}
+	
+	public Location copy() {
+		Location temp = new Location(this.x, this.y);
+		return temp;
+	}
+	
 	public void update(Direction d) {
 		switch (d) {
 		case NORTH:
@@ -54,6 +65,20 @@ public class Location {
 		case WEST:
 			this.decrementX();
 			break;
+		}
+	}
+	
+	/**
+	 * Compares this location to given coordinates
+	 * @param x X coordinate to compare against
+	 * @param y Y coordinate to compare against
+	 * @return if given coordinates are equivalent to this location then true, else false
+	 */
+	public boolean equals(int x, int y) {
+		if (this.x == x && this.y == y) {
+			return true;
+		} else {
+			return false;
 		}
 	}
 	
