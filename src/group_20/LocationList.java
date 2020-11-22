@@ -1,3 +1,5 @@
+package group_20;
+
 
 public class LocationList {
 	private Location[] list;

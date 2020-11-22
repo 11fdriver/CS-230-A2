@@ -1,3 +1,5 @@
+package group_20;
+
 import java.util.ArrayList;
 
 import javafx.scene.canvas.GraphicsContext;
