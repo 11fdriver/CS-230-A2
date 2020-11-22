@@ -9,7 +9,7 @@ public class Board implements Drawable, Saveable {
 	}
 
 	@Override
-	public void draw(int x, int y) {
+	public void draw(Location loc) {
 		// TODO Auto-generated method stub
 		
 	}

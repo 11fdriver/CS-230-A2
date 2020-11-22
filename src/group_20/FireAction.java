@@ -3,7 +3,7 @@ package group_20;
 public class FireAction extends FloorAction {
 
 	@Override
-	public void draw(int x, int y) {
+	public void draw(Location loc) {
 		// TODO Auto-generated method stub
 
 	}
