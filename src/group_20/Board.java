@@ -11,7 +11,7 @@ public class Board {
 	private FloorTile[][] gameBoard;
 	private SilkBag silkBag;
 	//private Player player1;
-	private GoalTile goalTile;
+	private Goal goalTile;
 	private Player[] players;
 	private int currentPlayer;
 	
@@ -38,7 +38,7 @@ public class Board {
 		for (int i = 0; i < this.width; i++) {
 			for (int j = 0; j < length; j++) {
 				if (this.gameBoard[i][j] == null) {
-					this.gameBoard[i][j] = silkBag.drawFLoorTile();
+					this.gameBoard[i][j] = silkBag.drawFloorTile();
 				}
 			}
 		}
@@ -159,7 +159,7 @@ public class Board {
 	}
 	
 	public boolean isOver() {
-		return this.goalTile.isOccupied();
+		return this.goalTile.hasPlayer();
 	}
 	
 	//Sets player of FloorTile at given location
