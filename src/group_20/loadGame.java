@@ -1,10 +1,13 @@
+package group_20;
+
 import java.io.*;
 import java.util.Scanner;
 import java.util.ArrayList;
 
-public class loadGame {
 
-    public load(){ //needs a more appropriate name (see superclass)
+public class LoadGame {
+
+    public void load(){ //needs a more appropriate name (see superclass)
         /*
         inherits from the load() method in the Load class
          */
@@ -25,38 +28,34 @@ public class loadGame {
 
         File file = new File(fileName);
         Scanner in = new Scanner(file);
-        ArrayList tilesArray = new ArrayList<Tile>();
-        ArrayList indexArray = new ArrayList<(Integer[])>();
+
         try{
             //gets the x and y of the Board
             int[] size = in.next();
             int x = size[0];
             int y = size[1];
+            FloorTile[][] tilesArray = new FloorTile[x][y];
 
             //reads all the tiles and instantiates them in an ArrayList
             Scanner tileScanner = new Scanner(file).useDelimiter(",");
             for(int i = 0; i < (y)-1; i++ ){
                 for(int j = 0; j < (x)-1; j++){
-                    ArrayList tileIn = tileScanner.next();
-                    tilesArray.add(new Tile(tileIn[0],tileIn[1],tileIn[2],tileIn[3],tileIn[4])); //tileIn[1] is the tile type
-                    indexArray.add([i,j]);
+                    String[] tileIn = in.next();
+                    tilesArray[j][i] = new FloorTile(tileIn[0],tileIn[1],tileIn[2],tileIn[3],tileIn[4]);
+                    //tileIn[1] is the tile type
+
                 }
             }
 
             //reads all the tiles in the silk bag and returns them as an ArrayList
-            Scanner silkScanner = new Scanner(file);
-            ArrayList silkBag = new ArrayList<int>
-            for(int i = 0; i < y-1; i++){
-              silkScanner.nextLine();
-            }
-            String silkBagInOneString = silkScanner.nextLine();
-            String silkBag = silkBagInOneString.split(",");
+            String silkBagInOneString = in.nextLine();
+            String[] silkBag = silkBagInOneString.split(",");
 
 
         }catch(Exception e){
-            System.out.println("error, you probably entered the wrong file, idiot.")
+            System.out.println("error, you probably entered the wrong file, idiot.");
         }
-        return tilesArray, indexArray;
+        return tilesArray;
     }
 
 
@@ -69,51 +68,60 @@ public class loadGame {
          */
          File file = new File(fileName);
          Scanner in = new Scanner(file);
-         ArrayList tilesArray = new ArrayList<Tile>();
-         ArrayList indexArray = new ArrayList<(Integer[])>();
          try{
 
            int[] size = in.next();
              int x = size[0];
              int y = size[1];
-
+             FloorTile[][] tilesArray = new FloorTile[x][y];
 
              for(int i = 0; i < (y)-1; i++ ){
                  for(int j = 0; j < (x)-1; j++){
-                     ArrayList tileIn = tileScanner.next();
-                     tilesArray.add(new Tile(tileIn[0],tileIn[1],tileIn[2],tileIn[3],tileIn[4])); //tileIn[1] is the tile type
-                     indexArray.add([i,j]);
+                     String[] tileIn = in.next();//TODO: it wont accept each chunk of data as a string[], so find a way to work around this
+                     tilesArray[j][i] = new FloorTile(tileIn[0],tileIn[1],tileIn[2],tileIn[3],tileIn[4]);
+
                  }
              }
 
+
          }catch(Exception e){
-             System.out.println("error, you probably entered the wrong file, idiot.")
+             System.out.println("error, you probably entered the wrong file, idiot.");
          }
-         return tilesArray, indexArray;
+         return tilesArray;
      }
-    }
 
     //**********Stuff that isn't on the design but is probably useful:**********
+    public String[] getSaveFileNames(){
+
+        File directoryPath = new File("src\\saves");
+        String saveFiles[] = directoryPath.list();
+        return saveFiles;
+    }
+
+    public String[] getTemplateFileNames(){
+
+        File directoryPath = new File("src\\templates");
+        String[] templateFiles = directoryPath.list();
+        return templateFiles;
+    }
+}
+
+
+
+
 
 
     //these two methods are made under the assumption that save files and template files are stored in separate folders
     //these two folders would be stored inside D:\\src\ for example
 
-    public String getSaveFileNames(){
 
-         File directoryPath = new File("src\saves");
-         String saveFiles[] = directoryPath.list();
-         return saveFiles;
-    }
-
-    public String getTemplateFileNames(){
-
-         File directoryPath = new File("src\templates");
-         String templateFiles = directoryPath.list();
-         return templateFiles;
-    }
-}
 
 /*
 need to pass a list of floor tiles and a list of locations (ordered list of floor tiles)
+ */
+
+
+/*
+create 2d array of tiles of length width*height populate with known tiles and then parse that
+then silk bag containing tiles
  */
