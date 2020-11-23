@@ -106,7 +106,7 @@ public class Player {
 		if (!this.inventory.isEmpty()) {
 			//Allow the user to select a tile
 			ActionTile chosenTile = new ActionTile();//TODO: Change to user input
-			chosenTile.play(this.board, this);
+			chosenTile.play(this, this.board);
 		}
 	}
 
