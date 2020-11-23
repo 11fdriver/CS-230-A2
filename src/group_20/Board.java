@@ -15,12 +15,13 @@ public class Board {
 	private Player[] players;
 	private int currentPlayer;
 	
-	public Board(int boardID, int length, int width, SilkBag silkBag) {
+	public Board(int boardID, int length, int width, SilkBag silkBag, FloorTile[][] gameBoard) {
 		this.boardID = boardID;
 		this.length = length;
 		this.width = width;
 		this.silkBag = silkBag;
-		this.gameBoard = new FloorTile[width][length];		
+		this.gameBoard = gameBoard;
+		//this.gameBoard = new FloorTile[width][length];		
 		//player1 = new Player(this, this.silkBag, new Location(0,0));
 		Player[] newPlayers = {new Player(this, this.silkBag,new Location(0,0)),new Player(this, this.silkBag,new Location(0,0)),new Player(this, this.silkBag,new Location(0,0)),new Player(this, this.silkBag,new Location(0,0))};
 		this.players = newPlayers;
@@ -28,6 +29,7 @@ public class Board {
 		this.populate();//TODO change from temp full population with random tiles
 	}
 	
+	//redundant as of this version
 	private void placeKnownTiles(FloorTile[] knownFloorTile, Location[] floorTileLocation) {
 		
 	}
@@ -52,12 +54,39 @@ public class Board {
 		}
 	}
 	
+	
 	public void returnToBag(FloorTile t) {
-		
+		this.silkBag.returnTile(t);//TODO change returnTile(Tile t) to returnTile(FloorTile t) in silkbag class
 	}
 	
 	public boolean canMove(Location l, Direction d) {
-		return true; //Temp
+		FloorTile tileAtLocation = this.gameBoard[l.getX()][l.getY()];
+		Location newLocation = l.copy();
+		l.update(d);
+		
+		if (this.isInBounds(newLocation)) {
+			FloorTile oppositeTile = this.gameBoard[newLocation.getX()][newLocation.getY()];
+			Direction oppositeDirection = this.invertDirection(d);
+			if (tileAtLocation.isValidMove(d) && oppositeTile.isValidMove(oppositeDirection)) {
+				return true;
+			}
+		}
+		return false; //Temp
+	}
+	
+	private Direction invertDirection(Direction d) {
+		switch (d) {
+		case NORTH:
+			return Direction.SOUTH;
+		case EAST:
+			return Direction.WEST;
+		case SOUTH:
+			return Direction.NORTH;
+		case WEST:
+			return Direction.EAST;
+		default:
+			return null;
+		}
 	}
 	
 	public boolean isInBounds(Location l) {
