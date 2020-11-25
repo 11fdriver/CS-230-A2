@@ -24,7 +24,7 @@ public class Main extends Application {
 	private static final int BOARD_WIDTH = 9;
 	private static final int BOARD_LENGTH = 9;
 	private Canvas canvas;
-	Board currentBoard = new Board(1,BOARD_WIDTH,BOARD_LENGTH,new SilkBag());
+	Board currentBoard = new Board(BOARD_WIDTH,BOARD_LENGTH);
 	
 	public static void main(String[] args) {
 		launch(args);
@@ -95,10 +95,28 @@ public class Main extends Application {
 			currentBoard.draw(canvas.getGraphicsContext2D(), TILE_WIDTH);
 		});
 		
+		Button button6 = new Button("Insert Tile");
+		sidebar.getChildren().addAll(button6);
+		
+		button6.setOnAction(e -> {
+			canvas.getGraphicsContext2D().clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+			currentBoard.insertTile(new Goal(0,false,0,false,false,new Location(0,0),null,"Goal"), new Location(4,BOARD_LENGTH-1));
+			currentBoard.draw(canvas.getGraphicsContext2D(), TILE_WIDTH);
+		});
+		
+		Button button7 = new Button("Randomize Board");
+		sidebar.getChildren().addAll(button7);
+		
+		button7.setOnAction(e -> {
+			canvas.getGraphicsContext2D().clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+			currentBoard.randomizeBoard();
+			currentBoard.draw(canvas.getGraphicsContext2D(), TILE_WIDTH);
+		});
+		
 		currentBoard.draw(canvas.getGraphicsContext2D(), TILE_WIDTH);
 		//currentBoard.calculateArea(new Location(0,0));
-		System.out.println("Number of tiles in bounds: " + currentBoard.calculateArea(new Location(0,0)).length);
-		System.out.println("(Testing tile finder)Number of tiles in bounds: " + currentBoard.tempTestCalculateArea().length);
+		//System.out.println("Number of tiles in bounds: " + currentBoard.calculateArea(new Location(0,0)).length);
+		//System.out.println("(Testing tile finder)Number of tiles in bounds: " + currentBoard.tempTestCalculateArea().length);
 		
 //		ArrayList<FloorTile> ls = new ArrayList<FloorTile>();
 //		ls.add(new FloorTile());

@@ -15,7 +15,21 @@ public class Board {
 	private Player[] players;
 	private int currentPlayer;
 	
-	public Board(int boardID, int length, int width, SilkBag silkBag, FloorTile[][] gameBoard) {
+	//For testing
+	public Board(int width, int length) {
+		this.boardID = 1;
+		this.length = length;
+		this.width = width;
+		this.silkBag = new SilkBag();
+		this.gameBoard = new FloorTile[width][length];		
+		//player1 = new Player(this, this.silkBag, new Location(0,0));
+		Player[] newPlayers = {new Player(this, this.silkBag,new Location(0,0)),new Player(this, this.silkBag,new Location(0,0)),new Player(this, this.silkBag,new Location(0,0)),new Player(this, this.silkBag,new Location(0,0))};
+		this.players = newPlayers;
+		this.currentPlayer = 0;
+		this.populate();//TODO change from temp full population with random tiles
+	}
+	
+	public Board(int boardID, int width, int length, SilkBag silkBag, FloorTile[][] gameBoard) {
 		this.boardID = boardID;
 		this.length = length;
 		this.width = width;
@@ -34,6 +48,12 @@ public class Board {
 		
 	}
 	
+	//Just for testing
+	public void randomizeBoard() {
+		this.gameBoard = new FloorTile[this.width][this.length];
+		this.populate();
+	}
+	
 	private void populate() {
 		//Populates non fixed spaces with random tiles
 		//Somehow need to put the fixed tiles in first???
@@ -46,23 +66,49 @@ public class Board {
 		}
 	}
 	
+	//TODO make sure players are moved when tiles inserted and account for player being on ejected tile
 	public void insertTile(FloorTile t, Location l) {
 		//Checks you aren't inserting at corners of the board
 		if (!(l.equals(0,0) || l.equals(0,this.length - 1) ||
 				l.equals(this.width - 1, 0) || l.equals(this.width - 1, this.length - 1))) {
+			//this.gameBoard[l.getX()][l.getY()] = t;
+			
+			if (l.getX() == 0) {
+				for (int i = this.width-1; i > 0; i--) {
+					this.gameBoard[i][l.getY()] = this.gameBoard[i-1][l.getY()]; 
+				}
+				this.gameBoard[l.getX()][l.getY()] = t;
+			} else if (l.getX() == this.width-1) {
+				for (int i = 0; i < this.length-1; i++) {
+					this.gameBoard[i][l.getY()] = this.gameBoard[i+1][l.getY()]; 
+				}
+				this.gameBoard[l.getX()][l.getY()] = t;
+			} else if (l.getY() == 0) {
+				for (int i = this.width-1; i > 0; i--) {
+					this.gameBoard[l.getX()][i] = this.gameBoard[l.getX()][i-1]; 
+				}
+				this.gameBoard[l.getX()][l.getY()] = t;
+			} else if (l.getY() == this.length-1) {
+				for (int i = 0; i < this.width-1; i++) {
+					this.gameBoard[l.getX()][i] = this.gameBoard[l.getX()][i+1]; 
+				}
+				this.gameBoard[l.getX()][l.getY()] = t;
+			} else {
+				System.out.println("Invalid tile insertion location");
+			}
 			
 		}
 	}
 	
 	
 	public void returnToBag(FloorTile t) {
-		this.silkBag.returnTile(t);//TODO change returnTile(Tile t) to returnTile(FloorTile t) in silkbag class
+		//this.silkBag.returnTile(t);//TODO change returnTile(Tile t) to returnTile(FloorTile t) in silkbag class
 	}
 	
 	public boolean canMove(Location l, Direction d) {
 		FloorTile tileAtLocation = this.gameBoard[l.getX()][l.getY()];
 		Location newLocation = l.copy();
-		l.update(d);
+		newLocation.update(d);
 		
 		if (this.isInBounds(newLocation)) {
 			FloorTile oppositeTile = this.gameBoard[newLocation.getX()][newLocation.getY()];
@@ -222,7 +268,6 @@ public class Board {
 	
 	//Just for testing animation
 	public Player getCurrentPlayer() {
-		this.advancePlayerTurn();
 		return this.players[this.currentPlayer];
 	}
 	

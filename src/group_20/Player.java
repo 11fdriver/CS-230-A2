@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
 
 public class Player {
 	/**
@@ -106,7 +107,7 @@ public class Player {
 		if (!this.inventory.isEmpty()) {
 			//Allow the user to select a tile
 			ActionTile chosenTile = new ActionTile();//TODO: Change to user input
-			chosenTile.play(this, this.board);
+			chosenTile.play(this, this.board); //Error but will be fixed when code merge
 		}
 	}
 
@@ -188,14 +189,18 @@ public class Player {
 	 * @param d Direction to move
 	 */
 	public void move(Direction d) {
-		Location newLocation = new Location(this.location.getX(), this.location.getY());
-		newLocation.update(d);
-		
-		//Only update location if new position is in bounds of Board
-		if (this.board.isInBounds(newLocation)) {
-			this.location = newLocation;
-		}
+//		Location newLocation = new Location(this.location.getX(), this.location.getY());
+//		newLocation.update(d);
+//		
+//		//Only update location if new position is in bounds of Board
+//		if (this.board.isInBounds(newLocation)) {
+//			this.location = newLocation;
+//		}
 		//this.location.update(d);
+		
+		if (this.board.canMove(this.location, d)) {
+			this.location.update(d);
+		}
 	}
 	
 	/**
@@ -311,9 +316,13 @@ public class Player {
 	}
 	
 	public void draw(GraphicsContext gc, int tileWidth) {
+		if (this == this.board.getCurrentPlayer()) {
+			gc.setStroke(Color.RED);
+		}
 		int x = this.getLocation().getX()*tileWidth + (tileWidth/4);
 		int y = this.getLocation().getY()*tileWidth + (tileWidth/4);
 		gc.strokeOval(x, y, (tileWidth/2), (tileWidth/2));
+		gc.setStroke(Color.BLACK);
 	}
 	
 	public void randomizeLocation(int boardWidth, int boardLength) {
