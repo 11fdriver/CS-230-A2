@@ -200,6 +200,7 @@ public class Player {
 		
 		if (this.board.canMove(this.location, d)) {
 			this.location.update(d);
+			this.board.getTileAt(this.location).setMyPlayer(this);
 		}
 	}
 	
@@ -330,5 +331,6 @@ public class Player {
 		int x = r.nextInt(boardWidth - 1);
 		int y = r.nextInt(boardLength - 1);
 		this.setLocation(new Location(x,y));
+		this.board.getTileAt(this.location).setMyPlayer(this);
 	}
 }

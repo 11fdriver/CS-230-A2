@@ -73,30 +73,51 @@ public class Board {
 				l.equals(this.width - 1, 0) || l.equals(this.width - 1, this.length - 1))) {
 			//this.gameBoard[l.getX()][l.getY()] = t;
 			
+			FloorTile ejectedTile = null;
 			if (l.getX() == 0) {
+				ejectedTile = this.gameBoard[this.width-1][l.getY()];
 				for (int i = this.width-1; i > 0; i--) {
-					this.gameBoard[i][l.getY()] = this.gameBoard[i-1][l.getY()]; 
+					this.gameBoard[i][l.getY()] = this.gameBoard[i-1][l.getY()];
+					if (this.gameBoard[i-1][l.getY()].hasPlayer()) {
+						this.gameBoard[i-1][l.getY()].getMyPlayer().setLocation(new Location(i,l.getY()));
+					}
 				}
 				this.gameBoard[l.getX()][l.getY()] = t;
 			} else if (l.getX() == this.width-1) {
+				ejectedTile = this.gameBoard[0][l.getY()];
 				for (int i = 0; i < this.length-1; i++) {
-					this.gameBoard[i][l.getY()] = this.gameBoard[i+1][l.getY()]; 
+					this.gameBoard[i][l.getY()] = this.gameBoard[i+1][l.getY()];
+					if (this.gameBoard[i+1][l.getY()].hasPlayer()) {
+						this.gameBoard[i+1][l.getY()].getMyPlayer().setLocation(new Location(i,l.getY()));
+					}
 				}
 				this.gameBoard[l.getX()][l.getY()] = t;
 			} else if (l.getY() == 0) {
+				ejectedTile = this.gameBoard[l.getX()][this.width-1];
 				for (int i = this.width-1; i > 0; i--) {
-					this.gameBoard[l.getX()][i] = this.gameBoard[l.getX()][i-1]; 
+					this.gameBoard[l.getX()][i] = this.gameBoard[l.getX()][i-1];
+					if (this.gameBoard[l.getX()][i-1].hasPlayer()) {
+						this.gameBoard[l.getX()][i-1].getMyPlayer().setLocation(new Location(l.getX(),i));
+					}
 				}
 				this.gameBoard[l.getX()][l.getY()] = t;
 			} else if (l.getY() == this.length-1) {
+				ejectedTile = this.gameBoard[l.getX()][0];
 				for (int i = 0; i < this.width-1; i++) {
-					this.gameBoard[l.getX()][i] = this.gameBoard[l.getX()][i+1]; 
+					this.gameBoard[l.getX()][i] = this.gameBoard[l.getX()][i+1];
+					if (this.gameBoard[l.getX()][i+1].hasPlayer()) {
+						this.gameBoard[l.getX()][i+1].getMyPlayer().setLocation(new Location(l.getX(),i));
+					}
 				}
 				this.gameBoard[l.getX()][l.getY()] = t;
 			} else {
 				System.out.println("Invalid tile insertion location");
 			}
 			
+			if (ejectedTile.hasPlayer()) {
+				t.setMyPlayer(ejectedTile.getMyPlayer());
+				t.getMyPlayer().setLocation(l.copy());
+			}
 		}
 	}
 	
