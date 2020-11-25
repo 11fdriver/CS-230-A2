@@ -4,72 +4,85 @@ import javafx.scene.canvas.GraphicsContext;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class FloorTile {
+public class FloorTile extends Tile implements Subscriber {
 	private int side; 
 	private boolean isFixed ;
 	private int orientation;
-	private boolean onFire;
-	private boolean isFrozen;
 	private Location location;
 	private Player myPlayer;
 	private int defSide;
 	private boolean defFixed;
 	private int defOrientation;
-	private boolean defFire;
-	private boolean defFrozen;
 	private Location defLocation;
 	private Player defPlayer;
 	private String shapeType;
 	private String defType;
 	ArrayList <Integer> degrees = new ArrayList <Integer>();
 	
-	public FloorTile(int side, boolean isFixed, int orientation, boolean onFire, boolean isFrozen, Location location, Player myPlayer, String shapeType) {
+	/**
+	 * Set when an Action is used on a FloorTile
+	 */
+	private FloorAction state;
+	
+	/**
+	 * The length of time until the state expires.
+	 */
+	private int stateLifetime;
+	
+	public FloorTile(int side, boolean isFixed, int orientation, Location location, Player myPlayer, String shapeType) {
 		this.setSide(side);
 		this.setDefSide(side); 
 		this.setFixed(isFixed);
 		this.setDefFixed(isFixed); 
 		this.setOrientation(orientation);
 		this.setDefOrientation(orientation); 
-		this.setOnFire(onFire);
-		this.setDefFire(onFire); 
-		this.setFrozen(isFrozen);
-		this.setDefFrozen(isFrozen);
 		this.setLocation(location);
 		this.setDefLocation(location);
 		this.setMyPlayer(myPlayer);
 		this.setDefPlayer(myPlayer);
 		this.setShapeType(shapeType);
-		this.setDefType(shapeType);
+		this.setDefType(shapeType); // FIXME: Incorrect use of types.
 	}
 	
-	public String toString() {
-		String result = "";
-		result += "This is a " + getShapeType() +  " floor tile" + "\n";
-		result += "Its side length is " + getSide() + "\n";
-		if (getIsFixed() == true) {
-			result += "It is fixed" + "\n";
-		} else {
-			result += "It is not fixed" + "\n";
-		} 
-		if (getIsFrozen() == true) {
-			result += "It is frozen" + "\n";
-		} else {
-			result += "It is not frozen" + "\n";
-		} 
-		if (isOnFire() == true) {
-			result += "It is on fire" + "\n";
-		} else {
-			result += "It is not on fire" + "\n";
-		} 
-		result += "Its orientation is " + getOrientation() + " degrees" + "\n";
-		result += "Its position on the board is " + getLocation().getX() + "," + getLocation().getY() + "\n";
-		if (getMyPlayer() == null) {
-			result += "It does not contain a player" + "\n";
-		} else {
-			result += "It contains a player" + "\n";
-		}
-		return result;
+	/**
+	 * Allows a FloorAction to affect the FloorTile, subscribing to the TurnNotifier.
+	 * @param action Action being used on this FloorTile.
+	 */
+	public void setState(FloorAction action) {
+		this.state = action;
+		this.stateLifetime = action.getLifetime();
+		TurnNotifier.addSubscriber(this);
 	}
+	
+//	This is impractical coding-style; even for debugging.
+//	public String toString() {
+//		String result = "";
+//		result += "This is a " + getShapeType() +  " floor tile" + "\n";
+//		result += "Its side length is " + getSide() + "\n";
+//		if (getIsFixed() == true) {
+//			result += "It is fixed" + "\n";
+//		} else {
+//			result += "It is not fixed" + "\n";
+//		} 
+//		if (getIsFrozen() == true) {
+//			result += "It is frozen" + "\n";
+//		} else {
+//			result += "It is not frozen" + "\n";
+//		} 
+//		if (isOnFire() == true) {
+//			result += "It is on fire" + "\n";
+//		} else {
+//			result += "It is not on fire" + "\n";
+//		} 
+//		result += "Its orientation is " + getOrientation() + " degrees" + "\n";
+//		result += "Its position on the board is " + getLocation().getX() + "," + getLocation().getY() + "\n";
+//		if (getMyPlayer() == null) {
+//			result += "It does not contain a player" + "\n";
+//		} else {
+//			result += "It contains a player" + "\n";
+//		}
+//		return result;
+//	}
 
 	/**
 	 * @return the side
@@ -114,34 +127,6 @@ public class FloorTile {
 	}
 
 	/**
-	 * @return the onFire
-	 */
-	public boolean isOnFire() {
-		return onFire;
-	}
-
-	/**
-	 * @param onFire the onFire to set
-	 */
-	public void setOnFire(boolean onFire) {
-		this.onFire = onFire;
-	}
-
-	/**
-	 * @return the isFrozen
-	 */
-	public boolean getIsFrozen() {
-		return isFrozen;
-	}
-
-	/**
-	 * @param isFrozen the isFrozen to set
-	 */
-	public void setFrozen(boolean isFrozen) {
-		this.isFrozen = isFrozen;
-	}
-
-	/**
 	 * @return the defSide
 	 */
 	public int getDefSide() {
@@ -181,34 +166,6 @@ public class FloorTile {
 	 */
 	public void setDefOrientation(int defOrientation) {
 		this.defOrientation = defOrientation;
-	}
-
-	/**
-	 * @return the defFire
-	 */
-	public boolean isDefFire() {
-		return defFire;
-	}
-
-	/**
-	 * @param defFire the defFire to set
-	 */
-	public void setDefFire(boolean defFire) {
-		this.defFire = defFire;
-	}
-
-	/**
-	 * @return the defFrozen
-	 */
-	public boolean isDefFrozen() {
-		return defFrozen;
-	}
-
-	/**
-	 * @param defFrozen the defFrozen to set
-	 */
-	public void setDefFrozen(boolean defFrozen) {
-		this.defFrozen = defFrozen;
 	}
 
 	/**
@@ -288,28 +245,17 @@ public class FloorTile {
 		this.setOrientation(degrees.get(0));
 	}
 	
-	public void notifyMe() {
-		if (getIsFrozen() == true) {
-			setFrozen(false);
-		} 
-		if (isOnFire() == true) {
-			setOnFire(false);
-		}
-	}
-	
 	public void reset() {
 		this.setSide(defSide);
 		this.setFixed(defFixed);
 		this.setOrientation(defOrientation);
-		this.setOnFire(defFire);
-		this.setFrozen(defFrozen);
 		this.setLocation(defLocation);
 		this.setMyPlayer(defPlayer);
 		this.setShapeType(defType);
 	}
 
 	public boolean isValidMove(Direction d) {
-		switch (getShapeType()) {
+		switch (getShapeType()) { // FIXME: Do not use types in this way.
 			case "Straight": 
 				switch (d) {
 					case NORTH:
@@ -463,21 +409,22 @@ public class FloorTile {
 		}
 	}
 	
-	public static void main(String args[]) {
-		FloorTile f1 = new FloorTile (5, true, 90, false, false, new Location (0,0), new Player (new Location(0,0), false, false, "Jeff"), "Straight");
-		FloorTile f2 = new FloorTile (5, false, 90, true, true, new Location (1,2), null, "Corner");
-		System.out.println(f1.toString());
-		f1.randomizeOrientation();
-		System.out.println(f1.getOrientation());
-		f1.reset();
-		System.out.println(f1.toString());
-		System.out.println(f2.toString());
-		f2.notifyMe();
-		f2.randomizeOrientation();
-		System.out.println(f2.toString());
-		System.out.println(f1.isValidMove(Direction.NORTH));
-		System.out.println(f2.isValidMove(Direction.SOUTH));
-	}
+// This should be in a different class.	
+//	public static void main(String args[]) {
+//		FloorTile f1 = new FloorTile (5, true, 90, false, false, new Location (0,0), new Player (new Location(0,0), false, false, "Jeff"), "Straight");
+//		FloorTile f2 = new FloorTile (5, false, 90, true, true, new Location (1,2), null, "Corner");
+//		System.out.println(f1.toString());
+//		f1.randomizeOrientation();
+//		System.out.println(f1.getOrientation());
+//		f1.reset();
+//		System.out.println(f1.toString());
+//		System.out.println(f2.toString());
+//		f2.notifyMe();
+//		f2.randomizeOrientation();
+//		System.out.println(f2.toString());
+//		System.out.println(f1.isValidMove(Direction.NORTH));
+//		System.out.println(f2.isValidMove(Direction.SOUTH));
+//	}
 
 	/**
 	 * @return the shapeType
@@ -505,5 +452,29 @@ public class FloorTile {
 	 */
 	public void setDefType(String defType) {
 		this.defType = defType;
+	}
+
+	/**
+	 * update(), in this context, decrements the remaining lifetime of the state,
+	 * unsubscribing from the notifier, and resetting the state, when at 0.
+	 */
+	@Override
+	public void update() {
+		if (0 == --stateLifetime) {
+			this.state = null;
+			TurnNotifier.delSubscriber(this);
+		}
+	}
+
+	@Override
+	public void draw(Location loc) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String saveFormat() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
