@@ -77,7 +77,7 @@ public class Player {
 	
 	public void takeTurn() {
 		this.drawTile();
-		//this.stepTwo();
+		//this.stepTwo();//Can't play action tiles until merge with Finn
 		while (this.numMoves > 0) {
 			this.decNumMoves(1);
 			this.stepThree();
@@ -332,5 +332,24 @@ public class Player {
 		int y = r.nextInt(boardLength - 1);
 		this.setLocation(new Location(x,y));
 		this.board.getTileAt(this.location).setMyPlayer(this);
+	}
+	
+	public String inventoryToString() {
+		String str = "[";
+		if (this.inventory != null) {
+			for (int i = 0; i < this.inventory.size() -1; i++) {
+				str += "ActionTile,";
+				//ActionTile temp = this.inventory.get(i);
+			}
+			str += "ActionTile";
+		}
+		str += "]";
+		return str;
+	}
+	
+	public String toString() {
+		return "Location: " + this.location.toString() + "\n"
+				+ "Previous Locations: " + this.previousLocations.toString() + "\n"
+				+ "Inventory: " + this.inventoryToString();
 	}
 }

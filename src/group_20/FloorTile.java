@@ -4,7 +4,7 @@ import javafx.scene.canvas.GraphicsContext;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class FloorTile {
+public class FloorTile extends Tile {
 	private int side; 
 	private boolean isFixed ;
 	private int orientation;
@@ -505,5 +505,17 @@ public class FloorTile {
 	 */
 	public void setDefType(String defType) {
 		this.defType = defType;
+	}
+
+	@Override
+	public void draw(Location loc) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String saveFormat() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
