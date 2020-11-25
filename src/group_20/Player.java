@@ -58,6 +58,7 @@ public class Player {
 		this.inventory = inventory;
 		this.previousLocations = previousLocations;
 		this.hasBeenBacktracked = hasBeenBacktracked;
+		this.numMoves = 1;
 	}
 	
 	/**
@@ -73,9 +74,11 @@ public class Player {
 		this.inventory = new ArrayList<ActionTile>();
 		this.previousLocations = new LocationList();
 		this.hasBeenBacktracked = false;
+		this.numMoves = 1;
 	}
 	
 	public void takeTurn() {
+		this.numMoves = 1;
 		this.drawTile();
 		//this.stepTwo();//Can't play action tiles until merge with Finn
 		while (this.numMoves > 0) {
@@ -90,12 +93,13 @@ public class Player {
 	 * 	- Floor Tile = Insert onto board (Also get input from user as to where to insert)
 	 */
 	public void stepOne() {
-		FloorTile drawnTile = this.drawTile();
-		//If tile is null then it was an ActionTile and was added to inventory
-		if (drawnTile != null) {
-			Location l = new Location(0,0); //As location to insert new tile -> temp value for now
-			this.board.insertTile(drawnTile, l);
-		}
+		this.drawTile();
+//		FloorTile drawnTile = this.drawTile();
+//		//If tile is null then it was an ActionTile and was added to inventory
+//		if (drawnTile != null) {
+//			Location l = new Location(0,0); //As location to insert new tile -> temp value for now
+//			this.board.insertTile(drawnTile, l);
+//		}
 	}
 	
 	/**
@@ -119,17 +123,83 @@ public class Player {
 	public void stepThree() {
 		//Skip method if player can't make any valid moves
 		if (this.canMove()) {
-			Direction d = Direction.EAST;//TODO: change to user input
-		
-			//Loop until input is valid
-			while (!canMove(d)) {
-				d = Direction.EAST;//New direction from user input, for now constant
+			Direction d = null;//TODO: change to user input
+			
+			Random r = new Random();
+			int directionNum = r.nextInt(5);
+			switch (directionNum) {
+			case 1:
+				d = Direction.NORTH;
+				break;
+			case 2:
+				d = Direction.EAST;
+				break;
+			case 3:
+				d = Direction.SOUTH;
+				break;
+			case 4:
+				d = Direction.WEST;
+				break;
+			default:
+				d = Direction.NORTH;
 			}
 			
+			//Loop until input is valid
+			//For now just picks a random new location
+			while (this.canMove() && !canMove(d)) {
+				//System.out.print("Invalid move choice");
+				directionNum = r.nextInt(5);
+				switch (directionNum) {
+				case 1:
+					d = Direction.NORTH;
+					break;
+				case 2:
+					d = Direction.EAST;
+					break;
+				case 3:
+					d = Direction.SOUTH;
+					break;
+				case 4:
+					d = Direction.WEST;
+					break;
+				default:
+					d = Direction.NORTH;
+				}
+				
+//				int directionNum = r.nextInt(4000);
+//				if (directionNum < 1000) {
+//					d = Direction.NORTH;
+//				} else if (directionNum < 1) {
+//					d = Direction.EAST;
+//				} else if (directionNum < 3000) {
+//					d = Direction.SOUTH;
+//				} else if (directionNum < 4000) {
+//					d = Direction.WEST;
+//				} else {
+//					d = Direction.NORTH;
+//				}
+				
+			}
+			
+//			if (this.canMove(Direction.NORTH)) {
+//				d = Direction.NORTH;
+//			} else if (this.canMove(Direction.EAST)) {
+//				d = Direction.EAST;
+//			} else if (this.canMove(Direction.SOUTH)) {
+//				d = Direction.SOUTH;
+//			} else if (this.canMove(Direction.WEST)) {
+//				d = Direction.WEST;
+//			}
+			
 			//Allow player to move
+			this.board.setPlayer(null, this.getLocation()); //Remove this Player from tile.player
+			System.out.print("Moved from " + this.location.toString());
 			this.addPreviousLocation(this.getLocation());
 			this.getLocation().update(d);
-			this.board.setPlayer(this, this.getLocation());
+			this.board.setPlayer(this, this.getLocation());//Add this Player to tile.player
+			System.out.println(" to " + this.location.toString());
+		} else {
+			System.out.println("No valid moves to make");
 		}
 	}
 	
@@ -160,28 +230,43 @@ public class Player {
 	 * Responsible for drawing a tile from the silk bag
 	 * @return ActionTile if action tile was drawn or null if FloorTile was drawn
 	 */
-	public FloorTile drawTile() {
+	public void drawTile() {
 		Tile drawnTile = silkBag.drawTile();
+		//System.out.println(drawnTile.toString());
 		
 		//If is ActionTile
-		if (drawnTile.getClass() == ActionTile.class) {
+		//if (drawnTile.getClass() == ActionTile.class) {
+		if (ActionTile.class.isAssignableFrom(drawnTile.getClass())) {
 			System.out.println("I drew an action tile");
 			this.addToInventory((ActionTile) drawnTile);
 			
 		//If is FloorTile
-		} else if (drawnTile.getClass() == FloorTile.class) {
+		//} else if (drawnTile.getClass() == FloorTile.class) {
+		} else if (FloorTile.class.isAssignableFrom(drawnTile.getClass())) {
 			System.out.println("I drew a floor tile");
-			return (FloorTile) drawnTile;
+			this.insertTile((FloorTile) drawnTile);
+			//return (FloorTile) drawnTile;
 			
 		//If is Tile
-		} else if (drawnTile.getClass() == Tile.class) {
+		//} else if (drawnTile.getClass() == Tile.class) {
+		} else if (Tile.class.isAssignableFrom(drawnTile.getClass())) {
 			System.out.println("I draw a generic Tile? Why would you give me that?");
 			
 		//Anything else
 		} else {
 			System.out.println("What the heck did I just draw?????");
 		}
-		return null;
+	}
+	
+	/**
+	 * Allows the player to insert a tile onto the board at a chosen location
+	 * - Location chosen inside of method
+	 * @param t FloorTile to insert onto board
+	 */
+	public void insertTile(FloorTile t) {
+		//Location insertLocation = new Location(0,5);//TODO change to player input
+		Location insertLocation = this.board.getRandomInsertLocation();
+		this.board.insertTile(t, insertLocation);
 	}
 	
 	/**
@@ -327,11 +412,13 @@ public class Player {
 	}
 	
 	public void randomizeLocation(int boardWidth, int boardLength) {
+		this.board.setPlayer(null, this.location);//Player pointer stuff ehhh iffy
 		Random r = new Random();
 		int x = r.nextInt(boardWidth - 1);
 		int y = r.nextInt(boardLength - 1);
 		this.setLocation(new Location(x,y));
-		this.board.getTileAt(this.location).setMyPlayer(this);
+		//this.board.getTileAt(this.location).setMyPlayer(this);
+		this.board.setPlayer(this, this.location);//Player pointer stuff ehhh iffy
 	}
 	
 	public String inventoryToString() {

@@ -1,10 +1,13 @@
 package group_20;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import javafx.scene.canvas.GraphicsContext;
 
+//TODO currently tiles don't really keep track of players: There's a lot of null pointers and pointers which aren't valid any more. Fix this.
 public class Board {
+	private final int TILE_WIDTH;
 	private int boardID;
 	private int length;
 	private int width;
@@ -14,9 +17,12 @@ public class Board {
 	private Goal goalTile;
 	private Player[] players;
 	private int currentPlayer;
+	private GraphicsContext gc;
 	
 	//For testing
-	public Board(int width, int length) {
+	public Board(GraphicsContext gc, int TILE_WIDTH, int width, int length) {
+		this.gc = gc;
+		this.TILE_WIDTH = TILE_WIDTH;
 		this.boardID = 1;
 		this.length = length;
 		this.width = width;
@@ -27,9 +33,31 @@ public class Board {
 		this.players = newPlayers;
 		this.currentPlayer = 0;
 		this.populate();//TODO change from temp full population with random tiles
+		this.goalTile = new Goal(0,false,0,false,false,new Location(0,0),null,"Goal");
+		this.randomizeAllPlayerLocations();//For testing
 	}
 	
-	public Board(int boardID, int width, int length, SilkBag silkBag, FloorTile[][] gameBoard) {
+	//For testing too
+	public Board(int width, int length) {
+		this.gc = null;
+		this.TILE_WIDTH = 30;
+		this.boardID = 1;
+		this.length = length;
+		this.width = width;
+		this.silkBag = new SilkBag();
+		this.gameBoard = new FloorTile[width][length];		
+		//player1 = new Player(this, this.silkBag, new Location(0,0));
+		Player[] newPlayers = {new Player(this, this.silkBag,new Location(0,0)),new Player(this, this.silkBag,new Location(0,0)),new Player(this, this.silkBag,new Location(0,0)),new Player(this, this.silkBag,new Location(0,0))};
+		this.players = newPlayers;
+		this.currentPlayer = 0;
+		this.populate();//TODO change from temp full population with random tiles
+		this.goalTile = new Goal(0,false,0,false,false,new Location(0,0),null,"Goal");
+		this.randomizeAllPlayerLocations();//For testing
+	}
+	
+	public Board(GraphicsContext gc, int TILE_WIDTH,int boardID, int width, int length, SilkBag silkBag, FloorTile[][] gameBoard) {
+		this.gc = gc;
+		this.TILE_WIDTH = TILE_WIDTH;
 		this.boardID = boardID;
 		this.length = length;
 		this.width = width;
@@ -41,6 +69,8 @@ public class Board {
 		this.players = newPlayers;
 		this.currentPlayer = 0;
 		this.populate();//TODO change from temp full population with random tiles
+		this.goalTile = new Goal(0,false,0,false,false,new Location(0,0),null,"Goal");
+		this.randomizeAllPlayerLocations();//For testing
 	}
 	
 	//redundant as of this version
@@ -66,6 +96,15 @@ public class Board {
 		}
 	}
 	
+	public void startGame() {
+		//while (!this.gameOver()) {
+			this.getCurrentPlayer().takeTurn();
+			this.advancePlayerTurn();
+			this.draw();
+		//}
+	}
+	
+	//TODO players ejected can be placed on top of another player
 	//TODO not allow insert if row/column contains fixed tiles
 		//Currently doesn't factor in fixed tiles
 	public void insertTile(FloorTile t, Location l) {
@@ -81,6 +120,8 @@ public class Board {
 					this.gameBoard[i][l.getY()] = this.gameBoard[i-1][l.getY()];
 					if (this.gameBoard[i-1][l.getY()].hasPlayer()) {
 						this.gameBoard[i-1][l.getY()].getMyPlayer().setLocation(new Location(i,l.getY()));
+						this.gameBoard[i][l.getY()].setMyPlayer(this.gameBoard[i-1][l.getY()].getMyPlayer());//Player pointer stuff ehhh iffy
+						this.gameBoard[i-1][l.getY()].setMyPlayer(null);//Player pointer stuff ehhh iffy
 					}
 				}
 				this.gameBoard[l.getX()][l.getY()] = t;
@@ -90,6 +131,8 @@ public class Board {
 					this.gameBoard[i][l.getY()] = this.gameBoard[i+1][l.getY()];
 					if (this.gameBoard[i+1][l.getY()].hasPlayer()) {
 						this.gameBoard[i+1][l.getY()].getMyPlayer().setLocation(new Location(i,l.getY()));
+						this.gameBoard[i][l.getY()].setMyPlayer(this.gameBoard[i+1][l.getY()].getMyPlayer());//Player pointer stuff ehhh iffy
+						this.gameBoard[i+1][l.getY()].setMyPlayer(null);//Player pointer stuff ehhh iffy
 					}
 				}
 				this.gameBoard[l.getX()][l.getY()] = t;
@@ -99,6 +142,8 @@ public class Board {
 					this.gameBoard[l.getX()][i] = this.gameBoard[l.getX()][i-1];
 					if (this.gameBoard[l.getX()][i-1].hasPlayer()) {
 						this.gameBoard[l.getX()][i-1].getMyPlayer().setLocation(new Location(l.getX(),i));
+						this.gameBoard[l.getX()][i].setMyPlayer(this.gameBoard[l.getX()][i-1].getMyPlayer());//Player pointer stuff ehhh iffy
+						this.gameBoard[l.getX()][i-1].setMyPlayer(null);//Player pointer stuff ehhh iffy
 					}
 				}
 				this.gameBoard[l.getX()][l.getY()] = t;
@@ -108,6 +153,8 @@ public class Board {
 					this.gameBoard[l.getX()][i] = this.gameBoard[l.getX()][i+1];
 					if (this.gameBoard[l.getX()][i+1].hasPlayer()) {
 						this.gameBoard[l.getX()][i+1].getMyPlayer().setLocation(new Location(l.getX(),i));
+						this.gameBoard[l.getX()][i].setMyPlayer(this.gameBoard[l.getX()][i+1].getMyPlayer());//Player pointer stuff ehhh iffy
+						this.gameBoard[l.getX()][i+1].setMyPlayer(null);//Player pointer stuff ehhh iffy
 					}
 				}
 				this.gameBoard[l.getX()][l.getY()] = t;
@@ -115,10 +162,11 @@ public class Board {
 				System.out.println("Invalid tile insertion location");
 			}
 			
-			if (ejectedTile.hasPlayer()) {
+			if (ejectedTile != null && ejectedTile.hasPlayer()) {
 				t.setMyPlayer(ejectedTile.getMyPlayer());
 				t.getMyPlayer().setLocation(l.copy());
 			}
+			System.out.println("Tile inserted at: " + l.toString());
 		}
 	}
 	
@@ -134,10 +182,12 @@ public class Board {
 		
 		if (this.isInBounds(newLocation)) {
 			FloorTile oppositeTile = this.gameBoard[newLocation.getX()][newLocation.getY()];
-			Direction oppositeDirection = this.invertDirection(d);
-			if (tileAtLocation.isValidMove(d) && oppositeTile.isValidMove(oppositeDirection)) {
-				return true;
-			}
+			//if (!oppositeTile.hasPlayer()) {//Isn't occupied
+				Direction oppositeDirection = this.invertDirection(d);
+				if (tileAtLocation.isValidMove(d) && oppositeTile.isValidMove(oppositeDirection)) { //Can exit/enter tiles
+					return true;
+				}
+			//}
 		}
 		return false; //Temp
 	}
@@ -255,7 +305,7 @@ public class Board {
 		
 	}
 	
-	public boolean isOver() {
+	public boolean gameOver() {
 		return this.goalTile.hasPlayer();
 	}
 	
@@ -271,6 +321,10 @@ public class Board {
 		} else {
 			return null;
 		}
+	}
+	
+	public void draw() {
+		this.draw(this.gc,this.TILE_WIDTH);
 	}
 	
 	public void draw(GraphicsContext gc, int tileWidth) {
@@ -298,5 +352,43 @@ public class Board {
 		if (this.currentPlayer > 3) {
 			this.currentPlayer = 0;
 		}
+	}
+	
+	public void randomizeAllPlayerLocations() {
+		for (Player p: this.players) {
+			p.randomizeLocation(this.width, this.length);
+		}
+	}
+	
+	public Location getRandomInsertLocation() {
+		int x = 0;
+		int y = 0;
+		
+		Random r = new Random();
+		int bound = r.nextInt(5);
+		
+		switch (bound) {
+		case 1:
+			x = 0;
+			y = r.nextInt(this.length-2)+1;
+			break;
+		case 2:
+			y = this.length-1;
+			x = r.nextInt(this.width-2)+1;
+			break;
+		case 3:
+			y = 0;
+			x = r.nextInt(this.width-2)+1;
+			break;
+		case 4:
+			x = this.width-1;
+			y = r.nextInt(this.length-2)+1;
+			break;
+		default:
+			y = 1;
+			x = 1;
+		}
+		
+		return new Location(x,y);
 	}
 }

@@ -14,11 +14,31 @@ public class TShaped extends FloorTile {
 		return result;
 	} 
 	
+//	public void draw(int x, int y, GraphicsContext g, int tileWidth) {
+//		g.strokeRect(x, y, tileWidth, tileWidth);
+//		g.strokeLine(x + tileWidth/2, y, x + tileWidth/2, y + tileWidth/2);
+//		g.strokeLine(x, y + tileWidth/2, x + tileWidth, y + tileWidth/2);
+//	}
+	
 	public void draw(int x, int y, GraphicsContext g, int tileWidth) {
-		g.strokeRect(x, y, tileWidth, tileWidth);
-		g.strokeLine(x + tileWidth/2, y, x + tileWidth/2, y + tileWidth/2);
-		g.strokeLine(x, y + tileWidth/2, x + tileWidth, y + tileWidth/2);
-	}
+        if (getOrientation() == 0) {
+            g.strokeRect(x, y, tileWidth, tileWidth);
+            g.strokeLine(x + tileWidth/2, y, x + tileWidth/2, y + tileWidth/2);
+            g.strokeLine(x, y + tileWidth/2, x + tileWidth, y + tileWidth/2);
+        } else if (getOrientation() == 180) {
+            g.strokeRect(x, y, tileWidth, tileWidth);
+            g.strokeLine(x + tileWidth/2, y + tileWidth/2, x + tileWidth/2, y + tileWidth);
+            g.strokeLine(x, y + tileWidth/2, x + tileWidth, y + tileWidth/2);
+        } else if (getOrientation() == 270) {
+            g.strokeRect(x, y, tileWidth, tileWidth);
+            g.strokeLine(x + tileWidth/2, y, x + tileWidth/2, y + tileWidth);
+            g.strokeLine(x + tileWidth/2, y + tileWidth/2, x, y + tileWidth/2);
+        } else if (getOrientation() == 90) {
+            g.strokeRect(x, y, tileWidth, tileWidth);
+            g.strokeLine(x + tileWidth/2, y, x + tileWidth/2, y + tileWidth);
+            g.strokeLine(x + tileWidth/2, y + tileWidth/2, x + tileWidth, y + tileWidth/2);
+        }
+    }
 
 	public static void main(String args[]) {
 		TShaped t1 = new TShaped (5, true, 90, false, false, new Location (0,0), null, "TShaped");

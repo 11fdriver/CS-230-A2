@@ -31,6 +31,11 @@ public class PlayerMain {
 		
 		System.out.println(p.toString());
 		
+		FloorTile ft = new FloorTile(0, false, 0, false, false, l, p, null);
+		Straight st = new Straight(0, false, 0, false, false, l, p, null);
+		
+		System.out.println(FloorTile.class.isAssignableFrom(st.getClass()));
+		
 //		System.out.println("Player's previous locations: " + p.getPreviousLocations().toString());
 //		System.out.println("First element is: " + p.getPreviousLocations().getFirst());
 //		System.out.println("Second element is: " + p.getPreviousLocations().getSecond());

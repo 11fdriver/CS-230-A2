@@ -3,8 +3,12 @@ package group_20;
 import java.util.ArrayList;
 import java.util.Random;
 
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -23,8 +27,8 @@ public class Main extends Application {
 	private static final int TILE_WIDTH = 40;
 	private static final int BOARD_WIDTH = 9;
 	private static final int BOARD_LENGTH = 9;
-	private Canvas canvas;
-	Board currentBoard = new Board(BOARD_WIDTH,BOARD_LENGTH);
+	private Canvas canvas = new Canvas(CANVAS_WIDTH, CANVAS_HEIGHT);
+	Board currentBoard = new Board(canvas.getGraphicsContext2D(),TILE_WIDTH,BOARD_WIDTH,BOARD_LENGTH);
 	
 	public static void main(String[] args) {
 		launch(args);
@@ -43,7 +47,6 @@ public class Main extends Application {
 	private Pane createPane() {
 		BorderPane root = new BorderPane();
 		
-		canvas = new Canvas(CANVAS_WIDTH, CANVAS_HEIGHT);
 		root.setCenter(canvas);
 		
 		VBox sidebar = new VBox();
@@ -113,7 +116,20 @@ public class Main extends Application {
 			currentBoard.draw(canvas.getGraphicsContext2D(), TILE_WIDTH);
 		});
 		
+		Button button8 = new Button("Start Game");
+		sidebar.getChildren().addAll(button8);
+		
+		button8.setOnAction(e -> {
+			canvas.getGraphicsContext2D().clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+			currentBoard.startGame();
+		});
+		
 		currentBoard.draw(canvas.getGraphicsContext2D(), TILE_WIDTH);
+		
+		Timeline timeline = new Timeline(new KeyFrame(Duration.millis(50), ae -> onTime()));
+		timeline.setCycleCount(Animation.INDEFINITE);
+		timeline.play();
+		
 		//currentBoard.calculateArea(new Location(0,0));
 		//System.out.println("Number of tiles in bounds: " + currentBoard.calculateArea(new Location(0,0)).length);
 		//System.out.println("(Testing tile finder)Number of tiles in bounds: " + currentBoard.tempTestCalculateArea().length);
@@ -128,6 +144,11 @@ public class Main extends Application {
 //		}
 		
 		return root;
+	}
+	
+	private void onTime() {
+		canvas.getGraphicsContext2D().clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+		this.currentBoard.startGame();
 	}
 	
 	private void createRandomCircle() {

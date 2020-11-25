@@ -54,7 +54,8 @@ public class SilkBag {
 	 * @return
 	 */
 	public Tile drawTile() {
-		return new ActionTile();
+		return this.drawFloorTile();
+		//return new ActionTile();
 	}
 	
 	/**
@@ -63,22 +64,54 @@ public class SilkBag {
 	 */
 	public FloorTile drawFloorTile() {
 		Random r = new Random();
-		int tileID = r.nextInt(4);
+		int tileID = r.nextInt(4);//ie x < 4
+		int orientationID = r.nextInt(5);//ie x < 5
+		int orientation = 0;
 		
-		//return new GoalTile();
+		switch (orientationID) {
+		case 1:
+			orientation = 0;
+			break;
+		case 2:
+			orientation = 90;
+			break;
+		case 3:
+			orientation = 180;
+			break;
+		case 4:
+			orientation = 270;
+			break;
+		default:
+			orientation = 0;
+		}
 		
+		//Random orientation
 		switch (tileID) {
 		case 1:
-			return new Straight(0,false,0,false,false,new Location(0,0),null,"Straight");
+			return new Straight(0,false,orientation,false,false,new Location(0,0),null,"Straight");
 		case 2:
-			return new Corner(0,false,0,false,false,new Location(0,0),null,"Corner");
+			return new Corner(0,false,orientation,false,false,new Location(0,0),null,"Corner");
 		case 3:
-			return new TShaped(0,false,0,false,false,new Location(0,0),null,"TShaped");
+			return new TShaped(0,false,orientation,false,false,new Location(0,0),null,"TShaped");
 		case 4:
-			return new Goal(0,false,0,false,false,new Location(0,0),null,"Goal");
+			return new Goal(0,false,orientation,false,false,new Location(0,0),null,"Goal");
 		default:
-			return new Straight(0,false,0,false,false,new Location(0,0),null,"Straight");
+			return new Straight(0,false,orientation,false,false,new Location(0,0),null,"Straight");
 		}
+		
+		//Fixed orientation
+//		switch (tileID) {
+//		case 1:
+//			return new Straight(0,false,0,false,false,new Location(0,0),null,"Straight");
+//		case 2:
+//			return new Corner(0,false,0,false,false,new Location(0,0),null,"Corner");
+//		case 3:
+//			return new TShaped(0,false,0,false,false,new Location(0,0),null,"TShaped");
+//		case 4:
+//			return new Goal(0,false,0,false,false,new Location(0,0),null,"Goal");
+//		default:
+//			return new Straight(0,false,0,false,false,new Location(0,0),null,"Straight");
+//		}
 	}
 	//===========================================================================================================//
 }
