@@ -1,7 +1,7 @@
 package group_20;
 
 public abstract class FloorAction extends Action {
-	protected final int LIFETIME = 4;
+	private final int LIFETIME = 4;
 	
 	/**
 	 * Get default lifetime of a FloorAction.
@@ -21,7 +21,5 @@ public abstract class FloorAction extends Action {
 	 * Whether FloorAction allows affected {@link FloorTile} to shift.
 	 * @return False if doesn't allow a tile to shift.
 	 */
-	public abstract boolean canShift();
-
-
+	public abstract boolean acceptsShift();
 }

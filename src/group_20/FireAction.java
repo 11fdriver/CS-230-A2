@@ -27,7 +27,9 @@ public class FireAction extends FloorAction {
 
 	@Override
 	public void apply(Player p, Board b) {
-		
+		// TODO: Here we need to
+		// - Get Player input for a center tile.
+		// - Pass surrounding tiles 'this'.
 	}
 
 	@Override
@@ -36,7 +38,7 @@ public class FireAction extends FloorAction {
 	}
 
 	@Override
-	public boolean canShift() {
+	public boolean acceptsShift() {
 		return this.CAN_SHIFT;
 	}
 
