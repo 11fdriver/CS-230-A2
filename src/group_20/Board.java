@@ -66,7 +66,8 @@ public class Board {
 		}
 	}
 	
-	//TODO make sure players are moved when tiles inserted and account for player being on ejected tile
+	//TODO not allow insert if row/column contains fixed tiles
+		//Currently doesn't factor in fixed tiles
 	public void insertTile(FloorTile t, Location l) {
 		//Checks you aren't inserting at corners of the board
 		if (!(l.equals(0,0) || l.equals(0,this.length - 1) ||
