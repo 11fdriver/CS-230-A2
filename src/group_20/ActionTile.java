@@ -1,17 +1,9 @@
-package group_20;
 
 public class ActionTile extends Tile {
 
-	@Override
-	public void draw(Location loc) {
+	public void play(Board board, Player player) {
 		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public String saveFormat() {
-		// TODO Auto-generated method stub
-		return null;
+		
 	}
 
 }

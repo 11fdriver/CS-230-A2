@@ -1,10 +1,20 @@
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
+
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class FloorTile {
+import javax.imageio.ImageIO;
+
+public class FloorTile extends Tile {
+	//def = default
 	private int side; 
-	private boolean isFixed ;
+	private boolean isFixed;
 	private int orientation;
 	private boolean onFire;
 	private boolean isFrozen;
@@ -17,11 +27,9 @@ public class FloorTile {
 	private boolean defFrozen;
 	private Location defLocation;
 	private Player defPlayer;
-	private String shapeType;
-	private String defType;
 	ArrayList <Integer> degrees = new ArrayList <Integer>();
 	
-	public FloorTile(int side, boolean isFixed, int orientation, boolean onFire, boolean isFrozen, Location location, Player myPlayer, String shapeType) {
+	public FloorTile(int side, boolean isFixed, int orientation, boolean onFire, boolean isFrozen, Location location, Player myPlayer) {
 		this.setSide(side);
 		this.setDefSide(side); 
 		this.setFixed(isFixed);
@@ -36,13 +44,10 @@ public class FloorTile {
 		this.setDefLocation(location);
 		this.setMyPlayer(myPlayer);
 		this.setDefPlayer(myPlayer);
-		this.setShapeType(shapeType);
-		this.setDefType(shapeType);
 	}
 	
 	public String toString() {
 		String result = "";
-		result += "This is a " + getShapeType() +  " floor tile" + "\n";
 		result += "Its side length is " + getSide() + "\n";
 		if (getIsFixed() == true) {
 			result += "It is fixed" + "\n";
@@ -269,6 +274,26 @@ public class FloorTile {
 		g.strokeRect(x, y, tileWidth, tileWidth);
 	}
 	
+	BufferedImage img;
+	public void draw(Graphics g) throws IOException {
+		img = ImageIO.read(new File("C:\\Users\\Owner\\Pictures\\EmptyTile.png"));
+		g.drawImage(img, 0, 0, null);
+	}
+	
+	/*public void paint(Graphics g) throws IOException {
+		BufferedImage img = ImageIO.read(new File("C:\\Users\\Owner\\Pictures\\EmptyTile.png"));
+		g.drawImage(img, 0, 0, null);
+    }
+	
+	public Dimension getPreferredSize() throws IOException {
+		BufferedImage img = ImageIO.read(new File("C:\\Users\\Owner\\Pictures\\EmptyTile.png"));
+		if (img == null) {
+             return new Dimension(100,100);
+        } else {
+           return new Dimension(img.getWidth(null), img.getHeight(null));
+       }
+    }*/
+	
 	public boolean hasPlayer() {
 		if (getMyPlayer() == null) {
 			return false;
@@ -303,167 +328,11 @@ public class FloorTile {
 		this.setFrozen(defFrozen);
 		this.setLocation(defLocation);
 		this.setMyPlayer(defPlayer);
-		this.setShapeType(defType);
 	}
 
-	public boolean isValidMove(Direction d) {
-		switch (getShapeType()) {
-			case "Straight": 
-				switch (d) {
-					case NORTH:
-						if (getOrientation() == 0) {
-							return false;
-						} else if (getOrientation() == 90) {
-							return true;
-						} else if (getOrientation() == 180) {
-							return false;
-						} else {
-							return true;
-						}
-					case SOUTH:
-						if (getOrientation() == 0) {
-							return false;
-						} else if (getOrientation() == 90) {
-							return true;
-						} else if (getOrientation() == 180) {
-							return false;
-						} else {
-							return true;
-						}
-					case EAST:
-						if (getOrientation() == 0) {
-							return true;
-						} else if (getOrientation() == 90) {
-							return false;
-						} else if (getOrientation() == 180) {
-							return true;
-						} else {
-							return false;
-						}
-					case WEST:
-						if (getOrientation() == 0) {
-							return true;
-						} else if (getOrientation() == 90) {
-							return false;
-						} else if (getOrientation() == 180) {
-							return true;
-						} else {
-							return false;
-						}
-					default:
-						return false;
-				} 
-			case "Corner": 	
-				switch (d) {
-					case NORTH:
-						if (getOrientation() == 0) {
-							return false;
-						} else if (getOrientation() == 90) {
-							return false;
-						} else if (getOrientation() == 180) {
-							return true;
-						} else {
-							return true;
-						}
-					case SOUTH:
-						if (getOrientation() == 0) {
-							return true;
-						} else if (getOrientation() == 90) {
-							return true;
-						} else if (getOrientation() == 180) {
-							return false;
-						} else {
-							return false;
-						}
-					case EAST:
-						if (getOrientation() == 0) {
-							return true;
-						} else if (getOrientation() == 90) {
-							return false;
-						} else if (getOrientation() == 180) {
-							return false;
-						} else {
-							return true;
-						}
-					case WEST:
-						if (getOrientation() == 0) {
-							return false;
-						} else if (getOrientation() == 90) {
-							return true;
-						} else if (getOrientation() == 180) {
-							return true;
-						} else {
-							return false;
-						}
-					default:
-						return false;
-				} 
-			case "TShaped":
-				switch (d) {
-					case NORTH:
-						if (getOrientation() == 0) {
-							return true;
-						} else if (getOrientation() == 90) {
-							return true;
-						} else if (getOrientation() == 180) {
-							return false;
-						} else {
-							return true;
-						}
-					case SOUTH:
-						if (getOrientation() == 0) {
-							return false;
-						} else if (getOrientation() == 90) {
-							return true;
-						} else if (getOrientation() == 180) {
-							return true;
-						} else {
-							return true;
-						}
-					case EAST:
-						if (getOrientation() == 0) {
-							return true;
-						} else if (getOrientation() == 90) {
-							return true;
-						} else if (getOrientation() == 180) {
-							return true;
-						} else {
-							return false;
-						}
-					case WEST:
-						if (getOrientation() == 0) {
-							return true;
-						} else if (getOrientation() == 90) {
-							return false;
-						} else if (getOrientation() == 180) {
-							return true;
-						} else {
-							return true;
-						}
-					default:
-						return false;
-				} 
-			case "Goal":
-				switch (d) {
-					case NORTH:
-						return true;
-					case SOUTH:
-						return true;
-					case EAST:
-						return true;
-					case WEST:
-						return true;
-					default:
-						return false;
-				} 
-			default: 
-				return false;
-		}
-	}
-	
 	public static void main(String args[]) {
-		FloorTile f1 = new FloorTile (5, true, 90, false, false, new Location (0,0), new Player (new Location(0,0), false, false, "Jeff"), "Straight");
-		FloorTile f2 = new FloorTile (5, false, 90, true, true, new Location (1,2), null, "Corner");
+		FloorTile f1 = new FloorTile (5, true, 90, false, false, new Location (0,0), null);
+		FloorTile f2 = new FloorTile (5, false, 90, true, true, new Location (1,2), null);
 		System.out.println(f1.toString());
 		f1.randomizeOrientation();
 		System.out.println(f1.getOrientation());
@@ -473,35 +342,5 @@ public class FloorTile {
 		f2.notifyMe();
 		f2.randomizeOrientation();
 		System.out.println(f2.toString());
-		System.out.println(f1.isValidMove(Direction.NORTH));
-		System.out.println(f2.isValidMove(Direction.SOUTH));
-	}
-
-	/**
-	 * @return the shapeType
-	 */
-	public String getShapeType() {
-		return shapeType;
-	}
-
-	/**
-	 * @param shapeType the shapeType to set
-	 */
-	public void setShapeType(String shapeType) {
-		this.shapeType = shapeType;
-	}
-
-	/**
-	 * @return the defType
-	 */
-	public String getDefType() {
-		return defType;
-	}
-
-	/**
-	 * @param defType the defType to set
-	 */
-	public void setDefType(String defType) {
-		this.defType = defType;
 	}
 }

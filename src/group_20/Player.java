@@ -1,5 +1,11 @@
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
+
+import javax.imageio.ImageIO;
 
 import javafx.scene.canvas.GraphicsContext;
 
@@ -308,10 +314,10 @@ public class Player {
 		this.numMoves -= decAmount;
 	}
 	
-	public void draw(GraphicsContext gc, int tileWidth) {
-		int x = this.getLocation().getX()*tileWidth + (tileWidth/4);
-		int y = this.getLocation().getY()*tileWidth + (tileWidth/4);
-		gc.strokeOval(x, y, (tileWidth/2), (tileWidth/2));
+	BufferedImage img;
+	public void draw(Graphics g) throws IOException {
+		img = ImageIO.read(new File("C:\\Users\\Owner\\Pictures\\Player.png"));
+		g.drawImage(img, 0, 0, null);
 	}
 	
 	public void randomizeLocation(int boardWidth, int boardLength) {

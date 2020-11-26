@@ -1,15 +1,47 @@
 import javafx.scene.canvas.GraphicsContext;
 
 public class Goal extends FloorTile {
+	private String shapeType;
 	
 	public Goal(int side, boolean isFixed, int orientation, boolean onFire, boolean isFrozen, Location location, Player myPlayer, String shapeType) {
-		super(side, isFixed, orientation, onFire, isFrozen, location, myPlayer, shapeType) ;
+		super(side, isFixed, orientation, onFire, isFrozen, location, myPlayer) ;
+		this.setShapeType(shapeType);
 	}
 	
 	public String toString() {
 		String result = "";
+		result += "Its shape is " + getShapeType() + "\n";
 		result += super.toString();
 		return result;
+	}
+	
+	/**
+	 * @return the shapeType
+	 */
+	public String getShapeType() {
+		return shapeType;
+	}
+
+	/**
+	 * @param shapeType the shapeType to set
+	 */
+	public void setShapeType(String shapeType) {
+		this.shapeType = shapeType;
+	}
+
+	public boolean isValidMove(Direction d) {
+		switch (d) {
+			case NORTH:
+				return true;
+			case SOUTH:
+				return true;
+			case EAST:
+				return true;
+			case WEST:
+				return true;
+			default:
+				return false;
+		} 
 	}
 	
 	public void draw(int x, int y, GraphicsContext g, int tileWidth) {

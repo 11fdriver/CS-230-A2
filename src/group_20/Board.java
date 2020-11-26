@@ -1,4 +1,11 @@
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+
+import javax.imageio.ImageIO;
 
 import javafx.scene.canvas.GraphicsContext;
 
@@ -9,7 +16,7 @@ public class Board {
 	private FloorTile[][] gameBoard;
 	private SilkBag silkBag;
 	//private Player player1;
-	private GoalTile goalTile;
+	private Goal goalTile;
 	private Player[] players;
 	private int currentPlayer;
 	
@@ -36,7 +43,7 @@ public class Board {
 		for (int i = 0; i < this.width; i++) {
 			for (int j = 0; j < length; j++) {
 				if (this.gameBoard[i][j] == null) {
-					this.gameBoard[i][j] = silkBag.drawFLoorTile();
+					this.gameBoard[i][j] = silkBag.drawFloorTile();
 				}
 			}
 		}
@@ -157,7 +164,7 @@ public class Board {
 	}
 	
 	public boolean isOver() {
-		return this.goalTile.isOccupied();
+		return this.goalTile.hasPlayer();
 	}
 	
 	//Sets player of FloorTile at given location
@@ -174,20 +181,26 @@ public class Board {
 		}
 	}
 	
-	public void draw(GraphicsContext gc, int tileWidth) {
-		for (int i = 0; i < this.width; i++) {
-			for (int j = 0; j < this.length; j++) {
-				//System.out.println("Drawing tile at (" + i + "," + j + ")");
-				this.gameBoard[i][j].draw(i*tileWidth, j*tileWidth, gc, tileWidth);
-			}
-		}
-		
-		//this.getCurrentPlayer().draw(gc, tileWidth);
-		
-		for (Player p: this.players) {
-			p.draw(gc, tileWidth);
-		}
-	}
+	BufferedImage img;
+	public void paint(Graphics g) {
+        g.drawImage(img, 0, 0, null);
+    }
+
+	public Dimension getPreferredSize() {
+        if (img == null) {
+             return new Dimension(100,100);
+        } else {
+           return new Dimension(img.getWidth(null), img.getHeight(null));
+       }
+    }
+	
+	public Board() {
+	       try {
+	           img = ImageIO.read(new File("C:\\Users\\Owner\\Pictures\\BasicBoard.png"));
+	       } catch (IOException e) {
+	       }
+
+	    }
 	
 	//Just for testing animation
 	public Player getCurrentPlayer() {
