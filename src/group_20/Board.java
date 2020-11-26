@@ -5,6 +5,7 @@ import java.util.Random;
 
 import javafx.scene.canvas.GraphicsContext;
 
+//TODO make sure can't push fixed tiles
 //TODO currently tiles don't really keep track of players: There's a lot of null pointers and pointers which aren't valid any more. Fix this.
 public class Board {
 	private final int TILE_WIDTH;
