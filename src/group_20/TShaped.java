@@ -87,7 +87,7 @@ public class TShaped extends FloorTile {
 	public void loadSprite() {
 		Image image = null;
 		try {
-			image = new Image(new FileInputStream("T_Tile_With_alligners.png"),Main.TILE_WIDTH, Main.TILE_WIDTH,true,true);
+			image = new Image(new FileInputStream("T_Tile.png"),Main.TILE_WIDTH, Main.TILE_WIDTH,true,true);
 		} catch (IOException e) {
 		}
 		this.sprite = image;

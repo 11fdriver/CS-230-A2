@@ -89,7 +89,7 @@ public class Corner extends FloorTile {
 	public void loadSprite() {
 		Image image = null;
 		try {
-			image = new Image(new FileInputStream("Corner_Tile_with_alligners.png"),Main.TILE_WIDTH, Main.TILE_WIDTH,true,true);
+			image = new Image(new FileInputStream("Corner_Tile.png"),Main.TILE_WIDTH, Main.TILE_WIDTH,true,true);
 		} catch (IOException e) {
 		}
 		this.sprite = image;
