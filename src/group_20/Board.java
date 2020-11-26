@@ -121,8 +121,8 @@ public class Board {
 					this.gameBoard[i][l.getY()] = this.gameBoard[i-1][l.getY()];
 					if (this.gameBoard[i-1][l.getY()].hasPlayer()) {
 						this.gameBoard[i-1][l.getY()].getMyPlayer().setLocation(new Location(i,l.getY()));
-						this.gameBoard[i][l.getY()].setMyPlayer(this.gameBoard[i-1][l.getY()].getMyPlayer());//Player pointer stuff ehhh iffy
-						this.gameBoard[i-1][l.getY()].setMyPlayer(null);//Player pointer stuff ehhh iffy
+						//this.gameBoard[i][l.getY()].setMyPlayer(this.gameBoard[i-1][l.getY()].getMyPlayer());//Player pointer stuff ehhh iffy
+						//this.gameBoard[i-1][l.getY()].setMyPlayer(null);//Player pointer stuff ehhh iffy
 					}
 				}
 				this.gameBoard[l.getX()][l.getY()] = t;
@@ -132,8 +132,8 @@ public class Board {
 					this.gameBoard[i][l.getY()] = this.gameBoard[i+1][l.getY()];
 					if (this.gameBoard[i+1][l.getY()].hasPlayer()) {
 						this.gameBoard[i+1][l.getY()].getMyPlayer().setLocation(new Location(i,l.getY()));
-						this.gameBoard[i][l.getY()].setMyPlayer(this.gameBoard[i+1][l.getY()].getMyPlayer());//Player pointer stuff ehhh iffy
-						this.gameBoard[i+1][l.getY()].setMyPlayer(null);//Player pointer stuff ehhh iffy
+						//this.gameBoard[i][l.getY()].setMyPlayer(this.gameBoard[i+1][l.getY()].getMyPlayer());//Player pointer stuff ehhh iffy
+						//this.gameBoard[i+1][l.getY()].setMyPlayer(null);//Player pointer stuff ehhh iffy
 					}
 				}
 				this.gameBoard[l.getX()][l.getY()] = t;
@@ -143,8 +143,8 @@ public class Board {
 					this.gameBoard[l.getX()][i] = this.gameBoard[l.getX()][i-1];
 					if (this.gameBoard[l.getX()][i-1].hasPlayer()) {
 						this.gameBoard[l.getX()][i-1].getMyPlayer().setLocation(new Location(l.getX(),i));
-						this.gameBoard[l.getX()][i].setMyPlayer(this.gameBoard[l.getX()][i-1].getMyPlayer());//Player pointer stuff ehhh iffy
-						this.gameBoard[l.getX()][i-1].setMyPlayer(null);//Player pointer stuff ehhh iffy
+						//this.gameBoard[l.getX()][i].setMyPlayer(this.gameBoard[l.getX()][i-1].getMyPlayer());//Player pointer stuff ehhh iffy
+						//this.gameBoard[l.getX()][i-1].setMyPlayer(null);//Player pointer stuff ehhh iffy
 					}
 				}
 				this.gameBoard[l.getX()][l.getY()] = t;
@@ -154,8 +154,8 @@ public class Board {
 					this.gameBoard[l.getX()][i] = this.gameBoard[l.getX()][i+1];
 					if (this.gameBoard[l.getX()][i+1].hasPlayer()) {
 						this.gameBoard[l.getX()][i+1].getMyPlayer().setLocation(new Location(l.getX(),i));
-						this.gameBoard[l.getX()][i].setMyPlayer(this.gameBoard[l.getX()][i+1].getMyPlayer());//Player pointer stuff ehhh iffy
-						this.gameBoard[l.getX()][i+1].setMyPlayer(null);//Player pointer stuff ehhh iffy
+						//this.gameBoard[l.getX()][i].setMyPlayer(this.gameBoard[l.getX()][i+1].getMyPlayer());//Player pointer stuff ehhh iffy
+						//this.gameBoard[l.getX()][i+1].setMyPlayer(null);//Player pointer stuff ehhh iffy
 					}
 				}
 				this.gameBoard[l.getX()][l.getY()] = t;
@@ -183,12 +183,12 @@ public class Board {
 		
 		if (this.isInBounds(newLocation)) {
 			FloorTile oppositeTile = this.gameBoard[newLocation.getX()][newLocation.getY()];
-			//if (!oppositeTile.hasPlayer()) {//Isn't occupied
+			if (!oppositeTile.hasPlayer()) {//Isn't occupied
 				Direction oppositeDirection = this.invertDirection(d);
 				if (tileAtLocation.isValidMove(d) && oppositeTile.isValidMove(oppositeDirection)) { //Can exit/enter tiles
 					return true;
 				}
-			//}
+			}
 		}
 		return false; //Temp
 	}

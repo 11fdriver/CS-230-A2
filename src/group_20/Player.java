@@ -199,12 +199,9 @@ public class Player {
 //			}
 			
 			//Allow player to move
-			this.board.setPlayer(null, this.getLocation()); //Remove this Player from tile.player
-			System.out.print("Moved from " + this.location.toString());
-			this.addPreviousLocation(this.getLocation());
-			this.getLocation().update(d);
-			this.board.setPlayer(this, this.getLocation());//Add this Player to tile.player
-			System.out.println(" to " + this.location.toString());
+			//System.out.print("Moved from " + this.location.toString());
+			this.move(d);
+			//System.out.println(" to " + this.location.toString());
 		} else {
 			System.out.println("No valid moves to make");
 		}
@@ -291,8 +288,10 @@ public class Player {
 		//this.location.update(d);
 		
 		if (this.board.canMove(this.location, d)) {
+			this.addPreviousLocation(this.getLocation());
+			this.removeFromCurrentTile();
 			this.location.update(d);
-			this.board.getTileAt(this.location).setMyPlayer(this);
+			this.addToCurrentTile();
 		}
 	}
 	
@@ -301,7 +300,10 @@ public class Player {
 	 * @param location New location
 	 */
 	public void setLocation(Location location) {
+		this.addPreviousLocation(this.getLocation());
+		this.removeFromCurrentTile();
 		this.location = location;
+		this.addToCurrentTile();
 	}
 	
 	/**
@@ -408,6 +410,18 @@ public class Player {
 		this.numMoves -= decAmount;
 	}
 	
+	public void removeFromCurrentTile() {
+		FloorTile currentlyOn = this.board.getTileAt(this.location);
+		if (currentlyOn != null) {
+			currentlyOn.setMyPlayer(null);
+		}
+	}
+	
+	public void addToCurrentTile() {
+		FloorTile currentlyOn = this.board.getTileAt(this.location);
+		currentlyOn.setMyPlayer(this);
+	}
+	
 	public void draw(GraphicsContext gc, int tileWidth) {
 //		if (this == this.board.getCurrentPlayer()) {
 //			gc.setStroke(Color.RED);
@@ -429,13 +443,10 @@ public class Player {
 	}
 	
 	public void randomizeLocation(int boardWidth, int boardLength) {
-		this.board.setPlayer(null, this.location);//Player pointer stuff ehhh iffy
 		Random r = new Random();
 		int x = r.nextInt(boardWidth - 1);
 		int y = r.nextInt(boardLength - 1);
 		this.setLocation(new Location(x,y));
-		//this.board.getTileAt(this.location).setMyPlayer(this);
-		this.board.setPlayer(this, this.location);//Player pointer stuff ehhh iffy
 	}
 	
 	public String inventoryToString() {

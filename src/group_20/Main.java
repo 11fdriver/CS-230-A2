@@ -20,7 +20,7 @@ import javafx.scene.control.Button;
 public class Main extends Application {
 	private static final int SHAPE_SIZE = 20;
 	private static final int SHAPE_SIZE_UPPER_BOUND = 100;
-	public static final int TILE_WIDTH = 50;
+	public static final int TILE_WIDTH = 120;
 	private static final int BOARD_WIDTH = 9;
 	private static final int BOARD_LENGTH = 9;
 	private static final int CANVAS_HEIGHT = TILE_WIDTH * BOARD_LENGTH;
@@ -126,9 +126,9 @@ public class Main extends Application {
 		
 		currentBoard.draw(canvas.getGraphicsContext2D(), TILE_WIDTH);
 		
-		Timeline timeline = new Timeline(new KeyFrame(Duration.millis(100), ae -> onTime()));
-		timeline.setCycleCount(Animation.INDEFINITE);
-		timeline.play();
+//		Timeline timeline = new Timeline(new KeyFrame(Duration.millis(100), ae -> onTime()));
+//		timeline.setCycleCount(Animation.INDEFINITE);
+//		timeline.play();
 		
 		//currentBoard.calculateArea(new Location(0,0));
 		//System.out.println("Number of tiles in bounds: " + currentBoard.calculateArea(new Location(0,0)).length);
