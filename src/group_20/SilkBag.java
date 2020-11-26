@@ -64,7 +64,7 @@ public class SilkBag {
 	 */
 	public FloorTile drawFloorTile() {
 		Random r = new Random();
-		int tileID = r.nextInt(4);//ie x < 4
+		int tileID = r.nextInt(5);//ie x < 5
 		int orientationID = r.nextInt(5);//ie x < 5
 		int orientation = 0;
 		

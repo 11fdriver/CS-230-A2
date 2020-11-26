@@ -1,6 +1,8 @@
 package group_20;
 
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
+
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -22,6 +24,7 @@ public class FloorTile extends Tile {
 	private String shapeType;
 	private String defType;
 	ArrayList <Integer> degrees = new ArrayList <Integer>();
+	protected Image sprite;
 	
 	public FloorTile(int side, boolean isFixed, int orientation, boolean onFire, boolean isFrozen, Location location, Player myPlayer, String shapeType) {
 		this.setSide(side);

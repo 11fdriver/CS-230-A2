@@ -1,9 +1,12 @@
 package group_20;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
 public class Player {
@@ -43,6 +46,8 @@ public class Player {
 	 */
 	private Boolean hasBeenBacktracked;
 	
+	private Image sprite;
+	
 	/**
 	 * Full Constructor to be called when loading a player object
 	 * @param board
@@ -59,6 +64,7 @@ public class Player {
 		this.previousLocations = previousLocations;
 		this.hasBeenBacktracked = hasBeenBacktracked;
 		this.numMoves = 1;
+		this.loadSprite();
 	}
 	
 	/**
@@ -75,6 +81,7 @@ public class Player {
 		this.previousLocations = new LocationList();
 		this.hasBeenBacktracked = false;
 		this.numMoves = 1;
+		this.loadSprite();
 	}
 	
 	public void takeTurn() {
@@ -402,13 +409,23 @@ public class Player {
 	}
 	
 	public void draw(GraphicsContext gc, int tileWidth) {
-		if (this == this.board.getCurrentPlayer()) {
-			gc.setStroke(Color.RED);
-		}
+//		if (this == this.board.getCurrentPlayer()) {
+//			gc.setStroke(Color.RED);
+//		}
+//		int x = this.getLocation().getX()*tileWidth + (tileWidth/4);
+//		int y = this.getLocation().getY()*tileWidth + (tileWidth/4);
+//		gc.strokeOval(x, y, (tileWidth/2), (tileWidth/2));
+//		gc.setStroke(Color.BLACK);
+		
+		
+//		Image image = null;
+//		try {
+//			image = new Image(new FileInputStream("Howard-no-background.png"),(tileWidth/3)*2, (tileWidth/3)*2,true,true);
+//		} catch (IOException e) {
+//		}
 		int x = this.getLocation().getX()*tileWidth + (tileWidth/4);
 		int y = this.getLocation().getY()*tileWidth + (tileWidth/4);
-		gc.strokeOval(x, y, (tileWidth/2), (tileWidth/2));
-		gc.setStroke(Color.BLACK);
+		gc.drawImage(sprite, x, y);
 	}
 	
 	public void randomizeLocation(int boardWidth, int boardLength) {
@@ -438,5 +455,14 @@ public class Player {
 		return "Location: " + this.location.toString() + "\n"
 				+ "Previous Locations: " + this.previousLocations.toString() + "\n"
 				+ "Inventory: " + this.inventoryToString();
+	}
+	
+	public void loadSprite() {
+		Image image = null;
+		try {
+			image = new Image(new FileInputStream("Howard-no-background.png"),(Main.TILE_WIDTH/3)*2, (Main.TILE_WIDTH/3)*2,true,true);
+		} catch (IOException e) {
+		}
+		this.sprite = image;
 	}
 }

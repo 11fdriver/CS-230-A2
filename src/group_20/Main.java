@@ -18,15 +18,15 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 
 public class Main extends Application {
-	private static final int WINDOW_HEIGHT = 500;
-	private static final int WINDOW_WIDTH = 600;
-	private static final int CANVAS_HEIGHT = 400;
-	private static final int CANVAS_WIDTH = 400;
 	private static final int SHAPE_SIZE = 20;
 	private static final int SHAPE_SIZE_UPPER_BOUND = 100;
-	private static final int TILE_WIDTH = 40;
+	public static final int TILE_WIDTH = 120;
 	private static final int BOARD_WIDTH = 9;
 	private static final int BOARD_LENGTH = 9;
+	private static final int CANVAS_HEIGHT = TILE_WIDTH * BOARD_LENGTH;
+	private static final int CANVAS_WIDTH = TILE_WIDTH * BOARD_WIDTH;
+	private static final int WINDOW_HEIGHT = CANVAS_HEIGHT + 100;
+	private static final int WINDOW_WIDTH = CANVAS_WIDTH + 300;
 	private Canvas canvas = new Canvas(CANVAS_WIDTH, CANVAS_HEIGHT);
 	Board currentBoard = new Board(canvas.getGraphicsContext2D(),TILE_WIDTH,BOARD_WIDTH,BOARD_LENGTH);
 	
@@ -126,7 +126,7 @@ public class Main extends Application {
 		
 		currentBoard.draw(canvas.getGraphicsContext2D(), TILE_WIDTH);
 		
-		Timeline timeline = new Timeline(new KeyFrame(Duration.millis(50), ae -> onTime()));
+		Timeline timeline = new Timeline(new KeyFrame(Duration.millis(100), ae -> onTime()));
 		timeline.setCycleCount(Animation.INDEFINITE);
 		timeline.play();
 		
