@@ -424,7 +424,7 @@ public class Player {
 //		} catch (IOException e) {
 //		}
 		int x = this.getLocation().getX()*tileWidth + (tileWidth/4);
-		int y = this.getLocation().getY()*tileWidth + (tileWidth/4);
+		int y = this.getLocation().getY()*tileWidth;
 		gc.drawImage(sprite, x, y);
 	}
 	
