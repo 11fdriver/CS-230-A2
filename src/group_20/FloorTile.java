@@ -2,7 +2,6 @@ package group_20;
 
 import javafx.scene.canvas.GraphicsContext;
 import java.util.ArrayList;
-import java.util.Collections;
 
 /**
  * Class for a Tile that can be placed onto the {@link Board}.
@@ -35,6 +34,8 @@ public class FloorTile extends Tile implements Subscriber {
 	
 	/**
 	 * Construct new FloorTile.
+	 * <br>
+	 * Will <b>not</b> set a non-player state when there is already a Player.
 	 * @param directions	Directions which a player can enter or exit a tile via.
 	 * @param location		Location at which this tile is on the {@link Board}.
 	 * @param player		The {@link Player} on this tile.
@@ -45,7 +46,7 @@ public class FloorTile extends Tile implements Subscriber {
 		this.DIRECTIONS = directions;
 		this.location = location;
 		this.player = player;
-		if (null != state) {
+		if (null == player || (null != state && state.acceptsPlayer())) {
 			this.state = state;
 			TurnNotifier.addSubscriber(this);
 			this.stateLifetime = lifetime;
@@ -84,9 +85,14 @@ public class FloorTile extends Tile implements Subscriber {
 	
 	/**
 	 * Allows a FloorAction to affect the FloorTile, subscribing to the TurnNotifier.
+	 * <br>
+	 * Will <b>not</b> set a non-player state when there is already a Player.
 	 * @param action Action being used on this FloorTile
 	 */
 	public void setState(FloorAction action) {
+		if (null != player && !action.acceptsPlayer()) { // Don't set non-player state if already a player
+			return;
+		}
 		this.state = action;
 		this.stateLifetime = action.getLifetime();
 		TurnNotifier.addSubscriber(this);
