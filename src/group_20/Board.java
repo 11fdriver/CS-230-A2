@@ -5,6 +5,7 @@ import java.util.Random;
 
 import javafx.scene.canvas.GraphicsContext;
 
+//TODO assign players to tiles once board is populated
 //TODO make sure can't push fixed tiles
 //TODO currently tiles don't really keep track of players: There's a lot of null pointers and pointers which aren't valid any more. Fix this.
 public class Board {
@@ -94,6 +95,15 @@ public class Board {
 					this.gameBoard[i][j] = silkBag.drawFloorTile();
 				}
 			}
+		}
+		this.assignPlayersToTiles();
+	}
+	
+	public void assignPlayersToTiles() {
+		for (Player p: this.players) {
+			Location playerLocation = p.getLocation().copy();
+			FloorTile tileAtLocation = this.gameBoard[playerLocation.getX()][playerLocation.getY()];
+			tileAtLocation.setMyPlayer(p);
 		}
 	}
 	
