@@ -2,6 +2,7 @@ package group_20;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -520,5 +521,11 @@ public class FloorTile extends Tile {
 	public String saveFormat() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	public void highlight(int x, int y, GraphicsContext gc, int tileWidth) {
+		gc.setStroke(Color.ANTIQUEWHITE);
+		gc.strokeOval(x, y, tileWidth, tileWidth);
+		gc.setStroke(Color.BLACK);
 	}
 }

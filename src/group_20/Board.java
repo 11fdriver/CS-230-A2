@@ -350,6 +350,9 @@ public class Board {
 		for (Player p: this.players) {
 			p.draw(gc, tileWidth);
 		}
+		
+		//Highlight valid moves for current player
+		this.highlightValidMoves();
 	}
 	
 	//Just for testing animation
@@ -439,6 +442,36 @@ public class Board {
 			}
 		} else {
 			System.out.println("Selected tile is too far away from current player");
+		}
+	}
+	
+	public void highlightValidMoves() {
+		Location playerLocation = this.getCurrentPlayer().getLocation();
+		//FloorTile currentTile = this.getTileAt(playerLocation);
+		
+		if (this.canMove(playerLocation, Direction.NORTH)) {
+			Location lNorth = playerLocation.check(Direction.NORTH);
+			FloorTile tNorth = this.getTileAt(lNorth);
+			tNorth.highlight(lNorth.getX()*this.TILE_WIDTH, lNorth.getY()*this.TILE_WIDTH, gc, this.TILE_WIDTH);
+			//System.out.println("Valid move at: " + lNorth.toString());
+		}
+		if (this.canMove(playerLocation, Direction.EAST)) {
+			Location lEast = playerLocation.check(Direction.EAST);
+			FloorTile tEast = this.getTileAt(lEast);
+			tEast.highlight(lEast.getX()*this.TILE_WIDTH, lEast.getY()*this.TILE_WIDTH, gc, this.TILE_WIDTH);
+			//System.out.println("Valid move at: " + lEast.toString());
+		}
+		if (this.canMove(playerLocation, Direction.SOUTH)) {
+			Location lSouth = playerLocation.check(Direction.SOUTH);
+			FloorTile tSouth = this.getTileAt(lSouth);
+			tSouth.highlight(lSouth.getX()*this.TILE_WIDTH, lSouth.getY()*this.TILE_WIDTH, gc, this.TILE_WIDTH);
+			//System.out.println("Valid move at: " + lSouth.toString());
+		}
+		if (this.canMove(playerLocation, Direction.WEST)) {
+			Location lWest = playerLocation.check(Direction.WEST);
+			FloorTile tWest = this.getTileAt(lWest);
+			tWest.highlight(lWest.getX()*this.TILE_WIDTH, lWest.getY()*this.TILE_WIDTH, gc, this.TILE_WIDTH);
+			//System.out.println("Valid move at: " + lWest.toString());
 		}
 	}
 }
