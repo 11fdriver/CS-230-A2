@@ -106,6 +106,14 @@ public class FloorTile extends Tile implements Subscriber {
 	}
 	
 	/**
+	 * Sets Player onto FloorTile.
+	 * @param p Player to put onto FloorTile. Null if unsetting.
+	 */
+	public void setPlayer(Player p) {
+		this.player = p;
+	}
+	
+	/**
 	 * update(), in this context, decrements the remaining lifetime of the state,
 	 * unsubscribing from the notifier, and resetting the state, when at 0.
 	 */
