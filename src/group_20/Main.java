@@ -103,7 +103,8 @@ public class Main extends Application {
 		
 		button6.setOnAction(e -> {
 			canvas.getGraphicsContext2D().clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-			currentBoard.insertTile(new Goal(0,false,0,false,false,new Location(0,0),null,"Goal"), new Location(4,BOARD_LENGTH-1));
+			//currentBoard.insertTile(new Goal(0,false,0,false,false,new Location(0,0),null,"Goal"), new Location(4,BOARD_LENGTH-1));
+			this.currentBoard.insertRandomTile();
 			currentBoard.draw(canvas.getGraphicsContext2D(), TILE_WIDTH);
 		});
 		

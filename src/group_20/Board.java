@@ -376,6 +376,12 @@ public class Board {
 		}
 	}
 	
+	public void insertRandomTile() {
+		FloorTile tileToInsert = this.silkBag.drawFloorTile();
+		Location insertLocation = this.getRandomInsertLocation();
+		this.insertTile(tileToInsert, insertLocation);
+	}
+	
 	public Location getRandomInsertLocation() {
 		int x = 0;
 		int y = 0;
