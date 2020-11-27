@@ -5,7 +5,6 @@ import java.util.Random;
 
 import javafx.scene.canvas.GraphicsContext;
 
-//TODO assign players to tiles once board is populated
 //TODO make sure can't push fixed tiles
 //TODO currently tiles don't really keep track of players: There's a lot of null pointers and pointers which aren't valid any more. Fix this.
 public class Board {
@@ -365,6 +364,12 @@ public class Board {
 		}
 	}
 	
+	public Location getCoordinateOfClick(Double xClick, Double yClick) {
+		int x = (int) Math.round(xClick)/this.TILE_WIDTH;
+		int y = (int) Math.round(yClick)/this.TILE_WIDTH;
+		return new Location(x,y);
+	}
+	
 	public void randomizeAllPlayerLocations() {
 		for (Player p: this.players) {
 			p.randomizeLocation(this.width, this.length);
@@ -401,5 +406,33 @@ public class Board {
 		}
 		
 		return new Location(x,y);
+	}
+	
+	public void movePlayer(Double xMouseClick, Double yMouseClick) {
+		Location clickLocation = this.getCoordinateOfClick(xMouseClick, yMouseClick);
+		int playerX = this.getCurrentPlayer().getLocation().getX();
+		int playerY = this.getCurrentPlayer().getLocation().getY();
+		
+		Direction directionToMove = null;
+		if (clickLocation.getY() == playerY+1 && clickLocation.getX() == playerX) {
+			directionToMove = Direction.SOUTH;
+		} else if (clickLocation.getY() == playerY-1 && clickLocation.getX() == playerX) {
+			directionToMove = Direction.NORTH;
+		} else if (clickLocation.getX() == playerX+1 && clickLocation.getY() == playerY) {
+			directionToMove = Direction.EAST;
+		} else if (clickLocation.getX() == playerX-1 && clickLocation.getY() == playerY) {
+			directionToMove = Direction.WEST;
+		}
+		
+		if (directionToMove != null) {
+			//System.out.println("Attempting to move");
+			if (this.canMove(this.getCurrentPlayer().getLocation(), directionToMove)) {
+				this.getCurrentPlayer().move(directionToMove);
+			} else {
+				System.out.println("Can't move to selected tile");
+			}
+		} else {
+			System.out.println("Selected tile is too far away from current player");
+		}
 	}
 }

@@ -126,6 +126,13 @@ public class Main extends Application {
 		
 		currentBoard.draw(canvas.getGraphicsContext2D(), TILE_WIDTH);
 		
+		canvas.setOnMouseClicked(e -> {
+			this.currentBoard.movePlayer(e.getX(), e.getY());
+			this.currentBoard.draw();
+			//System.out.println("Positon clicked: (" + e.getX() + "," + e.getY() + ")");
+			//System.out.println("Board coordinate: " + this.currentBoard.getCoordinateOfClick(e.getX(), e.getY()).toString());
+		});
+		
 //		Timeline timeline = new Timeline(new KeyFrame(Duration.millis(100), ae -> onTime()));
 //		timeline.setCycleCount(Animation.INDEFINITE);
 //		timeline.play();

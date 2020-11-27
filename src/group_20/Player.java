@@ -311,7 +311,7 @@ public class Player {
 	 * @return current location
 	 */
 	public Location getLocation() {
-		return this.location;
+		return this.location.copy();
 	}
 	
 	/**
