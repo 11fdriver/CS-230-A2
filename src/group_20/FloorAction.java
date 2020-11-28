@@ -22,6 +22,7 @@ public abstract class FloorAction extends Action {
 				result[pos] = b.getTileAt(new Location(xoffset + i, yoffset +j));
 			}
 		}
+		result[4] = null; // Don't include center tile
 		return result;
 	}
 	
