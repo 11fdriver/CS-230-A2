@@ -7,14 +7,15 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 
 public class BoardWindow extends BorderPane {
-	private static final int TILE_WIDTH = 60;
+	private final int TILE_WIDTH;
 	private final int CANVAS_WIDTH;
 	private final int CANVAS_HEIGHT;
 	private Board board;
 	private Canvas canvas;
 	private GraphicsContext gc;
 	
-	public BoardWindow(Board board) {
+	public BoardWindow(int TILE_WIDTH, Board board) {
+		this.TILE_WIDTH = TILE_WIDTH;
 		this.board = board;
 		CANVAS_WIDTH = this.board.getWidth() * TILE_WIDTH;
 		CANVAS_HEIGHT = this.board.getLength() * TILE_WIDTH;

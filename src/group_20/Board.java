@@ -27,10 +27,13 @@ public class Board {
 		this.boardID = 1;
 		this.length = length;
 		this.width = width;
-		this.silkBag = new SilkBag();
+		this.silkBag = new SilkBag(this.TILE_WIDTH);
 		this.gameBoard = new FloorTile[width][length];		
 		//player1 = new Player(this, this.silkBag, new Location(0,0));
-		Player[] newPlayers = {new Player(this, this.silkBag,new Location(0,0)),new Player(this, this.silkBag,new Location(0,0)),new Player(this, this.silkBag,new Location(0,0)),new Player(this, this.silkBag,new Location(0,0))};
+		Player[] newPlayers = {new Player(this, this.silkBag,this.TILE_WIDTH,new Location(0,0)),
+				new Player(this, this.silkBag,this.TILE_WIDTH,new Location(0,0)),
+				new Player(this, this.silkBag,this.TILE_WIDTH,new Location(0,0)),
+				new Player(this, this.silkBag,this.TILE_WIDTH,new Location(0,0))};
 		this.players = newPlayers;
 		this.currentPlayer = 0;
 		this.populate();//TODO change from temp full population with random tiles
@@ -39,16 +42,19 @@ public class Board {
 	}
 	
 	//For testing too
-	public Board(int width, int length) {
+	public Board(int width, int length, int TILE_WIDTH) {
 		this.gc = null;
-		this.TILE_WIDTH = 30;
+		this.TILE_WIDTH = TILE_WIDTH;
 		this.boardID = 1;
 		this.length = length;
 		this.width = width;
-		this.silkBag = new SilkBag();
+		this.silkBag = new SilkBag(this.TILE_WIDTH);
 		this.gameBoard = new FloorTile[width][length];		
 		//player1 = new Player(this, this.silkBag, new Location(0,0));
-		Player[] newPlayers = {new Player(this, this.silkBag,new Location(0,0)),new Player(this, this.silkBag,new Location(0,0)),new Player(this, this.silkBag,new Location(0,0)),new Player(this, this.silkBag,new Location(0,0))};
+		Player[] newPlayers = {new Player(this, this.silkBag,this.TILE_WIDTH,new Location(0,0)),
+				new Player(this, this.silkBag,this.TILE_WIDTH,new Location(0,0)),
+				new Player(this, this.silkBag,this.TILE_WIDTH,new Location(0,0)),
+				new Player(this, this.silkBag,this.TILE_WIDTH,new Location(0,0))};
 		this.players = newPlayers;
 		this.currentPlayer = 0;
 		this.populate();//TODO change from temp full population with random tiles
@@ -66,7 +72,10 @@ public class Board {
 		this.gameBoard = gameBoard;
 		//this.gameBoard = new FloorTile[width][length];		
 		//player1 = new Player(this, this.silkBag, new Location(0,0));
-		Player[] newPlayers = {new Player(this, this.silkBag,new Location(0,0)),new Player(this, this.silkBag,new Location(0,0)),new Player(this, this.silkBag,new Location(0,0)),new Player(this, this.silkBag,new Location(0,0))};
+		Player[] newPlayers = {new Player(this, this.silkBag,this.TILE_WIDTH,new Location(0,0)),
+				new Player(this, this.silkBag,this.TILE_WIDTH,new Location(0,0)),
+				new Player(this, this.silkBag,this.TILE_WIDTH,new Location(0,0)),
+				new Player(this, this.silkBag,this.TILE_WIDTH,new Location(0,0))};
 		this.players = newPlayers;
 		this.currentPlayer = 0;
 		this.populate();//TODO change from temp full population with random tiles

@@ -26,8 +26,10 @@ public class FloorTile extends Tile {
 	private String defType;
 	ArrayList <Integer> degrees = new ArrayList <Integer>();
 	protected Image sprite;
+	protected int TILE_WIDTH;
 	
-	public FloorTile(int side, boolean isFixed, int orientation, boolean onFire, boolean isFrozen, Location location, Player myPlayer, String shapeType) {
+	public FloorTile(int TILE_WIDTH, boolean isFixed, int orientation, boolean onFire, boolean isFrozen, Location location, Player myPlayer, String shapeType) {
+		this.TILE_WIDTH = TILE_WIDTH;
 		this.setSide(side);
 		this.setDefSide(side); 
 		this.setFixed(isFixed);
@@ -527,5 +529,9 @@ public class FloorTile extends Tile {
 		gc.setStroke(Color.ANTIQUEWHITE);
 		gc.strokeOval(x, y, tileWidth, tileWidth);
 		gc.setStroke(Color.BLACK);
+	}
+	
+	public void setTileWidth(int TILE_WIDTH) {
+		this.TILE_WIDTH = TILE_WIDTH;
 	}
 }

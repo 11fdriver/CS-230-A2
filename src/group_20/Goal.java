@@ -44,7 +44,7 @@ public class Goal extends FloorTile {
 	public void loadSprite() {
 		Image image = null;
 		try {
-			image = new Image(new FileInputStream("X_tile.png"),Main.TILE_WIDTH, Main.TILE_WIDTH,true,true);
+			image = new Image(new FileInputStream("X_tile.png"),this.TILE_WIDTH, this.TILE_WIDTH,true,true);
 		} catch (IOException e) {
 		}
 		this.sprite = image;

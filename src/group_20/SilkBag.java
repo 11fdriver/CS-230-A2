@@ -45,8 +45,10 @@ public class SilkBag {
 //	}
 	
 //===========================================================================================================//	
-	public SilkBag() {
-		
+	private int TILE_WIDTH;
+	
+	public SilkBag(int TILE_WIDTH) {
+		this.TILE_WIDTH = TILE_WIDTH;
 	}
 	
 	/**
@@ -88,15 +90,15 @@ public class SilkBag {
 		//Random orientation
 		switch (tileID) {
 		case 1:
-			return new Straight(0,false,orientation,false,false,new Location(0,0),null,"Straight");
+			return new Straight(this.TILE_WIDTH,false,orientation,false,false,new Location(0,0),null,"Straight");
 		case 2:
-			return new Corner(0,false,orientation,false,false,new Location(0,0),null,"Corner");
+			return new Corner(this.TILE_WIDTH,false,orientation,false,false,new Location(0,0),null,"Corner");
 		case 3:
-			return new TShaped(0,false,orientation,false,false,new Location(0,0),null,"TShaped");
+			return new TShaped(this.TILE_WIDTH,false,orientation,false,false,new Location(0,0),null,"TShaped");
 		case 4:
-			return new Goal(0,false,orientation,false,false,new Location(0,0),null,"Goal");
+			return new Goal(this.TILE_WIDTH,false,orientation,false,false,new Location(0,0),null,"Goal");
 		default:
-			return new Straight(0,false,orientation,false,false,new Location(0,0),null,"Straight");
+			return new Straight(this.TILE_WIDTH,false,orientation,false,false,new Location(0,0),null,"Straight");
 		}
 		
 		//Fixed orientation

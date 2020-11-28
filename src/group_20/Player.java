@@ -10,6 +10,8 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
 public class Player {
+	private final int TILE_WIDTH;
+	
 	/**
 	 * location of player
 	 */
@@ -58,9 +60,10 @@ public class Player {
 	 * @param inventory
 	 * @param previousLocations
 	 */
-	public Player(Board board, SilkBag silkbag, Location location, ArrayList<ActionTile> inventory, LocationList previousLocations, boolean hasBeenBacktracked) {
+	public Player(Board board, SilkBag silkbag, int TILE_WIDTH, Location location, ArrayList<ActionTile> inventory, LocationList previousLocations, boolean hasBeenBacktracked) {
 		this.board = board;
 		this.silkBag = silkbag;
+		this.TILE_WIDTH = TILE_WIDTH;
 		this.location = location;
 		this.inventory = inventory;
 		this.previousLocations = previousLocations;
@@ -75,9 +78,10 @@ public class Player {
 	 * @param silkBag
 	 * @param startingLocation
 	 */
-	public Player(Board board, SilkBag silkBag, Location startingLocation) {
+	public Player(Board board, SilkBag silkBag, int TILE_WIDTH, Location startingLocation) {
 		this.board = board;
 		this.silkBag = silkBag;
+		this.TILE_WIDTH = TILE_WIDTH;
 		this.location = startingLocation;
 		this.inventory = new ArrayList<ActionTile>();
 		this.previousLocations = new LocationList();
@@ -492,7 +496,7 @@ public class Player {
 	public void loadSprite() {
 		Image image = null;
 		try {
-			image = new Image(new FileInputStream("Howard-no-background.png"),(Main.TILE_WIDTH/3)*2, (Main.TILE_WIDTH/3)*2,true,true);
+			image = new Image(new FileInputStream("Howard-no-background.png"),(this.TILE_WIDTH/3)*2, (this.TILE_WIDTH/3)*2,true,true);
 		} catch (IOException e) {
 		}
 		this.sprite = image;
