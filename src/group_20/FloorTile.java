@@ -99,6 +99,13 @@ public class FloorTile extends Tile implements Subscriber {
 	}
 	
 	/**
+	 * @return FloorTile's location.
+	 */
+	public Location getLocation() {
+		return this.location;
+	}
+	
+	/**
 	 * @param loc New location for FloorTile
 	 */
 	public void setLocation(Location loc) {
