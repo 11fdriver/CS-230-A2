@@ -102,7 +102,7 @@ public class FloorTile extends Tile implements Subscriber {
 	 * @return FloorTile's location.
 	 */
 	public Location getLocation() {
-		return this.location;
+		return this.location.copy();
 	}
 	
 	/**
