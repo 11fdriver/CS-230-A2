@@ -20,7 +20,7 @@ import javafx.scene.control.Button;
 public class Main extends Application {
 	private static final int SHAPE_SIZE = 20;
 	private static final int SHAPE_SIZE_UPPER_BOUND = 100;
-	public static final int TILE_WIDTH = 120;
+	public static final int TILE_WIDTH = 60;
 	private static final int BOARD_WIDTH = 9;
 	private static final int BOARD_LENGTH = 9;
 	private static final int CANVAS_HEIGHT = TILE_WIDTH * BOARD_LENGTH;
@@ -38,10 +38,18 @@ public class Main extends Application {
 	public void start(Stage primaryStage) {
 		Pane root = createPane();
 		
-		Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
+		Scene scene = new Scene(new BoardWindow(this.currentBoard), WINDOW_WIDTH, WINDOW_HEIGHT);
+		//Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
 		
 		primaryStage.setScene(scene);
 		primaryStage.show();
+//		System.out.println("HERE");
+//		for (int i = 0; i < 999999; i++) {
+//			//for (int j = 0; j < 999999999; j++) {
+//				System.out.println("Loading...");
+//			//}
+//		}
+//		System.out.println("Does this work?");
 	}
 	
 	private Pane createPane() {

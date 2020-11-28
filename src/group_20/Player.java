@@ -46,6 +46,8 @@ public class Player {
 	 */
 	private Boolean hasBeenBacktracked;
 	
+	private FloorTile tileToInsert;
+	
 	private Image sprite;
 	
 	/**
@@ -248,7 +250,8 @@ public class Player {
 		//} else if (drawnTile.getClass() == FloorTile.class) {
 		} else if (FloorTile.class.isAssignableFrom(drawnTile.getClass())) {
 			System.out.println("I drew a floor tile");
-			this.insertTile((FloorTile) drawnTile);
+			this.tileToInsert = (FloorTile) drawnTile;
+			//this.insertTile((FloorTile) drawnTile);
 			//return (FloorTile) drawnTile;
 			
 		//If is Tile
@@ -267,10 +270,28 @@ public class Player {
 	 * - Location chosen inside of method
 	 * @param t FloorTile to insert onto board
 	 */
+	//Think redundant
 	public void insertTile(FloorTile t) {
 		//Location insertLocation = new Location(0,5);//TODO change to player input
 		Location insertLocation = this.board.getRandomInsertLocation();
 		this.board.insertTile(t, insertLocation);
+	}
+	
+	/**
+	 * Inserts the tile drawn at a given location
+	 * @param l Location to insert tile
+	 */
+	public void insertTile(Location l) {
+		this.board.insertTile(this.tileToInsert,l);
+		this.tileToInsert = null;
+	}
+	
+	/**
+	 * True if player has a value for tileToInsert ie drew a floor tile
+	 * @return
+	 */
+	public boolean drewFloorTile() {
+		return this.tileToInsert != null;
 	}
 	
 	/**

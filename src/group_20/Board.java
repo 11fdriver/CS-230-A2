@@ -180,6 +180,22 @@ public class Board {
 		}
 	}
 	
+	//TODO change to actually check for fixed tiles
+	public Boolean canInsertAt(Location l) {
+		//Is in bounds
+		if ((this.isInBounds(l)) && //And isn't a corner
+				!(l.equals(0,0) || l.equals(0,this.length - 1) ||
+				l.equals(this.width - 1, 0) || l.equals(this.width - 1, this.length - 1))) {
+			if (l.getY() == 0 || l.getX() == 0 || 
+					l.getY() == this.length-1 || l.getX() == this.width-1) {
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}
+	}
 	
 	public void returnToBag(FloorTile t) {
 		//this.silkBag.returnTile(t);//TODO change returnTile(Tile t) to returnTile(FloorTile t) in silkbag class
@@ -303,6 +319,22 @@ public class Board {
 		}
 	}
 	
+	public void setLength(int length) {
+		this.length = length;
+	}
+	
+	public void setWidth(int width) {
+		this.width = width;
+	}
+	
+	public int getLength() {
+		return this.length;
+	}
+	
+	public int getWidth() {
+		return this.width;
+	}
+	
 	public void setPlayers(Player[] players) {
 		this.players = players;
 	}
@@ -333,6 +365,14 @@ public class Board {
 		}
 	}
 	
+	public void setGraphicsContext(GraphicsContext gc) {
+		this.gc = gc;
+	}
+	
+	public GraphicsContext getGraphicsContext() {
+		return this.gc;
+	}
+	
 	public void draw() {
 		this.draw(this.gc,this.TILE_WIDTH);
 	}
@@ -352,7 +392,7 @@ public class Board {
 		}
 		
 		//Highlight valid moves for current player
-		this.highlightValidMoves();
+		//this.highlightValidMoves();
 	}
 	
 	//Just for testing animation
@@ -472,6 +512,17 @@ public class Board {
 			FloorTile tWest = this.getTileAt(lWest);
 			tWest.highlight(lWest.getX()*this.TILE_WIDTH, lWest.getY()*this.TILE_WIDTH, gc, this.TILE_WIDTH);
 			//System.out.println("Valid move at: " + lWest.toString());
+		}
+	}
+	
+	public void highlightValidInsertLocations() {
+		for (int i = 0; i < this.width; i++) {
+			for (int j = 0; j < this.length; j++) {
+				Location l = new Location(i,j);
+				if (this.canInsertAt(l)) {
+					this.gameBoard[i][j].highlight(i*this.TILE_WIDTH, j*this.TILE_WIDTH, this.gc, this.TILE_WIDTH);
+				}
+			}
 		}
 	}
 }
