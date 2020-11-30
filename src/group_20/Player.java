@@ -52,6 +52,8 @@ public class Player {
 	
 	private Image sprite;
 	
+	private int currentStageOfTurn;
+	
 	/**
 	 * Full Constructor to be called when loading a player object
 	 * @param board
@@ -91,11 +93,15 @@ public class Player {
 	}
 	
 	public void takeTurn() {
+		this.currentStageOfTurn = 1;
+		System.out.println("Drawing a tile");
 		this.numMoves = 1;
 		this.drawTile();
 		//this.stepTwo();//Can't play action tiles until merge with Finn
+		this.currentStageOfTurn = 3;
 		while (this.numMoves > 0) {
 			this.decNumMoves(1);
+			System.out.println("Making a move");
 			this.stepThree();
 		}
 	}
@@ -136,80 +142,49 @@ public class Player {
 	public void stepThree() {
 		//Skip method if player can't make any valid moves
 		if (this.canMove()) {
-			Direction d = null;//TODO: change to user input
+			this.board.setLastClickLocation(null);
+			Location clickLocation = null;
 			
-			Random r = new Random();
-			int directionNum = r.nextInt(5);
-			switch (directionNum) {
-			case 1:
-				d = Direction.NORTH;
-				break;
-			case 2:
-				d = Direction.EAST;
-				break;
-			case 3:
-				d = Direction.SOUTH;
-				break;
-			case 4:
-				d = Direction.WEST;
-				break;
-			default:
-				d = Direction.NORTH;
-			}
-			
-			//Loop until input is valid
-			//For now just picks a random new location
-			while (this.canMove() && !canMove(d)) {
-				//System.out.print("Invalid move choice");
-				directionNum = r.nextInt(5);
-				switch (directionNum) {
-				case 1:
-					d = Direction.NORTH;
-					break;
-				case 2:
-					d = Direction.EAST;
-					break;
-				case 3:
-					d = Direction.SOUTH;
-					break;
-				case 4:
-					d = Direction.WEST;
-					break;
-				default:
-					d = Direction.NORTH;
+			while (clickLocation == null ||
+					!this.canMove(clickLocation)) {
+				clickLocation = this.board.getlastClickLocation();
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-				
-//				int directionNum = r.nextInt(4000);
-//				if (directionNum < 1000) {
-//					d = Direction.NORTH;
-//				} else if (directionNum < 1) {
-//					d = Direction.EAST;
-//				} else if (directionNum < 3000) {
-//					d = Direction.SOUTH;
-//				} else if (directionNum < 4000) {
-//					d = Direction.WEST;
-//				} else {
-//					d = Direction.NORTH;
-//				}
-				
 			}
 			
-//			if (this.canMove(Direction.NORTH)) {
-//				d = Direction.NORTH;
-//			} else if (this.canMove(Direction.EAST)) {
-//				d = Direction.EAST;
-//			} else if (this.canMove(Direction.SOUTH)) {
-//				d = Direction.SOUTH;
-//			} else if (this.canMove(Direction.WEST)) {
-//				d = Direction.WEST;
-//			}
-			
-			//Allow player to move
-			//System.out.print("Moved from " + this.location.toString());
-			this.move(d);
-			//System.out.println(" to " + this.location.toString());
+			Direction directionToMove = this.getDirectionFromPlayer(clickLocation);
+			this.move(directionToMove);
+		}
+	}
+	
+	public boolean isInRange(Location l) {
+		return this.getDirectionFromPlayer(l) != null;
+	}
+	
+	public Direction getDirectionFromPlayer(Location l) {
+		Direction directionToMove = null;
+		if (l.getY() == this.getLocation().getY()+1 && l.getX() == this.getLocation().getX()) {
+			directionToMove = Direction.SOUTH;
+		} else if (l.getY() == this.getLocation().getY()-1 && l.getX() == this.getLocation().getX()) {
+			directionToMove = Direction.NORTH;
+		} else if (l.getX() == this.getLocation().getX()+1 && l.getY() == this.getLocation().getY()) {
+			directionToMove = Direction.EAST;
+		} else if (l.getX() == this.getLocation().getX()-1 && l.getY() == this.getLocation().getY()) {
+			directionToMove = Direction.WEST;
+		}
+		return directionToMove;
+	}
+	
+	public boolean canMove(Location l) {
+		if (this.isInRange(l) &&
+				this.canMove(this.getDirectionFromPlayer(l))) {
+			return true;
 		} else {
-			System.out.println("No valid moves to make");
+			return false;
 		}
 	}
 	
@@ -255,6 +230,7 @@ public class Player {
 		} else if (FloorTile.class.isAssignableFrom(drawnTile.getClass())) {
 			System.out.println("I drew a floor tile");
 			this.tileToInsert = (FloorTile) drawnTile;
+			this.insertTile();
 			//this.insertTile((FloorTile) drawnTile);
 			//return (FloorTile) drawnTile;
 			
@@ -269,16 +245,27 @@ public class Player {
 		}
 	}
 	
-	/**
-	 * Allows the player to insert a tile onto the board at a chosen location
-	 * - Location chosen inside of method
-	 * @param t FloorTile to insert onto board
-	 */
-	//Think redundant
-	public void insertTile(FloorTile t) {
-		//Location insertLocation = new Location(0,5);//TODO change to player input
-		Location insertLocation = this.board.getRandomInsertLocation();
-		this.board.insertTile(t, insertLocation);
+	public void insertTile() {
+		System.out.println("Inserting the tile");
+		this.board.setLastClickLocation(null);
+		Location insertLocation = null;
+		
+		while (insertLocation == null ||
+				!this.board.canInsertAt(insertLocation)) {
+			insertLocation = this.board.getlastClickLocation();
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			//System.out.println(insertLocation.toString());
+			//System.out.println("Invalid insert: " + insertLocation.toString());
+			//System.out.println("invalid insert");
+		}
+		
+		System.out.println("Valid insert location selected");
+		this.insertTile(insertLocation);
 	}
 	
 	/**
@@ -288,6 +275,7 @@ public class Player {
 	public void insertTile(Location l) {
 		this.board.insertTile(this.tileToInsert,l);
 		this.tileToInsert = null;
+		System.out.println("Tile inserted!");
 	}
 	
 	/**
@@ -318,6 +306,7 @@ public class Player {
 			this.location.update(d);
 			this.addToCurrentTile();
 		}
+		System.out.println("Player Moved!");
 	}
 	
 	/**
@@ -462,8 +451,8 @@ public class Player {
 //			image = new Image(new FileInputStream("Howard-no-background.png"),(tileWidth/3)*2, (tileWidth/3)*2,true,true);
 //		} catch (IOException e) {
 //		}
-		int x = this.getLocation().getX()*tileWidth + (tileWidth/4);
-		int y = this.getLocation().getY()*tileWidth;
+		int x = this.getLocation().getX()*TILE_WIDTH + (TILE_WIDTH/4);
+		int y = this.getLocation().getY()*TILE_WIDTH;
 		gc.drawImage(sprite, x, y);
 	}
 	
@@ -500,5 +489,17 @@ public class Player {
 		} catch (IOException e) {
 		}
 		this.sprite = image;
+	}
+	
+	public int getCurrentStageOfTurn() {
+		return this.currentStageOfTurn;
+	}
+	
+	public void highlight(GraphicsContext gc) {
+		gc.setStroke(Color.MAGENTA);
+		int x = this.getLocation().getX()*TILE_WIDTH;
+		int y = this.getLocation().getY()*TILE_WIDTH;
+		gc.strokeOval(x, y, (TILE_WIDTH), (TILE_WIDTH));
+		gc.setStroke(Color.BLACK);
 	}
 }

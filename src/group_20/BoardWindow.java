@@ -1,10 +1,14 @@
 package group_20;
 
+import javafx.animation.Animation;
+import javafx.animation.Timeline;
+import javafx.animation.KeyFrame;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 
 public class BoardWindow extends BorderPane {
 	private final int TILE_WIDTH;
@@ -28,52 +32,64 @@ public class BoardWindow extends BorderPane {
 		this.board.draw(canvas.getGraphicsContext2D(), TILE_WIDTH);
 		this.board.highlightValidMoves();
 		
-		this.setOnClickEventMovePlayer();
+		this.canvas.setOnMouseClicked(e -> {
+			this.board.setLastClickLocation(e.getX(), e.getY());
+		});
+		
+		Timeline timeline = new Timeline(new KeyFrame(Duration.millis(100), ae -> refreshBoard()));
+		timeline.setCycleCount(Animation.INDEFINITE);
+		timeline.play();
+		
+		//this.setOnClickEventMovePlayer();
 		
 		VBox sidebar = new VBox();
 		this.setLeft(sidebar);
 		
-		Button drawTileButton = new Button("Draw Tile");
-		sidebar.getChildren().addAll(drawTileButton);
-		drawTileButton.setOnAction(e -> {
-			Player p = this.board.getCurrentPlayer();
-			p.drawTile();
-			this.refreshBoard();
-			if (p.drewFloorTile()) {
-				this.board.highlightValidInsertLocations();
-				this.setOnClickEventInsertTile();
-			}
-		});
+		Thread tr = new Thread(board);
+		tr.setDaemon(true);
+		tr.start();
+		
+//		Button drawTileButton = new Button("Draw Tile");
+//		sidebar.getChildren().addAll(drawTileButton);
+//		drawTileButton.setOnAction(e -> {
+//			Player p = this.board.getCurrentPlayer();
+//			p.drawTile();
+//			this.refreshBoard();
+//			if (p.drewFloorTile()) {
+//				this.board.highlightValidInsertLocations();
+//				this.setOnClickEventInsertTile();
+//			}
+//		});
 	}
 	
-	private void setOnClickEventMovePlayer() {
-		this.canvas.setOnMouseClicked(e -> {
-			this.board.movePlayer(e.getX(), e.getY());
-			this.refreshBoard();
-			this.board.highlightValidMoves();
-		});
-	}
+//	private void setOnClickEventMovePlayer() {
+//		this.canvas.setOnMouseClicked(e -> {
+//			this.board.movePlayer(e.getX(), e.getY());
+//			this.refreshBoard();
+//			this.board.highlightValidMoves();
+//		});
+//	}
 	
-	private void setOnClickEventInsertTile() {
-		Player p = this.board.getCurrentPlayer();
-		this.canvas.setOnMouseClicked(e2 -> {
-			//System.out.println("Can I do this?");
-			Location l = this.board.getCoordinateOfClick(e2.getX(), e2.getY());
-			if (this.board.canInsertAt(l)) {
-				p.insertTile(l);
-				this.setOnClickEventMovePlayer();
-				this.refreshBoard();
-				this.board.highlightValidMoves();
-			} else {
-				System.out.println("Can't insert there m8");
-				this.refreshBoard();
-				this.board.highlightValidInsertLocations();
-			}
-		});
-	}
+//	private void setOnClickEventInsertTile() {
+//		Player p = this.board.getCurrentPlayer();
+//		this.canvas.setOnMouseClicked(e2 -> {
+//			//System.out.println("Can I do this?");
+//			Location l = this.board.getCoordinateOfClick(e2.getX(), e2.getY());
+//			if (this.board.canInsertAt(l)) {
+//				p.insertTile(l);
+//				this.setOnClickEventMovePlayer();
+//				this.refreshBoard();
+//				this.board.highlightValidMoves();
+//			} else {
+//				System.out.println("Can't insert there m8");
+//				this.refreshBoard();
+//				this.board.highlightValidInsertLocations();
+//			}
+//		});
+//	}
 	
 	private void refreshBoard() {
-		System.out.println("Refreshed");
+		//System.out.println("Refreshed");
 		this.gc.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 		this.board.draw(canvas.getGraphicsContext2D(), TILE_WIDTH);
 	}

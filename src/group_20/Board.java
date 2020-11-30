@@ -3,11 +3,12 @@ package group_20;
 import java.util.ArrayList;
 import java.util.Random;
 
+import javafx.concurrent.Task;
 import javafx.scene.canvas.GraphicsContext;
 
 //TODO make sure can't push fixed tiles
 //TODO currently tiles don't really keep track of players: There's a lot of null pointers and pointers which aren't valid any more. Fix this.
-public class Board {
+public class Board extends Task<Void>{
 	private final int TILE_WIDTH;
 	private int boardID;
 	private int length;
@@ -19,6 +20,7 @@ public class Board {
 	private Player[] players;
 	private int currentPlayer;
 	private GraphicsContext gc;
+	private Location lastClickLocation;
 	
 	//For testing
 	public Board(GraphicsContext gc, int TILE_WIDTH, int width, int length) {
@@ -390,7 +392,12 @@ public class Board {
 		for (int i = 0; i < this.width; i++) {
 			for (int j = 0; j < this.length; j++) {
 				//System.out.println("Drawing tile at (" + i + "," + j + ")");
-				this.gameBoard[i][j].draw(i*tileWidth, j*tileWidth, gc, tileWidth);
+				FloorTile currentTile = this.gameBoard[i][j];
+				currentTile.draw(i*tileWidth, j*tileWidth, gc, tileWidth);
+				//Highlights current player
+//				if (currentTile.getMyPlayer() == this.getCurrentPlayer()) {
+//					currentTile.highlight(i*tileWidth, j*tileWidth, gc, tileWidth);
+//				}
 			}
 		}
 		
@@ -400,8 +407,15 @@ public class Board {
 			p.draw(gc, tileWidth);
 		}
 		
-		//Highlight valid moves for current player
-		//this.highlightValidMoves();
+		switch (this.getCurrentPlayer().getCurrentStageOfTurn()) {
+		case 1:
+			this.highlightValidInsertLocations();
+			break;
+		case 3:
+			this.highlightValidMoves();
+			break;
+		}
+		this.getCurrentPlayer().highlight(this.gc);
 	}
 	
 	//Just for testing animation
@@ -414,12 +428,6 @@ public class Board {
 		if (this.currentPlayer > 3) {
 			this.currentPlayer = 0;
 		}
-	}
-	
-	public Location getCoordinateOfClick(Double xClick, Double yClick) {
-		int x = (int) Math.round(xClick)/this.TILE_WIDTH;
-		int y = (int) Math.round(yClick)/this.TILE_WIDTH;
-		return new Location(x,y);
 	}
 	
 	public void randomizeAllPlayerLocations() {
@@ -533,5 +541,37 @@ public class Board {
 				}
 			}
 		}
+	}
+	
+	public Location getCoordinateOfClick(Double xClick, Double yClick) {
+		int x = (int) Math.round(xClick)/this.TILE_WIDTH;
+		int y = (int) Math.round(yClick)/this.TILE_WIDTH;
+		return new Location(x,y);
+	}
+	
+	public void setLastClickLocation(Double x, Double y) {
+		System.out.println("Updated last click location");
+		this.lastClickLocation = this.getCoordinateOfClick(x, y);
+	}
+	
+	public void setLastClickLocation(Location l) {
+		System.out.println("(Probably) Cleared last click location");
+		this.lastClickLocation = l;
+	}
+	
+	public Location getlastClickLocation() {
+		return this.lastClickLocation;
+	}
+
+	@Override
+	protected Void call() throws Exception {
+		System.out.println("Starting Game");
+		while (!this.gameOver()) {
+			this.getCurrentPlayer().takeTurn();
+			this.advancePlayerTurn();
+			//this.draw();
+			System.out.println("Next Player's Turn");
+		}
+		return null;
 	}
 }
