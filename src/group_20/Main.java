@@ -67,7 +67,7 @@ public class Main extends Application {
 			//createRandomCircle();
 			canvas.getGraphicsContext2D().clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 			currentBoard.getCurrentPlayer().move(Direction.SOUTH);
-			currentBoard.draw(canvas.getGraphicsContext2D(), TILE_WIDTH);
+			currentBoard.draw();
 		});
 		
 		Button button2 = new Button("Right");
@@ -76,7 +76,7 @@ public class Main extends Application {
 		button2.setOnAction(e -> {
 			canvas.getGraphicsContext2D().clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 			currentBoard.getCurrentPlayer().move(Direction.EAST);
-			currentBoard.draw(canvas.getGraphicsContext2D(), TILE_WIDTH);
+			currentBoard.draw();
 		});
 		
 		Button button3 = new Button("Left");
@@ -85,7 +85,7 @@ public class Main extends Application {
 		button3.setOnAction(e -> {
 			canvas.getGraphicsContext2D().clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 			currentBoard.getCurrentPlayer().move(Direction.WEST);
-			currentBoard.draw(canvas.getGraphicsContext2D(), TILE_WIDTH);
+			currentBoard.draw();
 		});
 		
 		Button button4 = new Button("Up");
@@ -94,7 +94,7 @@ public class Main extends Application {
 		button4.setOnAction(e -> {
 			canvas.getGraphicsContext2D().clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 			currentBoard.getCurrentPlayer().move(Direction.NORTH);
-			currentBoard.draw(canvas.getGraphicsContext2D(), TILE_WIDTH);
+			currentBoard.draw();
 		});
 		
 		Button button5 = new Button("Random");
@@ -103,7 +103,7 @@ public class Main extends Application {
 		button5.setOnAction(e -> {
 			canvas.getGraphicsContext2D().clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 			currentBoard.getCurrentPlayer().randomizeLocation(BOARD_WIDTH, BOARD_LENGTH);;
-			currentBoard.draw(canvas.getGraphicsContext2D(), TILE_WIDTH);
+			currentBoard.draw();
 		});
 		
 		Button button6 = new Button("Insert Tile");
@@ -113,7 +113,7 @@ public class Main extends Application {
 			canvas.getGraphicsContext2D().clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 			//currentBoard.insertTile(new Goal(0,false,0,false,false,new Location(0,0),null,"Goal"), new Location(4,BOARD_LENGTH-1));
 			this.currentBoard.insertRandomTile();
-			currentBoard.draw(canvas.getGraphicsContext2D(), TILE_WIDTH);
+			currentBoard.draw();
 		});
 		
 		Button button7 = new Button("Randomize Board");
@@ -122,7 +122,7 @@ public class Main extends Application {
 		button7.setOnAction(e -> {
 			canvas.getGraphicsContext2D().clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 			currentBoard.randomizeBoard();
-			currentBoard.draw(canvas.getGraphicsContext2D(), TILE_WIDTH);
+			currentBoard.draw();
 		});
 		
 		Button button8 = new Button("Start Game");
@@ -133,7 +133,7 @@ public class Main extends Application {
 			currentBoard.startGame();
 		});
 		
-		currentBoard.draw(canvas.getGraphicsContext2D(), TILE_WIDTH);
+		currentBoard.draw();
 		
 		canvas.setOnMouseClicked(e -> {
 			this.currentBoard.movePlayer(e.getX(), e.getY());

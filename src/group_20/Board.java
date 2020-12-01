@@ -32,10 +32,10 @@ public class Board extends Task<Void>{
 		this.silkBag = new SilkBag(this.TILE_WIDTH);
 		this.gameBoard = new FloorTile[width][length];		
 		//player1 = new Player(this, this.silkBag, new Location(0,0));
-		Player[] newPlayers = {new Player(this, this.silkBag,this.TILE_WIDTH,new Location(0,0)),
-				new Player(this, this.silkBag,this.TILE_WIDTH,new Location(0,0)),
-				new Player(this, this.silkBag,this.TILE_WIDTH,new Location(0,0)),
-				new Player(this, this.silkBag,this.TILE_WIDTH,new Location(0,0))};
+		Player[] newPlayers = {new Player(this, this.silkBag,this.TILE_WIDTH,"Howard-no-background.png", new Location(0,0)),
+				new Player(this, this.silkBag,this.TILE_WIDTH,"Dagon-no-background.png",new Location(0,0)),
+				new Player(this, this.silkBag,this.TILE_WIDTH,"Nightgaunt-no-background.png",new Location(0,0)),
+				new Player(this, this.silkBag,this.TILE_WIDTH,"Shelley-no-background.png",new Location(0,0))};
 		this.players = newPlayers;
 		this.currentPlayer = 0;
 		this.populate();//TODO change from temp full population with random tiles
@@ -53,10 +53,10 @@ public class Board extends Task<Void>{
 		this.silkBag = new SilkBag(this.TILE_WIDTH);
 		this.gameBoard = new FloorTile[width][length];		
 		//player1 = new Player(this, this.silkBag, new Location(0,0));
-		Player[] newPlayers = {new Player(this, this.silkBag,this.TILE_WIDTH,new Location(0,0)),
-				new Player(this, this.silkBag,this.TILE_WIDTH,new Location(0,0)),
-				new Player(this, this.silkBag,this.TILE_WIDTH,new Location(0,0)),
-				new Player(this, this.silkBag,this.TILE_WIDTH,new Location(0,0))};
+		Player[] newPlayers = {new Player(this, this.silkBag,this.TILE_WIDTH,"Howard-no-background.png", new Location(0,0)),
+				new Player(this, this.silkBag,this.TILE_WIDTH,"Dagon-no-background.png",new Location(0,0)),
+				new Player(this, this.silkBag,this.TILE_WIDTH,"Nightgaunt-no-background.png",new Location(0,0)),
+				new Player(this, this.silkBag,this.TILE_WIDTH,"Shelley-no-background.png",new Location(0,0))};
 		this.players = newPlayers;
 		this.currentPlayer = 0;
 		this.populate();//TODO change from temp full population with random tiles
@@ -74,10 +74,10 @@ public class Board extends Task<Void>{
 		this.gameBoard = gameBoard;
 		//this.gameBoard = new FloorTile[width][length];		
 		//player1 = new Player(this, this.silkBag, new Location(0,0));
-		Player[] newPlayers = {new Player(this, this.silkBag,this.TILE_WIDTH,new Location(0,0)),
-				new Player(this, this.silkBag,this.TILE_WIDTH,new Location(0,0)),
-				new Player(this, this.silkBag,this.TILE_WIDTH,new Location(0,0)),
-				new Player(this, this.silkBag,this.TILE_WIDTH,new Location(0,0))};
+		Player[] newPlayers = {new Player(this, this.silkBag,this.TILE_WIDTH,"Howard-no-background.png", new Location(0,0)),
+				new Player(this, this.silkBag,this.TILE_WIDTH,"Dagon-no-background.png",new Location(0,0)),
+				new Player(this, this.silkBag,this.TILE_WIDTH,"Nightgaunt-no-background.png",new Location(0,0)),
+				new Player(this, this.silkBag,this.TILE_WIDTH,"Shelley-no-background.png",new Location(0,0))};
 		this.players = newPlayers;
 		this.currentPlayer = 0;
 		this.populate();//TODO change from temp full population with random tiles
@@ -385,15 +385,11 @@ public class Board extends Task<Void>{
 	}
 	
 	public void draw() {
-		this.draw(this.gc,this.TILE_WIDTH);
-	}
-	
-	public void draw(GraphicsContext gc, int tileWidth) {
 		for (int i = 0; i < this.width; i++) {
 			for (int j = 0; j < this.length; j++) {
 				//System.out.println("Drawing tile at (" + i + "," + j + ")");
 				FloorTile currentTile = this.gameBoard[i][j];
-				currentTile.draw(i*tileWidth, j*tileWidth, gc, tileWidth);
+				currentTile.draw(i*TILE_WIDTH, j*TILE_WIDTH, gc, TILE_WIDTH);
 				//Highlights current player
 //				if (currentTile.getMyPlayer() == this.getCurrentPlayer()) {
 //					currentTile.highlight(i*tileWidth, j*tileWidth, gc, tileWidth);
@@ -404,7 +400,7 @@ public class Board extends Task<Void>{
 		//this.getCurrentPlayer().draw(gc, tileWidth);
 		
 		for (Player p: this.players) {
-			p.draw(gc, tileWidth);
+			p.draw(this.gc);
 		}
 		
 		switch (this.getCurrentPlayer().getCurrentStageOfTurn()) {

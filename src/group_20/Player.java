@@ -48,10 +48,23 @@ public class Player {
 	 */
 	private Boolean hasBeenBacktracked;
 	
+	/**
+	 * The current floor tile that the player has drawn on their turn
+	 */
 	private FloorTile tileToInsert;
 	
+	/**
+	 * Sprite for player
+	 */
 	private Image sprite;
 	
+	/**
+	 * (Used by board to check state of player).
+	 * Keeps track of turn state -> Stage 1, Stage 2, Stage 3.
+	 * Stage 1: Drawing a tile & (possibly) inserting tile.
+	 * Stage 2: Playing action tile.
+	 * Stage 3: Moving.
+	 */
 	private int currentStageOfTurn;
 	
 	/**
@@ -62,7 +75,7 @@ public class Player {
 	 * @param inventory
 	 * @param previousLocations
 	 */
-	public Player(Board board, SilkBag silkbag, int TILE_WIDTH, Location location, ArrayList<ActionTile> inventory, LocationList previousLocations, boolean hasBeenBacktracked) {
+	public Player(Board board, SilkBag silkbag, int TILE_WIDTH, String spriteFilename, Location location, ArrayList<ActionTile> inventory, LocationList previousLocations, boolean hasBeenBacktracked) {
 		this.board = board;
 		this.silkBag = silkbag;
 		this.TILE_WIDTH = TILE_WIDTH;
@@ -71,7 +84,7 @@ public class Player {
 		this.previousLocations = previousLocations;
 		this.hasBeenBacktracked = hasBeenBacktracked;
 		this.numMoves = 1;
-		this.loadSprite();
+		this.loadSprite(spriteFilename);
 	}
 	
 	/**
@@ -80,7 +93,7 @@ public class Player {
 	 * @param silkBag
 	 * @param startingLocation
 	 */
-	public Player(Board board, SilkBag silkBag, int TILE_WIDTH, Location startingLocation) {
+	public Player(Board board, SilkBag silkBag, int TILE_WIDTH, String spriteFilename, Location startingLocation) {
 		this.board = board;
 		this.silkBag = silkBag;
 		this.TILE_WIDTH = TILE_WIDTH;
@@ -89,15 +102,16 @@ public class Player {
 		this.previousLocations = new LocationList();
 		this.hasBeenBacktracked = false;
 		this.numMoves = 1;
-		this.loadSprite();
+		this.loadSprite(spriteFilename);
 	}
 	
 	public void takeTurn() {
 		this.currentStageOfTurn = 1;
-		System.out.println("Drawing a tile");
 		this.numMoves = 1;
-		this.drawTile();
-		//this.stepTwo();//Can't play action tiles until merge with Finn
+		System.out.println("Drawing a tile");
+		this.stepOne();
+		System.out.println("Doing action on tile");
+		this.stepTwo(); //Can't play action tiles until merge with Finn
 		this.currentStageOfTurn = 3;
 		while (this.numMoves > 0) {
 			this.decNumMoves(1);
@@ -113,12 +127,6 @@ public class Player {
 	 */
 	public void stepOne() {
 		this.drawTile();
-//		FloorTile drawnTile = this.drawTile();
-//		//If tile is null then it was an ActionTile and was added to inventory
-//		if (drawnTile != null) {
-//			Location l = new Location(0,0); //As location to insert new tile -> temp value for now
-//			this.board.insertTile(drawnTile, l);
-//		}
 	}
 	
 	/**
@@ -220,22 +228,17 @@ public class Player {
 		//System.out.println(drawnTile.toString());
 		
 		//If is ActionTile
-		//if (drawnTile.getClass() == ActionTile.class) {
 		if (ActionTile.class.isAssignableFrom(drawnTile.getClass())) {
 			System.out.println("I drew an action tile");
 			this.addToInventory((ActionTile) drawnTile);
 			
 		//If is FloorTile
-		//} else if (drawnTile.getClass() == FloorTile.class) {
 		} else if (FloorTile.class.isAssignableFrom(drawnTile.getClass())) {
 			System.out.println("I drew a floor tile");
 			this.tileToInsert = (FloorTile) drawnTile;
 			this.insertTile();
-			//this.insertTile((FloorTile) drawnTile);
-			//return (FloorTile) drawnTile;
 			
 		//If is Tile
-		//} else if (drawnTile.getClass() == Tile.class) {
 		} else if (Tile.class.isAssignableFrom(drawnTile.getClass())) {
 			System.out.println("I draw a generic Tile? Why would you give me that?");
 			
@@ -259,9 +262,6 @@ public class Player {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			//System.out.println(insertLocation.toString());
-			//System.out.println("Invalid insert: " + insertLocation.toString());
-			//System.out.println("invalid insert");
 		}
 		
 		System.out.println("Valid insert location selected");
@@ -291,15 +291,6 @@ public class Player {
 	 * @param d Direction to move
 	 */
 	public void move(Direction d) {
-//		Location newLocation = new Location(this.location.getX(), this.location.getY());
-//		newLocation.update(d);
-//		
-//		//Only update location if new position is in bounds of Board
-//		if (this.board.isInBounds(newLocation)) {
-//			this.location = newLocation;
-//		}
-		//this.location.update(d);
-		
 		if (this.board.canMove(this.location, d)) {
 			this.addPreviousLocation(this.getLocation());
 			this.removeFromCurrentTile();
@@ -436,21 +427,7 @@ public class Player {
 		currentlyOn.setMyPlayer(this);
 	}
 	
-	public void draw(GraphicsContext gc, int tileWidth) {
-//		if (this == this.board.getCurrentPlayer()) {
-//			gc.setStroke(Color.RED);
-//		}
-//		int x = this.getLocation().getX()*tileWidth + (tileWidth/4);
-//		int y = this.getLocation().getY()*tileWidth + (tileWidth/4);
-//		gc.strokeOval(x, y, (tileWidth/2), (tileWidth/2));
-//		gc.setStroke(Color.BLACK);
-		
-		
-//		Image image = null;
-//		try {
-//			image = new Image(new FileInputStream("Howard-no-background.png"),(tileWidth/3)*2, (tileWidth/3)*2,true,true);
-//		} catch (IOException e) {
-//		}
+	public void draw(GraphicsContext gc) {
 		int x = this.getLocation().getX()*TILE_WIDTH + (TILE_WIDTH/4);
 		int y = this.getLocation().getY()*TILE_WIDTH;
 		gc.drawImage(sprite, x, y);
@@ -482,11 +459,12 @@ public class Player {
 				+ "Inventory: " + this.inventoryToString();
 	}
 	
-	public void loadSprite() {
+	public void loadSprite(String filename) {
 		Image image = null;
 		try {
-			image = new Image(new FileInputStream("Howard-no-background.png"),(this.TILE_WIDTH/3)*2, (this.TILE_WIDTH/3)*2,true,true);
+			image = new Image(new FileInputStream(filename),(this.TILE_WIDTH/3)*2, (this.TILE_WIDTH/3)*2,true,true);
 		} catch (IOException e) {
+			System.out.println("Unable to find sprite file: " + filename);
 		}
 		this.sprite = image;
 	}

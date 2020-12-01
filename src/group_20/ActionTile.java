@@ -13,5 +13,8 @@ public class ActionTile extends Tile {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	
+	public void play(Player p, Board b) {
+		
+	}
 }
