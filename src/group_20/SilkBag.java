@@ -44,8 +44,8 @@ public class SilkBag implements Saveable {
 	public String saveFormat() {
 		String str = "[SilkBag]";
 		for (Tile t : TILES) {
-			str += ", " + t.saveFormat();
+			str += " " + t.saveFormat();
 		}
-		return str + "[/SilkBag]";
+		return str + " [/SilkBag]";
 	}
 }
