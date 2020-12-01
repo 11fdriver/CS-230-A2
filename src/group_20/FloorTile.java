@@ -134,9 +134,41 @@ public class FloorTile extends Tile implements Subscriber {
 
 	@Override
 	public void draw(Location loc) {
-		// TODO Auto-generated method stub
-	}
+		boolean n = DIRECTIONS.contains(Direction.NORTH);
+		boolean e = DIRECTIONS.contains(Direction.EAST);
+		boolean s = DIRECTIONS.contains(Direction.SOUTH);
+		boolean w = DIRECTIONS.contains(Direction.WEST);
+		switch (DIRECTIONS.size()) {
+		case 2:
+			if (n && e) {
+				// Draw Corner from North to East
+			} else if (n && s) {
+				// Draw Straight from East to West
+			} else if (n && w) {
+				// Draw Corner from North to West
+			} else if (e && s) {
+				// Draw Corner from East to South
+			} else if (e && w) {
+				// Draw Straight from East to West
+			} else if (s && w) {
+				// Draw Corner from South to West
+			}
 
+		case 3:
+			if (n && e && s) {
+				// Draw T-Shaped with North, East, South
+			} else if (e && s && w) {
+				// Draw T-Shaped with East, South, West
+			} else if (s && w && n) {
+				// Draw T-Shaped with South, West, North
+			} else if (w && n && e) {
+				// Draw T-Shaped with West, North, East
+			}
+		case 4:
+			; // Draw goal;
+		}
+	}
+	
 	@Override
 	public String saveFormat() {
 		// TODO Auto-generated method stub
