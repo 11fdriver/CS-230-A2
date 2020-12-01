@@ -564,7 +564,9 @@ public class Board extends Task<Void>{
 		System.out.println("Starting Game");
 		while (!this.gameOver()) {
 			this.getCurrentPlayer().takeTurn();
+			System.out.println("Advancing player");
 			this.advancePlayerTurn();
+			System.out.println("Drawing board");
 			//this.draw();
 			System.out.println("Next Player's Turn");
 		}
