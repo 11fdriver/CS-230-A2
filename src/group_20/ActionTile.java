@@ -33,8 +33,4 @@ public class ActionTile extends Tile {
 	public String saveFormat() {
 		return "ATile:" + ACTION.saveFormat();
 	}
-	
-	public void play(Player p, Board b) {
-		
-	}
 }

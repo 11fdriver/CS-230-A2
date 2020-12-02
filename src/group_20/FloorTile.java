@@ -4,12 +4,19 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
  * Class for a Tile that can be placed onto the {@link Board}.
  */
 public class FloorTile extends Tile implements Subscriber {
+	/**
+	 * Width of tiles -> Used in sprite scaling when loading sprite
+	 */
+	private final int TILE_WIDTH;
+	
 	/**
 	 * ArrayList containing exit/entry points.
 	 */
@@ -36,6 +43,16 @@ public class FloorTile extends Tile implements Subscriber {
 	private int stateLifetime;
 	
 	/**
+	 * Orientation of tile clockwise from 12 o'clock
+	 */
+	private Direction orientation;
+	
+	/**
+	 * Stores image of tile for drawing
+	 */
+	private Image sprite;
+	
+	/**
 	 * Construct new FloorTile.
 	 * <br>
 	 * Will <b>not</b> set a non-player state when there is already a Player.
@@ -45,8 +62,11 @@ public class FloorTile extends Tile implements Subscriber {
 	 * @param state			The current state of the tile, see {@link FloorAction}
 	 * @param lifetime		Turns left until {@code state} expires
 	 */
-	public FloorTile(ArrayList<Direction> directions, Location location, Player player, FloorAction state, int lifetime) {
+	public FloorTile(int TILE_WIDTH, String spriteFileLocation, ArrayList<Direction> directions, Direction orientation, Location location, Player player, FloorAction state, int lifetime) {
+		this.TILE_WIDTH = TILE_WIDTH;
+		this.loadSprite(spriteFileLocation); //Sets this.sprite
 		this.DIRECTIONS = directions;
+		this.orientation = orientation;
 		this.location = location;
 		this.player = player;
 		if (null == player || (null != state && state.acceptsPlayer())) {
@@ -102,6 +122,30 @@ public class FloorTile extends Tile implements Subscriber {
 	}
 	
 	/**
+	 * Getter for TILE_WIDTH
+	 * @return TILE_WIDTH
+	 */
+	public int getTileWidth() {
+		return this.TILE_WIDTH;
+	}
+	
+	 /**
+	  * Setter for orientation
+	  * @param orientation New value
+	  */
+	public void setOrientation(Direction orientation) {
+		this.orientation = orientation;
+	}
+	
+	/**
+	 * Getter for orientation
+	 * @return Orientation of this tile
+	 */
+	public Direction getOrientation() {
+		return this.orientation;
+	}
+	
+	/**
 	 * @return FloorTile's location.
 	 */
 	public Location getLocation() {
@@ -124,6 +168,38 @@ public class FloorTile extends Tile implements Subscriber {
 	}
 	
 	/**
+	 * Getter for player
+	 * @return Tile's player
+	 */
+	public Player getPlayer() {
+		return this.player;
+	}
+	
+	/**
+	 * Checks if tile contains a player
+	 * @return True if tile contains a player
+	 */
+	public boolean hasPlayer() {
+		return this.player != null;
+	}
+	
+	/**
+	 * Setter for sprite
+	 * @param sprite New sprite
+	 */
+	public void setSprite(Image sprite) {
+		this.sprite = sprite;
+	}
+	
+	/**
+	 * Getter for sprite
+	 * @return Sprite for this tile
+	 */
+	public Image getSprite() {
+		return this.sprite;
+	}
+	
+	/**
 	 * update(), in this context, decrements the remaining lifetime of the state,
 	 * unsubscribing from the notifier, and resetting the state, when at 0.
 	 */
@@ -135,41 +211,60 @@ public class FloorTile extends Tile implements Subscriber {
 		}
 	}
 
+//	@Override
+//	public void draw(Location loc) {
+//		boolean n = DIRECTIONS.contains(Direction.NORTH);
+//		boolean e = DIRECTIONS.contains(Direction.EAST);
+//		boolean s = DIRECTIONS.contains(Direction.SOUTH);
+//		boolean w = DIRECTIONS.contains(Direction.WEST);
+//		switch (DIRECTIONS.size()) {
+//		case 2:
+//			if (n && e) {
+//				// Draw Corner from North to East
+//			} else if (n && s) {
+//				// Draw Straight from East to West
+//			} else if (n && w) {
+//				// Draw Corner from North to West
+//			} else if (e && s) {
+//				// Draw Corner from East to South
+//			} else if (e && w) {
+//				// Draw Straight from East to West
+//			} else if (s && w) {
+//				// Draw Corner from South to West
+//			}
+//
+//		case 3:
+//			if (n && e && s) {
+//				// Draw T-Shaped with North, East, South
+//			} else if (e && s && w) {
+//				// Draw T-Shaped with East, South, West
+//			} else if (s && w && n) {
+//				// Draw T-Shaped with South, West, North
+//			} else if (w && n && e) {
+//				// Draw T-Shaped with West, North, East
+//			}
+//		case 4:
+//			; // Draw goal;
+//		}
+//	}
+	
 	@Override
-	public void draw(Location loc) {
-		boolean n = DIRECTIONS.contains(Direction.NORTH);
-		boolean e = DIRECTIONS.contains(Direction.EAST);
-		boolean s = DIRECTIONS.contains(Direction.SOUTH);
-		boolean w = DIRECTIONS.contains(Direction.WEST);
-		switch (DIRECTIONS.size()) {
-		case 2:
-			if (n && e) {
-				// Draw Corner from North to East
-			} else if (n && s) {
-				// Draw Straight from East to West
-			} else if (n && w) {
-				// Draw Corner from North to West
-			} else if (e && s) {
-				// Draw Corner from East to South
-			} else if (e && w) {
-				// Draw Straight from East to West
-			} else if (s && w) {
-				// Draw Corner from South to West
-			}
-
-		case 3:
-			if (n && e && s) {
-				// Draw T-Shaped with North, East, South
-			} else if (e && s && w) {
-				// Draw T-Shaped with East, South, West
-			} else if (s && w && n) {
-				// Draw T-Shaped with South, West, North
-			} else if (w && n && e) {
-				// Draw T-Shaped with West, North, East
-			}
-		case 4:
-			; // Draw goal;
+	public void draw(GraphicsContext gc, int x, int y) {
+		//TODO probably set this method to abstract -> There shouldn't really be code here
+	}
+	
+	/**
+	 * Sets value for this.sprite to image at file location
+	 * @param fileLocation File location of sprite image
+	 */
+	public void loadSprite(String fileLocation) {
+		Image image = null;
+		try {
+			image = new Image(new FileInputStream(fileLocation),this.TILE_WIDTH, this.TILE_WIDTH,true,true);
+		} catch (IOException e) {
+			//TODO add code
 		}
+		this.setSprite(image);
 	}
 	
 	@Override
@@ -186,16 +281,21 @@ public class FloorTile extends Tile implements Subscriber {
 		return str ;
 	}
 	
-  // TODO: Comment me!
-	public void highlight(int x, int y, GraphicsContext gc, int tileWidth) {
-		gc.setStroke(Color.ANTIQUEWHITE);
-		gc.strokeOval(x, y, tileWidth, tileWidth);
-		gc.setStroke(Color.BLACK);
+	/**
+	 * Highlights this tile on the board
+	 * @param x X coordinate to draw
+	 * @param y Y coordinate to draw
+	 * @param gc GraphicsContext to draw onto
+	 */
+	public void highlight(GraphicsContext gc, int x, int y) {
+		gc.setStroke(Color.ANTIQUEWHITE); //Can change colour if you want
+		gc.strokeOval(x, y, this.TILE_WIDTH, this.TILE_WIDTH);
+		gc.setStroke(Color.BLACK); //Just resets to black for now
 	}
   
   @Override
 	public String toString() {
 		// TODO: Write toString()
-    return null;
+    return "";
 	}
 }
