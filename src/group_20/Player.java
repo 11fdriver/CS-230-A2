@@ -118,7 +118,7 @@ public class Player {
 		while (this.numMoves > 0) {
 			this.decNumMoves(1);
 			System.out.println("Making a move");
-			this.stepThree();
+			//this.stepThree();
 		}
 	}
 	
@@ -290,10 +290,15 @@ public class Player {
 	 * @param location New location
 	 */
 	public void setLocation(Location location) {
+		System.out.println("Player: Point 1");
 		this.addPreviousLocation(this.getLocation());
+		System.out.println("Player: Point 2");
 		this.removeFromCurrentTile();
+		System.out.println("Player: Point 3");
 		this.location = location;
+		System.out.println("Player: Point 4");
 		this.addToCurrentTile();
+		System.out.println("Player: Point 5");
 	}
 	
 	/**
