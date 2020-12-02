@@ -1,10 +1,13 @@
 package group_20;
 
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
+
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class FloorTile {
+public class FloorTile extends Tile {
 	private int side; 
 	private boolean isFixed ;
 	private int orientation;
@@ -22,8 +25,11 @@ public class FloorTile {
 	private String shapeType;
 	private String defType;
 	ArrayList <Integer> degrees = new ArrayList <Integer>();
+	protected Image sprite;
+	protected int TILE_WIDTH;
 	
-	public FloorTile(int side, boolean isFixed, int orientation, boolean onFire, boolean isFrozen, Location location, Player myPlayer, String shapeType) {
+	public FloorTile(int TILE_WIDTH, boolean isFixed, int orientation, boolean onFire, boolean isFrozen, Location location, Player myPlayer, String shapeType) {
+		this.TILE_WIDTH = TILE_WIDTH;
 		this.setSide(side);
 		this.setDefSide(side); 
 		this.setFixed(isFixed);
@@ -505,5 +511,27 @@ public class FloorTile {
 	 */
 	public void setDefType(String defType) {
 		this.defType = defType;
+	}
+
+	@Override
+	public void draw(Location loc) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String saveFormat() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	public void highlight(int x, int y, GraphicsContext gc, int tileWidth) {
+		gc.setStroke(Color.ANTIQUEWHITE);
+		gc.strokeOval(x, y, tileWidth, tileWidth);
+		gc.setStroke(Color.BLACK);
+	}
+	
+	public void setTileWidth(int TILE_WIDTH) {
+		this.TILE_WIDTH = TILE_WIDTH;
 	}
 }

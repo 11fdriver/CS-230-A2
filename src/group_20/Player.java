@@ -1,11 +1,19 @@
 package group_20;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
+import javafx.event.EventHandler;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
 
 public class Player {
+	private final int TILE_WIDTH;
+	
 	/**
 	 * location of player
 	 */
@@ -43,6 +51,25 @@ public class Player {
 	private Boolean hasBeenBacktracked;
 	
 	/**
+	 * The current floor tile that the player has drawn on their turn
+	 */
+	private FloorTile tileToInsert;
+	
+	/**
+	 * Sprite for player
+	 */
+	private Image sprite;
+	
+	/**
+	 * (Used by board to check state of player).
+	 * Keeps track of turn state -> Stage 1, Stage 2, Stage 3.
+	 * Stage 1: Drawing a tile & (possibly) inserting tile.
+	 * Stage 2: Playing action tile.
+	 * Stage 3: Moving.
+	 */
+	private int currentStageOfTurn;
+	
+	/**
 	 * Full Constructor to be called when loading a player object
 	 * @param board
 	 * @param silkbag
@@ -50,13 +77,16 @@ public class Player {
 	 * @param inventory
 	 * @param previousLocations
 	 */
-	public Player(Board board, SilkBag silkbag, Location location, ArrayList<ActionTile> inventory, LocationList previousLocations, boolean hasBeenBacktracked) {
+	public Player(Board board, SilkBag silkbag, int TILE_WIDTH, String spriteFilename, Location location, ArrayList<ActionTile> inventory, LocationList previousLocations, boolean hasBeenBacktracked) {
 		this.board = board;
 		this.silkBag = silkbag;
+		this.TILE_WIDTH = TILE_WIDTH;
 		this.location = location;
 		this.inventory = inventory;
 		this.previousLocations = previousLocations;
 		this.hasBeenBacktracked = hasBeenBacktracked;
+		this.numMoves = 1;
+		this.loadSprite(spriteFilename);
 	}
 	
 	/**
@@ -65,20 +95,29 @@ public class Player {
 	 * @param silkBag
 	 * @param startingLocation
 	 */
-	public Player(Board board, SilkBag silkBag, Location startingLocation) {
+	public Player(Board board, SilkBag silkBag, int TILE_WIDTH, String spriteFilename, Location startingLocation) {
 		this.board = board;
 		this.silkBag = silkBag;
+		this.TILE_WIDTH = TILE_WIDTH;
 		this.location = startingLocation;
 		this.inventory = new ArrayList<ActionTile>();
 		this.previousLocations = new LocationList();
 		this.hasBeenBacktracked = false;
+		this.numMoves = 1;
+		this.loadSprite(spriteFilename);
 	}
 	
 	public void takeTurn() {
-		this.drawTile();
-		//this.stepTwo();
+		this.currentStageOfTurn = 1;
+		this.numMoves = 1;
+		System.out.println("Drawing a tile");
+		this.stepOne();
+		System.out.println("Doing action on tile");
+		this.stepTwo(); //Can't play action tiles until merge with Finn
+		this.currentStageOfTurn = 3;
 		while (this.numMoves > 0) {
 			this.decNumMoves(1);
+			System.out.println("Making a move");
 			this.stepThree();
 		}
 	}
@@ -89,12 +128,7 @@ public class Player {
 	 * 	- Floor Tile = Insert onto board (Also get input from user as to where to insert)
 	 */
 	public void stepOne() {
-		FloorTile drawnTile = this.drawTile();
-		//If tile is null then it was an ActionTile and was added to inventory
-		if (drawnTile != null) {
-			Location l = new Location(0,0); //As location to insert new tile -> temp value for now
-			this.board.insertTile(drawnTile, l);
-		}
+		this.drawTile();
 	}
 	
 	/**
@@ -106,7 +140,7 @@ public class Player {
 		if (!this.inventory.isEmpty()) {
 			//Allow the user to select a tile
 			ActionTile chosenTile = new ActionTile();//TODO: Change to user input
-			chosenTile.play(this, this.board);
+			chosenTile.play(this, this.board); //Error but will be fixed when code merge
 		}
 	}
 
@@ -115,20 +149,44 @@ public class Player {
 	 * - Handles user input for selecting a direction to move in
 	 * - Allows 2 moves if doubleMove is true
 	 */
-	public void stepThree() {
+	public synchronized void stepThree() {
 		//Skip method if player can't make any valid moves
 		if (this.canMove()) {
-			Direction d = Direction.EAST;//TODO: change to user input
-		
-			//Loop until input is valid
-			while (!canMove(d)) {
-				d = Direction.EAST;//New direction from user input, for now constant
+			Location clickLocation = this.board.getLocationAtClick();
+			
+			while (!this.canMove(clickLocation)) {
+				clickLocation = this.board.getLocationAtClick();;
 			}
 			
-			//Allow player to move
-			this.addPreviousLocation(this.getLocation());
-			this.getLocation().update(d);
-			this.board.setPlayer(this, this.getLocation());
+			Direction d = this.getDirectionFromPlayer(clickLocation);
+			this.move(d);
+		}
+	}
+	
+	public boolean isInRange(Location l) {
+		return this.getDirectionFromPlayer(l) != null;
+	}
+	
+	public Direction getDirectionFromPlayer(Location l) {
+		Direction directionToMove = null;
+		if (l.getY() == this.getLocation().getY()+1 && l.getX() == this.getLocation().getX()) {
+			directionToMove = Direction.SOUTH;
+		} else if (l.getY() == this.getLocation().getY()-1 && l.getX() == this.getLocation().getX()) {
+			directionToMove = Direction.NORTH;
+		} else if (l.getX() == this.getLocation().getX()+1 && l.getY() == this.getLocation().getY()) {
+			directionToMove = Direction.EAST;
+		} else if (l.getX() == this.getLocation().getX()-1 && l.getY() == this.getLocation().getY()) {
+			directionToMove = Direction.WEST;
+		}
+		return directionToMove;
+	}
+	
+	public boolean canMove(Location l) {
+		if (this.isInRange(l) &&
+				this.canMove(this.getDirectionFromPlayer(l))) {
+			return true;
+		} else {
+			return false;
 		}
 	}
 	
@@ -159,28 +217,58 @@ public class Player {
 	 * Responsible for drawing a tile from the silk bag
 	 * @return ActionTile if action tile was drawn or null if FloorTile was drawn
 	 */
-	public FloorTile drawTile() {
+	public void drawTile() {
 		Tile drawnTile = silkBag.drawTile();
+		//System.out.println(drawnTile.toString());
 		
 		//If is ActionTile
-		if (drawnTile.getClass() == ActionTile.class) {
+		if (ActionTile.class.isAssignableFrom(drawnTile.getClass())) {
 			System.out.println("I drew an action tile");
 			this.addToInventory((ActionTile) drawnTile);
 			
 		//If is FloorTile
-		} else if (drawnTile.getClass() == FloorTile.class) {
+		} else if (FloorTile.class.isAssignableFrom(drawnTile.getClass())) {
 			System.out.println("I drew a floor tile");
-			return (FloorTile) drawnTile;
+			this.tileToInsert = (FloorTile) drawnTile;
+			this.insertTile();
 			
 		//If is Tile
-		} else if (drawnTile.getClass() == Tile.class) {
+		} else if (Tile.class.isAssignableFrom(drawnTile.getClass())) {
 			System.out.println("I draw a generic Tile? Why would you give me that?");
 			
 		//Anything else
 		} else {
 			System.out.println("What the heck did I just draw?????");
 		}
-		return null;
+	}
+	
+	public synchronized void insertTile() {
+		System.out.println("Inserting the tile");
+		Location insertLocation = this.board.getLocationAtClick();
+		
+		while (!this.board.canInsertAt(insertLocation)) {
+			insertLocation = this.board.getLocationAtClick();
+		}
+		
+		this.insertTile(insertLocation);
+	}
+	
+	/**
+	 * Inserts the tile drawn at a given location
+	 * @param l Location to insert tile
+	 */
+	public void insertTile(Location l) {
+		this.board.insertTile(this.tileToInsert,l);
+		this.tileToInsert = null;
+		System.out.println("Tile inserted!");
+	}
+	
+	/**
+	 * True if player has a value for tileToInsert ie drew a floor tile
+	 * @return
+	 */
+	public boolean drewFloorTile() {
+		return this.tileToInsert != null;
 	}
 	
 	/**
@@ -188,14 +276,13 @@ public class Player {
 	 * @param d Direction to move
 	 */
 	public void move(Direction d) {
-		Location newLocation = new Location(this.location.getX(), this.location.getY());
-		newLocation.update(d);
-		
-		//Only update location if new position is in bounds of Board
-		if (this.board.isInBounds(newLocation)) {
-			this.location = newLocation;
+		if (this.board.canMove(this.location, d)) {
+			this.addPreviousLocation(this.getLocation());
+			this.removeFromCurrentTile();
+			this.location.update(d);
+			this.addToCurrentTile();
 		}
-		//this.location.update(d);
+		System.out.println("Player Moved!");
 	}
 	
 	/**
@@ -203,7 +290,10 @@ public class Player {
 	 * @param location New location
 	 */
 	public void setLocation(Location location) {
+		this.addPreviousLocation(this.getLocation());
+		this.removeFromCurrentTile();
 		this.location = location;
+		this.addToCurrentTile();
 	}
 	
 	/**
@@ -211,7 +301,7 @@ public class Player {
 	 * @return current location
 	 */
 	public Location getLocation() {
-		return this.location;
+		return this.location.copy();
 	}
 	
 	/**
@@ -310,10 +400,22 @@ public class Player {
 		this.numMoves -= decAmount;
 	}
 	
-	public void draw(GraphicsContext gc, int tileWidth) {
-		int x = this.getLocation().getX()*tileWidth + (tileWidth/4);
-		int y = this.getLocation().getY()*tileWidth + (tileWidth/4);
-		gc.strokeOval(x, y, (tileWidth/2), (tileWidth/2));
+	public void removeFromCurrentTile() {
+		FloorTile currentlyOn = this.board.getTileAt(this.location);
+		if (currentlyOn != null) {
+			currentlyOn.setMyPlayer(null);
+		}
+	}
+	
+	public void addToCurrentTile() {
+		FloorTile currentlyOn = this.board.getTileAt(this.location);
+		currentlyOn.setMyPlayer(this);
+	}
+	
+	public void draw(GraphicsContext gc) {
+		int x = this.getLocation().getX()*TILE_WIDTH + (TILE_WIDTH/4);
+		int y = this.getLocation().getY()*TILE_WIDTH;
+		gc.drawImage(sprite, x, y);
 	}
 	
 	public void randomizeLocation(int boardWidth, int boardLength) {
@@ -321,5 +423,46 @@ public class Player {
 		int x = r.nextInt(boardWidth - 1);
 		int y = r.nextInt(boardLength - 1);
 		this.setLocation(new Location(x,y));
+	}
+	
+	public String inventoryToString() {
+		String str = "[";
+		if (this.inventory != null) {
+			for (int i = 0; i < this.inventory.size() -1; i++) {
+				str += "ActionTile,";
+				//ActionTile temp = this.inventory.get(i);
+			}
+			str += "ActionTile";
+		}
+		str += "]";
+		return str;
+	}
+	
+	public String toString() {
+		return "Location: " + this.location.toString() + "\n"
+				+ "Previous Locations: " + this.previousLocations.toString() + "\n"
+				+ "Inventory: " + this.inventoryToString();
+	}
+	
+	public void loadSprite(String filename) {
+		Image image = null;
+		try {
+			image = new Image(new FileInputStream(filename),(this.TILE_WIDTH/3)*2, (this.TILE_WIDTH/3)*2,true,true);
+		} catch (IOException e) {
+			System.out.println("Unable to find sprite file: " + filename);
+		}
+		this.sprite = image;
+	}
+	
+	public int getCurrentStageOfTurn() {
+		return this.currentStageOfTurn;
+	}
+	
+	public void highlight(GraphicsContext gc) {
+		gc.setStroke(Color.MAGENTA);
+		int x = this.getLocation().getX()*TILE_WIDTH;
+		int y = this.getLocation().getY()*TILE_WIDTH;
+		gc.strokeOval(x, y, (TILE_WIDTH), (TILE_WIDTH));
+		gc.setStroke(Color.BLACK);
 	}
 }
