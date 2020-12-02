@@ -5,11 +5,9 @@ import java.util.ArrayList;
 public class PlayerMain {
 	public static void main(String[] args) {
 		SilkBag sb = new SilkBag();
-		Board b = new Board(1,1,1,sb);
+		Board b = new Board(9,9);
 		Location l = new Location(0,0);
-		ArrayList<ActionTile> i = null;
 		Player p = new Player(b,sb,l);
-		
 //		p.takeTurn();
 		
 //		l.print();
@@ -25,10 +23,22 @@ public class PlayerMain {
 		ls.add(new Location(2,3));
 		
 		p.setPreviousLocations(ls);
+		p.setLocation(new Location(2,3));
 		
-		System.out.println("Player's previous locations: " + p.getPreviousLocations().toString());
-		System.out.println("First element is: " + p.getPreviousLocations().getFirst());
-		System.out.println("Second element is: " + p.getPreviousLocations().getSecond());
-		System.out.println("Third element is: " + p.getPreviousLocations().getThird());
+		p.addToInventory(new ActionTile());
+		p.addToInventory(new ActionTile());
+		p.addToInventory(new ActionTile());
+		
+		System.out.println(p.toString());
+		
+		FloorTile ft = new FloorTile(0, false, 0, false, false, l, p, null);
+		Straight st = new Straight(0, false, 0, false, false, l, p, null);
+		
+		System.out.println(FloorTile.class.isAssignableFrom(st.getClass()));
+		
+//		System.out.println("Player's previous locations: " + p.getPreviousLocations().toString());
+//		System.out.println("First element is: " + p.getPreviousLocations().getFirst());
+//		System.out.println("Second element is: " + p.getPreviousLocations().getSecond());
+//		System.out.println("Third element is: " + p.getPreviousLocations().getThird());
 	}
 }

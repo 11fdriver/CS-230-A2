@@ -1,6 +1,9 @@
 package group_20;
 
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
+
 import java.util.ArrayList;
 
 /**
@@ -181,5 +184,18 @@ public class FloorTile extends Tile implements Subscriber {
 			state.saveFormat() + ";" +
 			String.valueOf(stateLifetime) + "}";
 		return str ;
+	}
+	
+  // TODO: Comment me!
+	public void highlight(int x, int y, GraphicsContext gc, int tileWidth) {
+		gc.setStroke(Color.ANTIQUEWHITE);
+		gc.strokeOval(x, y, tileWidth, tileWidth);
+		gc.setStroke(Color.BLACK);
+	}
+  
+  @Override
+	public String toString() {
+		// TODO: Write toString()
+    return null;
 	}
 }
