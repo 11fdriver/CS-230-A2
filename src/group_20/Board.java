@@ -25,8 +25,8 @@ public class Board extends Task<Void>{
 	private Canvas canvas;
 	private GraphicsContext gc;
 	private Location lastClickLocation;
-	private Double xClick;
-	private Double yClick;
+	private Double xClick; //Think redundant??
+	private Double yClick; //Think redundant??
 	
 	//For testing
 	public Board(Canvas canvas, int TILE_WIDTH, int width, int length) {
@@ -46,7 +46,7 @@ public class Board extends Task<Void>{
 		this.players = newPlayers;
 		this.currentPlayer = 0;
 		this.populate();//TODO change from temp full population with random tiles
-		this.goalTile = new Goal(length, null, null, null, lastClickLocation, null, null, length);
+		this.goalTile = new Goal(TILE_WIDTH, "Goal_Tile_Animated-with-carpet-noise.gif", null, Direction.NORTH, null, null, null, 0);
 		this.randomizeAllPlayerLocations();//For testing
 	}
 	
@@ -67,7 +67,7 @@ public class Board extends Task<Void>{
 		this.players = newPlayers;
 		this.currentPlayer = 0;
 		this.populate();//TODO change from temp full population with random tiles
-		this.goalTile = new Goal(length, null, null, null, lastClickLocation, null, null, length);
+		this.goalTile = new Goal(TILE_WIDTH, "Goal_Tile_Animated-with-carpet-noise.gif", null, Direction.NORTH, null, null, null, 0);
 		this.randomizeAllPlayerLocations();//For testing
 	}
 	
@@ -89,7 +89,7 @@ public class Board extends Task<Void>{
 		this.players = newPlayers;
 		this.currentPlayer = 0;
 		this.populate();//TODO change from temp full population with random tiles
-		this.goalTile = new Goal(length, null, null, null, lastClickLocation, null, null, length);
+		this.goalTile = new Goal(TILE_WIDTH, "Goal_Tile_Animated-with-carpet-noise.gif", null, Direction.NORTH, null, null, null, 0);
 		this.randomizeAllPlayerLocations();//For testing
 	}
 	
@@ -222,34 +222,15 @@ public class Board extends Task<Void>{
 	
 	//TODO fix errors
 	public boolean canMove(Location l, Direction d) {
-		FloorTile tileAtLocation = this.gameBoard[l.getX()][l.getY()];
-		Location newLocation = l.copy();
-		newLocation.update(d);
+		FloorTile currentTile = this.getTileAt(l);
+		Location locationOfOppositeTile = l.copy();
+		locationOfOppositeTile.update(d);
+		FloorTile oppositeTile = this.getTileAt(locationOfOppositeTile);
 		
-		if (this.isInBounds(newLocation)) {
-			FloorTile oppositeTile = this.gameBoard[newLocation.getX()][newLocation.getY()];
-			if (!oppositeTile.hasPlayer()) {//Isn't occupied
-				Direction oppositeDirection = this.invertDirection(d);
-				if (tileAtLocation.isValidMove(d) && oppositeTile.isValidMove(oppositeDirection)) { //Can exit/enter tiles
-					return true;
-				}
-			}
-		}
-		return false; //Temp
-	}
-	
-	private Direction invertDirection(Direction d) {
-		switch (d) {
-		case NORTH:
-			return Direction.SOUTH;
-		case EAST:
-			return Direction.WEST;
-		case SOUTH:
-			return Direction.NORTH;
-		case WEST:
-			return Direction.EAST;
-		default:
-			return null;
+		if (currentTile.canExitTo(d) && oppositeTile.canEnterFrom(d.opposite())) {
+			return true;
+		} else {
+			return false;
 		}
 	}
 	

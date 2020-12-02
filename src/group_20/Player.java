@@ -113,7 +113,7 @@ public class Player {
 		System.out.println("Drawing a tile");
 		this.stepOne();
 		System.out.println("Doing action on tile");
-		this.stepTwo(); //Can't play action tiles until merge with Finn
+		//this.stepTwo(); //Can't play action tiles until merge with Finn
 		this.currentStageOfTurn = 3;
 		while (this.numMoves > 0) {
 			this.decNumMoves(1);
@@ -139,7 +139,7 @@ public class Player {
 		//Skip step 2 if inventory is empty
 		if (!this.inventory.isEmpty()) {
 			//Allow the user to select a tile
-			ActionTile chosenTile = new ActionTile();//TODO: Change to user input
+			ActionTile chosenTile = new ActionTile(null);//TODO: Change to user input
 			chosenTile.play(this, this.board); //Error but will be fixed when code merge
 		}
 	}
@@ -403,13 +403,13 @@ public class Player {
 	public void removeFromCurrentTile() {
 		FloorTile currentlyOn = this.board.getTileAt(this.location);
 		if (currentlyOn != null) {
-			currentlyOn.setMyPlayer(null);
+			currentlyOn.setPlayer(null);
 		}
 	}
 	
 	public void addToCurrentTile() {
 		FloorTile currentlyOn = this.board.getTileAt(this.location);
-		currentlyOn.setMyPlayer(this);
+		currentlyOn.setPlayer(this);
 	}
 	
 	public void draw(GraphicsContext gc) {

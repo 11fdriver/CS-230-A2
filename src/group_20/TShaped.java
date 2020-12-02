@@ -22,7 +22,7 @@ public class TShaped extends FloorTile {
 		return result;
 	}
 	
-	public void draw(int x, int y, GraphicsContext gc, int tileWidth) {
+	public void draw(GraphicsContext gc, int x, int y) {
 		int varOrientation = 0;
 		switch (this.getOrientation()) {
 		case NORTH:

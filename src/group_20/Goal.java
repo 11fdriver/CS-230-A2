@@ -22,7 +22,7 @@ public class Goal extends FloorTile {
 		return result;
 	}
 	
-	public void draw(int x, int y, GraphicsContext gc) {
+	public void draw(GraphicsContext gc, int x, int y) {
 		gc.drawImage(this.getSprite(), x, y);
 	}
 }

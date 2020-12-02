@@ -4,47 +4,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class SilkBag {
-	
 	int numberOfTiles;
-	
-//	public SilkBag(ArrayList<Tile> tiles) {
-//		numberOfTiles = (tiles.length);	
-//	}
-//	
-//	public boolean isEmpty() {
-//		if (numberOfTiles == 0) {
-//			return true;
-//		} else {
-//			return false;
-//		}
-//	}
-//	
-//	public FloorTile drawFloorTile() {
-//		x = math.random(0,2);
-//		
-//		if (x = 0) {
-//			return Straight;
-//		}
-//		if (x = 1) {
-//			return Corner;
-//		}
-//		if (x = 2) {
-//			return T-Shaped;
-//		}
-//	}
-//	
-//	public Tile drawTile() {
-//		return(tiles.get(0));
-//		tiles.remove(0);
-//		numberOfTiles = (tiles.Length);
-//	}
-//	
-//	public void returnTile(Tile t) {
-//		tiles.add (t);
-//		numberOfTiles = (tiles.Length);
-//	}
-	
-//===========================================================================================================//	
 	private int TILE_WIDTH;
 	
 	public SilkBag(int TILE_WIDTH) {
@@ -68,37 +28,37 @@ public class SilkBag {
 		Random r = new Random();
 		int tileID = r.nextInt(5);//ie x < 5
 		int orientationID = r.nextInt(5);//ie x < 5
-		int orientation = 0;
+		Direction orientation;
 		
 		switch (orientationID) {
 		case 1:
-			orientation = 0;
+			orientation = Direction.NORTH;
 			break;
 		case 2:
-			orientation = 90;
+			orientation = Direction.EAST;
 			break;
 		case 3:
-			orientation = 180;
+			orientation = Direction.SOUTH;
 			break;
 		case 4:
-			orientation = 270;
+			orientation = Direction.WEST;
 			break;
 		default:
-			orientation = 0;
+			orientation = Direction.NORTH;
 		}
 		
 		//Random orientation
 		switch (tileID) {
 		case 1:
-			return new Straight(this.TILE_WIDTH,false,orientation,false,false,new Location(0,0),null,"Straight");
+			return new Straight(TILE_WIDTH, "straight_tile_with_alligners.png", null, orientation, null, null, null, 0);
 		case 2:
-			return new Corner(this.TILE_WIDTH,false,orientation,false,false,new Location(0,0),null,"Corner");
+			return new Corner(TILE_WIDTH, "Corner_Tile_with_alligners.png", null, orientation, null, null, null, 0);
 		case 3:
-			return new TShaped(this.TILE_WIDTH,false,orientation,false,false,new Location(0,0),null,"TShaped");
+			return new TShaped(TILE_WIDTH, "T_Tile_With_alligners.png", null, orientation, null, null, null, 0);
 		case 4:
-			return new Goal(this.TILE_WIDTH,false,orientation,false,false,new Location(0,0),null,"Goal");
+			return new Goal(TILE_WIDTH, "Goal_Tile_Animated-with-carpet-noise.gif", null, orientation, null, null, null, 0);
 		default:
-			return new Straight(this.TILE_WIDTH,false,orientation,false,false,new Location(0,0),null,"Straight");
+			return new Straight(TILE_WIDTH, "straight_tile_with_alligners.png", null, orientation, null, null, null, 0);
 		}
 		
 		//Fixed orientation
