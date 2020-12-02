@@ -27,8 +27,8 @@ public class Main extends Application {
 	private static final int CANVAS_WIDTH = TILE_WIDTH * BOARD_WIDTH;
 	private static final int WINDOW_HEIGHT = CANVAS_HEIGHT + 100;
 	private static final int WINDOW_WIDTH = CANVAS_WIDTH + 300;
-	private Canvas canvas = new Canvas(CANVAS_WIDTH, CANVAS_HEIGHT);
-	Board currentBoard = new Board(canvas.getGraphicsContext2D(),TILE_WIDTH,BOARD_WIDTH,BOARD_LENGTH);
+	public static Canvas canvas = new Canvas(CANVAS_WIDTH, CANVAS_HEIGHT);
+	Board currentBoard = new Board(canvas,TILE_WIDTH,BOARD_WIDTH,BOARD_LENGTH);
 	
 	public static void main(String[] args) {
 		launch(args);
@@ -38,11 +38,12 @@ public class Main extends Application {
 	public void start(Stage primaryStage) {
 		Pane root = createPane();
 		
-		Scene scene = new Scene(new BoardWindow(this.TILE_WIDTH, this.currentBoard), WINDOW_WIDTH, WINDOW_HEIGHT);
 		//Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
 		
+		Scene scene = new Scene(new BoardWindow(this.TILE_WIDTH, this.currentBoard), WINDOW_WIDTH, WINDOW_HEIGHT);
 		primaryStage.setScene(scene);
 		primaryStage.show();
+		
 //		System.out.println("HERE");
 //		for (int i = 0; i < 999999; i++) {
 //			//for (int j = 0; j < 999999999; j++) {

@@ -5,8 +5,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
+import javafx.event.EventHandler;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 
 public class Player {
@@ -147,25 +149,17 @@ public class Player {
 	 * - Handles user input for selecting a direction to move in
 	 * - Allows 2 moves if doubleMove is true
 	 */
-	public void stepThree() {
+	public synchronized void stepThree() {
 		//Skip method if player can't make any valid moves
 		if (this.canMove()) {
-			this.board.setLastClickLocation(null);
-			Location clickLocation = null;
+			Location clickLocation = this.board.getLocationAtClick();
 			
-			while (clickLocation == null ||
-					!this.canMove(clickLocation)) {
-				clickLocation = this.board.getlastClickLocation();
-				try {
-					Thread.sleep(100);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+			while (!this.canMove(clickLocation)) {
+				clickLocation = this.board.getLocationAtClick();;
 			}
 			
-			Direction directionToMove = this.getDirectionFromPlayer(clickLocation);
-			this.move(directionToMove);
+			Direction d = this.getDirectionFromPlayer(clickLocation);
+			this.move(d);
 		}
 	}
 	
@@ -248,23 +242,14 @@ public class Player {
 		}
 	}
 	
-	public void insertTile() {
+	public synchronized void insertTile() {
 		System.out.println("Inserting the tile");
-		this.board.setLastClickLocation(null);
-		Location insertLocation = null;
+		Location insertLocation = this.board.getLocationAtClick();
 		
-		while (insertLocation == null ||
-				!this.board.canInsertAt(insertLocation)) {
-			insertLocation = this.board.getlastClickLocation();
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		while (!this.board.canInsertAt(insertLocation)) {
+			insertLocation = this.board.getLocationAtClick();
 		}
 		
-		System.out.println("Valid insert location selected");
 		this.insertTile(insertLocation);
 	}
 	

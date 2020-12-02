@@ -29,8 +29,7 @@ public class BoardWindow extends BorderPane {
 		
 		this.setCenter(this.canvas);
 		
-		this.board.draw();
-		this.board.highlightValidMoves();
+		//this.board.highlightValidMoves();
 		
 		
 		
@@ -47,9 +46,23 @@ public class BoardWindow extends BorderPane {
 		tr.setDaemon(true);
 		tr.start();
 		
+		refreshBoard();
+		
 		this.canvas.setOnMouseClicked(e -> {
 			this.board.setLastClickLocation(e.getX(), e.getY());
+			synchronized (this.board) {
+				board.notify();
+			}
+			System.out.println("You clicked tile: " + this.board.getlastClickLocation());
+			refreshBoard();
 		});
+		
+//		Button button1 = new Button("Button");
+//		sidebar.getChildren().addAll(button1);
+//		
+//		button1.setOnAction(e -> {
+//			
+//		});
 	}
 	
 	private void refreshBoard() {

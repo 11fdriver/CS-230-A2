@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import javafx.concurrent.Task;
+import javafx.event.EventHandler;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.input.MouseEvent;
 
 //TODO make sure can't push fixed tiles
 //TODO currently tiles don't really keep track of players: There's a lot of null pointers and pointers which aren't valid any more. Fix this.
@@ -19,12 +22,16 @@ public class Board extends Task<Void>{
 	private Goal goalTile;
 	private Player[] players;
 	private int currentPlayer;
+	private Canvas canvas;
 	private GraphicsContext gc;
 	private Location lastClickLocation;
+	private Double xClick;
+	private Double yClick;
 	
 	//For testing
-	public Board(GraphicsContext gc, int TILE_WIDTH, int width, int length) {
-		this.gc = gc;
+	public Board(Canvas canvas, int TILE_WIDTH, int width, int length) {
+		this.canvas = canvas;
+		this.gc = canvas.getGraphicsContext2D();
 		this.TILE_WIDTH = TILE_WIDTH;
 		this.boardID = 1;
 		this.length = length;
@@ -64,8 +71,9 @@ public class Board extends Task<Void>{
 		this.randomizeAllPlayerLocations();//For testing
 	}
 	
-	public Board(GraphicsContext gc, int TILE_WIDTH,int boardID, int width, int length, SilkBag silkBag, FloorTile[][] gameBoard) {
-		this.gc = gc;
+	public Board(Canvas canvas, int TILE_WIDTH,int boardID, int width, int length, SilkBag silkBag, FloorTile[][] gameBoard) {
+		this.canvas = canvas;
+		this.gc = canvas.getGraphicsContext2D();
 		this.TILE_WIDTH = TILE_WIDTH;
 		this.boardID = boardID;
 		this.length = length;
@@ -558,9 +566,36 @@ public class Board extends Task<Void>{
 	public Location getlastClickLocation() {
 		return this.lastClickLocation;
 	}
-
+	
+	public FloorTile getTileAtClick() {
+		this.getLocationAtClick();
+		return this.getTileAt(this.lastClickLocation);
+	}
+	
+	public Location getLocationAtClick() {
+		synchronized (this) {
+			this.setLastClickLocation(null);
+			while (this.lastClickLocation == null) {
+				try {
+					System.out.println("I'm waiting");
+					this.wait();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			System.out.println("You clicked!");
+		}
+		return this.lastClickLocation;
+	}
+	
 	@Override
 	protected Void call() throws Exception {
+//		System.out.println("Starting game");
+//		this.getTileAtClick();
+//		System.out.println("Getting another click");
+//		this.getTileAtClick();
+		
 		System.out.println("Starting Game");
 		while (!this.gameOver()) {
 			this.getCurrentPlayer().takeTurn();
