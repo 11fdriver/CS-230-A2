@@ -85,7 +85,7 @@ public class FloorTile extends Tile implements Subscriber {
 	 * @return True if a Player can move to this tile
 	 */
 	public boolean canEnterFrom(Direction d) {
-		return (null == state || state.acceptsPlayer()) && null == player && DIRECTIONS.contains(d.opposite());
+		return (null == state || state.acceptsPlayer()) && null == player && DIRECTIONS.contains(d);
 	}
 	
 	/**

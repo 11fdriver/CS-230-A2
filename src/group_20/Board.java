@@ -225,13 +225,14 @@ public class Board extends Task<Void>{
 		FloorTile currentTile = this.getTileAt(l);
 		Location locationOfOppositeTile = l.copy();
 		locationOfOppositeTile.update(d);
-		FloorTile oppositeTile = this.getTileAt(locationOfOppositeTile);
 		
-		if (currentTile.canExitTo(d) && oppositeTile.canEnterFrom(d.opposite())) {
-			return true;
-		} else {
-			return false;
+		if (this.isInBounds(locationOfOppositeTile)) {
+			FloorTile oppositeTile = this.getTileAt(locationOfOppositeTile);
+			if (currentTile.canExitTo(d) && oppositeTile.canEnterFrom(d.opposite())) {
+				return true;
+			}
 		}
+		return false;
 	}
 	
 	public boolean isInBounds(Location l) {

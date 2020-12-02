@@ -48,32 +48,123 @@ public class SilkBag {
 		}
 		
 		//Random orientation
+		ArrayList<Direction> directions = new ArrayList<Direction>();
 		switch (tileID) {
 		case 1:
-			return new Straight(TILE_WIDTH, "straight_tile_with_alligners.png", null, orientation, null, null, null, 0);
+			switch (orientation) {
+			case NORTH:
+				directions.add(Direction.EAST);
+				directions.add(Direction.WEST);
+				break;
+			case EAST:
+				directions.add(Direction.NORTH);
+				directions.add(Direction.SOUTH);
+				break;
+			case SOUTH:
+				directions.add(Direction.EAST);
+				directions.add(Direction.WEST);
+				break;
+			case WEST:
+				directions.add(Direction.NORTH);
+				directions.add(Direction.SOUTH);
+				break;
+			}
+			return new Straight(TILE_WIDTH, "straight_tile_with_alligners.png", directions, orientation, null, null, null, 0);
 		case 2:
-			return new Corner(TILE_WIDTH, "Corner_Tile_with_alligners.png", null, orientation, null, null, null, 0);
+			switch (orientation) {
+			case NORTH:
+				directions.add(Direction.EAST);
+				directions.add(Direction.SOUTH);
+				break;
+			case EAST:
+				directions.add(Direction.SOUTH);
+				directions.add(Direction.WEST);
+				break;
+			case SOUTH:
+				directions.add(Direction.WEST);
+				directions.add(Direction.NORTH);
+				break;
+			case WEST:
+				directions.add(Direction.NORTH);
+				directions.add(Direction.EAST);
+				break;
+			}
+			return new Corner(TILE_WIDTH, "Corner_Tile_with_alligners.png", directions, orientation, null, null, null, 0);
 		case 3:
-			return new TShaped(TILE_WIDTH, "T_Tile_With_alligners.png", null, orientation, null, null, null, 0);
+			switch (orientation) {
+			case NORTH:
+				directions.add(Direction.NORTH);
+				directions.add(Direction.EAST);
+				directions.add(Direction.WEST);
+				break;
+			case EAST:
+				directions.add(Direction.NORTH);
+				directions.add(Direction.EAST);
+				directions.add(Direction.SOUTH);
+				break;
+			case SOUTH:
+				directions.add(Direction.EAST);
+				directions.add(Direction.SOUTH);
+				directions.add(Direction.WEST);
+				break;
+			case WEST:
+				directions.add(Direction.NORTH);
+				directions.add(Direction.SOUTH);
+				directions.add(Direction.WEST);
+				break;
+			}
+			return new TShaped(TILE_WIDTH, "T_Tile_With_alligners.png", directions, orientation, null, null, null, 0);
 		case 4:
-			return new Goal(TILE_WIDTH, "Goal_Tile_Animated-with-carpet-noise.gif", null, orientation, null, null, null, 0);
+			directions.add(Direction.NORTH);
+			directions.add(Direction.EAST);
+			directions.add(Direction.SOUTH);
+			directions.add(Direction.WEST);
+			return new Goal(TILE_WIDTH, "Goal_Tile_Animated-with-carpet-noise.gif", directions, orientation, null, null, null, 0);
 		default:
-			return new Straight(TILE_WIDTH, "straight_tile_with_alligners.png", null, orientation, null, null, null, 0);
+			switch (orientation) {
+			case NORTH:
+				directions.add(Direction.EAST);
+				directions.add(Direction.WEST);
+				break;
+			case EAST:
+				directions.add(Direction.NORTH);
+				directions.add(Direction.SOUTH);
+				break;
+			case SOUTH:
+				directions.add(Direction.EAST);
+				directions.add(Direction.WEST);
+				break;
+			case WEST:
+				directions.add(Direction.NORTH);
+				directions.add(Direction.SOUTH);
+				break;
+			}
+			return new Straight(TILE_WIDTH, "straight_tile_with_alligners.png", directions, orientation, null, null, null, 0);
 		}
+	}
+	
+	public static void main(String[] args) {
+		ArrayList<Direction> directions = new ArrayList<Direction>();
+		directions.add(Direction.SOUTH);
+		directions.add(Direction.WEST);
+		Direction orientation = Direction.EAST;
 		
-		//Fixed orientation
-//		switch (tileID) {
-//		case 1:
-//			return new Straight(0,false,0,false,false,new Location(0,0),null,"Straight");
-//		case 2:
-//			return new Corner(0,false,0,false,false,new Location(0,0),null,"Corner");
-//		case 3:
-//			return new TShaped(0,false,0,false,false,new Location(0,0),null,"TShaped");
-//		case 4:
-//			return new Goal(0,false,0,false,false,new Location(0,0),null,"Goal");
-//		default:
-//			return new Straight(0,false,0,false,false,new Location(0,0),null,"Straight");
-//		}
+		FloorTile t = new Straight(120, "straight_tile_with_alligners.png", directions, orientation, null, null, null, 0);
+		System.out.println(t.getOrientation());
+		switch (t.getOrientation()) {
+		case NORTH:
+			System.out.println("Facing NORTH");
+			break;
+		case EAST:
+			System.out.println("Facing EAST");
+			break;
+		case SOUTH:
+			System.out.println("Facing SOUTH");
+			break;
+		case WEST:
+			System.out.println("Facing WEST");
+			break;
+		}
 	}
 	//===========================================================================================================//
 }
