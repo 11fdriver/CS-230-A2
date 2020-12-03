@@ -42,6 +42,10 @@ public class Inventory {
 		return this.inv.size();
 	}
 	
+	public boolean isEmpty() {
+		return this.inv.isEmpty();
+	}
+	
 	public void printString() {
 		System.out.println("Inventory contains " + this.getLength() + " elements.");
 		System.out.println("- " + this.getNum(new FireAction()) + " fire action tile(s).");
