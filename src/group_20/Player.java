@@ -118,7 +118,7 @@ public class Player {
 		while (this.numMoves > 0) {
 			this.decNumMoves(1);
 			System.out.println("Making a move");
-			//this.stepThree();
+			this.stepThree();
 		}
 	}
 	

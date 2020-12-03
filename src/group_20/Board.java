@@ -143,94 +143,72 @@ public class Board extends Task<Void>{
 				l.equals(this.width - 1, 0) || l.equals(this.width - 1, this.length - 1))) {
 			//this.gameBoard[l.getX()][l.getY()] = t;
 			
-			FloorTile ejectedTile = null;
+			//FloorTile ejectedTile = null;
+			Player ejectedPlayer = null;
 			if (l.getX() == 0) {
-				ejectedTile = this.gameBoard[this.width-1][l.getY()];
+				//ejectedTile = this.gameBoard[this.width-1][l.getY()];
+				ejectedPlayer = this.gameBoard[this.width-1][l.getY()].getPlayer();
 				for (int i = this.width-1; i > 0; i--) {
 					this.gameBoard[i][l.getY()] = this.gameBoard[i-1][l.getY()];
 					if (this.gameBoard[i-1][l.getY()].hasPlayer()) {
 						this.gameBoard[i-1][l.getY()].getPlayer().setLocation(new Location(i,l.getY()));
-						//this.gameBoard[i][l.getY()].setMyPlayer(this.gameBoard[i-1][l.getY()].getMyPlayer());//Player pointer stuff ehhh iffy
-						//this.gameBoard[i-1][l.getY()].setMyPlayer(null);//Player pointer stuff ehhh iffy
 					}
 				}
 				this.gameBoard[l.getX()][l.getY()] = t;
-				if (ejectedTile != null && ejectedTile.hasPlayer()) {
-					t.setPlayer(ejectedTile.getPlayer());
-					t.getPlayer().setLocation(l.copy());
-				}
+				
 			} else if (l.getX() == this.width-1) {
-				Player ejectedPlayer = this.gameBoard[0][l.getY()].getPlayer();
-				System.out.println("Point 1");
-				//ejectedTile = this.gameBoard[0][l.getY()];
+				ejectedPlayer = this.gameBoard[0][l.getY()].getPlayer();
 				for (int i = 0; i < this.length-1; i++) {
-					System.out.println("Point 2");
 					this.gameBoard[i][l.getY()] = this.gameBoard[i+1][l.getY()];
 					if (this.gameBoard[i+1][l.getY()].hasPlayer()) {
-						System.out.println("Point 3");
 						this.gameBoard[i+1][l.getY()].getPlayer().setLocation(new Location(i,l.getY()));
-						//this.gameBoard[i][l.getY()].setMyPlayer(this.gameBoard[i+1][l.getY()].getMyPlayer());//Player pointer stuff ehhh iffy
-						//this.gameBoard[i+1][l.getY()].setMyPlayer(null);//Player pointer stuff ehhh iffy
 					}
-					System.out.println("Point 4");
 				}
-				System.out.println("Point 5");
 				this.gameBoard[l.getX()][l.getY()] = t;
-				System.out.println("Point 6");
 				
-				if (ejectedPlayer != null) {
-					Player p = this.getTileAt(ejectedPlayer.getLocation()).getPlayer();
-					if (p != null) {
-						ejectedPlayer.setLocation(l);
-						p.setLocation(p.getLocation());
-					} else {
-						ejectedPlayer.setLocation(l);
-					}
-				}
-//				if (ejectedTile != null && this.gameBoard[0][l.getY()].hasPlayer()) {
-//					System.out.println("Point 7");
-//					t.setPlayer(ejectedTile.getPlayer());
-//					System.out.println("Point 8");
-//					Player temp = this.gameBoard[0][l.getY()].getPlayer();
-//					System.out.println("Point 9");
-//					t.getPlayer().setLocation(l.copy());
-//					System.out.println("Point 10");
-//					temp.setLocation(new Location(0,l.getY()));
-//					System.out.println("Point 11");
+//				if (ejectedPlayer != null) {
+//					Player p = this.getTileAt(ejectedPlayer.getLocation()).getPlayer();
+//					if (p != null) {
+//						ejectedPlayer.setLocation(l);
+//						p.setLocation(p.getLocation());
+//					} else {
+//						ejectedPlayer.setLocation(l);
+//					}
 //				}
-				System.out.println("Point 12");
+
 			} else if (l.getY() == 0) {
-				ejectedTile = this.gameBoard[l.getX()][this.width-1];
+				//ejectedTile = this.gameBoard[l.getX()][this.width-1];
+				ejectedPlayer = this.gameBoard[l.getX()][this.width-1].getPlayer();
 				for (int i = this.width-1; i > 0; i--) {
 					this.gameBoard[l.getX()][i] = this.gameBoard[l.getX()][i-1];
 					if (this.gameBoard[l.getX()][i-1].hasPlayer()) {
 						this.gameBoard[l.getX()][i-1].getPlayer().setLocation(new Location(l.getX(),i));
-						//this.gameBoard[l.getX()][i].setMyPlayer(this.gameBoard[l.getX()][i-1].getMyPlayer());//Player pointer stuff ehhh iffy
-						//this.gameBoard[l.getX()][i-1].setMyPlayer(null);//Player pointer stuff ehhh iffy
 					}
 				}
 				this.gameBoard[l.getX()][l.getY()] = t;
-				if (ejectedTile != null && ejectedTile.hasPlayer()) {
-					t.setPlayer(ejectedTile.getPlayer());
-					t.getPlayer().setLocation(l.copy());
-				}
+				
 			} else if (l.getY() == this.length-1) {
-				ejectedTile = this.gameBoard[l.getX()][0];
+				//ejectedTile = this.gameBoard[l.getX()][0];
+				ejectedPlayer = this.gameBoard[l.getX()][0].getPlayer();
 				for (int i = 0; i < this.width-1; i++) {
 					this.gameBoard[l.getX()][i] = this.gameBoard[l.getX()][i+1];
 					if (this.gameBoard[l.getX()][i+1].hasPlayer()) {
 						this.gameBoard[l.getX()][i+1].getPlayer().setLocation(new Location(l.getX(),i));
-						//this.gameBoard[l.getX()][i].setMyPlayer(this.gameBoard[l.getX()][i+1].getMyPlayer());//Player pointer stuff ehhh iffy
-						//this.gameBoard[l.getX()][i+1].setMyPlayer(null);//Player pointer stuff ehhh iffy
 					}
 				}
 				this.gameBoard[l.getX()][l.getY()] = t;
-				if (ejectedTile != null && ejectedTile.hasPlayer()) {
-					t.setPlayer(ejectedTile.getPlayer());
-					t.getPlayer().setLocation(l.copy());
-				}
+				
 			} else {
 				System.out.println("Invalid tile insertion location");
+			}
+			if (ejectedPlayer != null) {
+				Player p = this.getTileAt(ejectedPlayer.getLocation()).getPlayer();
+				if (p != null) {
+					ejectedPlayer.setLocation(l);
+					p.setLocation(p.getLocation());
+				} else {
+					ejectedPlayer.setLocation(l);
+				}
 			}
 			System.out.println("Tile inserted at: " + l.toString());
 		}
