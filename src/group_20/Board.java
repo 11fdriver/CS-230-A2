@@ -47,7 +47,7 @@ public class Board extends Task<Void>{
 		this.currentPlayer = 0;
 		this.populate();//TODO change from temp full population with random tiles
 		this.goalTile = new Goal(TILE_WIDTH, "Goal_Tile_Animated-with-carpet-noise.gif", null, Direction.NORTH, null, null, null, 0);
-		//this.randomizeAllPlayerLocations();//For testing
+		this.randomizeAllPlayerLocations();//For testing
 	}
 	
 	//For testing too

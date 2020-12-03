@@ -114,6 +114,7 @@ public class Player {
 		this.stepOne();
 		System.out.println("Doing action on tile");
 		//this.stepTwo(); //Can't play action tiles until merge with Finn
+		this.getClickFromInventoryCanvas();
 		this.currentStageOfTurn = 3;
 		while (this.numMoves > 0) {
 			this.decNumMoves(1);
@@ -290,15 +291,10 @@ public class Player {
 	 * @param location New location
 	 */
 	public void setLocation(Location location) {
-		System.out.println("Player: Point 1");
 		this.addPreviousLocation(this.getLocation());
-		System.out.println("Player: Point 2");
 		this.removeFromCurrentTile();
-		System.out.println("Player: Point 3");
 		this.location = location;
-		System.out.println("Player: Point 4");
 		this.addToCurrentTile();
-		System.out.println("Player: Point 5");
 	}
 	
 	/**
@@ -469,5 +465,38 @@ public class Player {
 		int y = this.getLocation().getY()*TILE_WIDTH;
 		gc.strokeOval(x, y, (TILE_WIDTH), (TILE_WIDTH));
 		gc.setStroke(Color.BLACK);
+	}
+	
+	private boolean hasBeenClicked = false;
+	private boolean isWaiting = false;
+	
+	public void setHasBeenClicked(boolean b) {
+		this.hasBeenClicked = b;
+	}
+	
+	public boolean getHasBeenClicked() {
+		return this.hasBeenClicked;
+	}
+	
+	public boolean isWaiting() {
+		return this.isWaiting;
+	}
+	
+	public void getClickFromInventoryCanvas() {
+		synchronized (this) {
+			this.setHasBeenClicked(false);
+			while (!this.hasBeenClicked) {
+				this.isWaiting = true;
+				System.out.println("Select An Action Tile");
+				try {
+					this.wait();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			System.out.println("Action Tile Selected");
+			this.isWaiting = false;
+		}
 	}
 }
