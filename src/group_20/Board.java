@@ -651,6 +651,12 @@ public class Board extends Task<Void>{
 		
 		System.out.println("Starting Game");
 		while (!this.gameOver()) {
+//			Inventory inv = new Inventory();
+//			inv.add(new ActionTile(null));
+//			inv.draw(gc, this, TILE_WIDTH);
+			
+			//this.draw();
+			
 			this.getCurrentPlayer().takeTurn();
 			System.out.println("Advancing player");
 			this.advancePlayerTurn();

@@ -1,5 +1,7 @@
 package group_20;
 
+import javafx.scene.canvas.GraphicsContext;
+
 public class ActionTile extends Tile {
 	/**
 	 * Action stored in ActionTile.
@@ -24,13 +26,21 @@ public class ActionTile extends Tile {
 	}
 	
 	@Override
-	public void draw(Location loc) {
-		// TODO Draw tile
-		ACTION.draw(loc);
+	public void draw(GraphicsContext gc, int x, int y) {
+		// TODO Auto-generated method stub
+		//ACTION.draw(GraphicsContext gc, int x, int y);
 	}
 
 	@Override
 	public String saveFormat() {
 		return "ATile:" + ACTION.saveFormat();
+	}
+	
+	public String toString() {
+		return ACTION.toString();
+	}
+	
+	public Action getAction() {
+		return this.ACTION;
 	}
 }

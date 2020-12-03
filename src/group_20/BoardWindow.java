@@ -43,8 +43,68 @@ public class BoardWindow extends BorderPane {
 		
 		//this.setOnClickEventMovePlayer();
 		
-		//VBox sidebar = new VBox();
-		//this.setLeft(sidebar);
+		VBox sidebar = new VBox();
+		this.setLeft(sidebar);
+		
+		//Backtrack
+		Button backTrackActionButton = new Button("Backtrack Action");
+		sidebar.getChildren().addAll(backTrackActionButton);
+		
+		backTrackActionButton.setOnAction(e -> {
+			Player p = this.board.getCurrentPlayer();
+			if (p.isWaiting()) {
+				p.setHasBeenClicked(true);
+				synchronized (p) {
+					p.notify();
+				}
+				System.out.println("Backtrack action selected");
+			}
+		});
+		
+		//Fire action
+		Button fireActionButton = new Button("Fire Action");
+		sidebar.getChildren().addAll(fireActionButton);
+		
+		fireActionButton.setOnAction(e -> {
+			Player p = this.board.getCurrentPlayer();
+			if (p.isWaiting()) {
+				p.setHasBeenClicked(true);
+				synchronized (p) {
+					p.notify();
+				}
+				System.out.println("Fire action selected");
+			}
+		});
+		
+		//Ice action
+		Button iceActionButton = new Button("Ice Action");
+		sidebar.getChildren().addAll(iceActionButton);
+		
+		iceActionButton.setOnAction(e -> {
+			Player p = this.board.getCurrentPlayer();
+			if (p.isWaiting()) {
+				p.setHasBeenClicked(true);
+				synchronized (p) {
+					p.notify();
+				}
+				System.out.println("Ice action selected");
+			}
+		});
+		
+		//Double move
+		Button doubleMoveActionButton = new Button("Double Move Action");
+		sidebar.getChildren().addAll(doubleMoveActionButton);
+		
+		doubleMoveActionButton.setOnAction(e -> {
+			Player p = this.board.getCurrentPlayer();
+			if (p.isWaiting()) {
+				p.setHasBeenClicked(true);
+				synchronized (p) {
+					p.notify();
+				}
+				System.out.println("Double move action selected");
+			}
+		});
 		
 		Thread tr = new Thread(board);
 		tr.setDaemon(true);
@@ -61,20 +121,20 @@ public class BoardWindow extends BorderPane {
 			refreshBoard();
 		});
 		
-		this.setLeft(inventoryCanvas);
-		drawInventory();
-		
-		this.inventoryCanvas.setOnMouseClicked(e -> {
-			this.board.getCurrentPlayer().setHasBeenClicked(true);
-			Player p = this.board.getCurrentPlayer();
-			if (p.isWaiting()) {
-			//if (tr.getState() == Thread.State.WAITING) {
-			synchronized (p) {
-				p.notify();
-			}
-			}
-			//System.out.println("You clicked + " + e.getX() + "," + e.getY());
-		});
+//		this.setLeft(inventoryCanvas);
+//		drawInventory();
+//		
+//		this.inventoryCanvas.setOnMouseClicked(e -> {
+//			this.board.getCurrentPlayer().setHasBeenClicked(true);
+//			Player p = this.board.getCurrentPlayer();
+//			if (p.isWaiting()) {
+//			//if (tr.getState() == Thread.State.WAITING) {
+//			synchronized (p) {
+//				p.notify();
+//			}
+//			}
+//			//System.out.println("You clicked + " + e.getX() + "," + e.getY());
+//		});
 		
 //		Button button1 = new Button("Button");
 //		sidebar.getChildren().addAll(button1);

@@ -19,5 +19,8 @@ public class BacktrackAction extends Action {
 		// TODO Auto-generated method stub
 		
 	}
-
+	
+	public String toString() {
+		return "This is a backtrack action tile";
+	}
 }

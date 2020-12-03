@@ -19,5 +19,8 @@ public class DoubleMoveAction extends Action {
 		// TODO Auto-generated method stub
 		
 	}
-
+	
+	public String toString() {
+		return "This is a double move action tile";
+	}
 }
