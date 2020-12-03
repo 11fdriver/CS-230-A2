@@ -16,7 +16,23 @@ public class SilkBag {
 	 * @return
 	 */
 	public Tile drawTile() {
-		return this.drawFloorTile();
+		Random r = new Random();
+		int rnd = r.nextInt(9);
+		
+		switch (rnd) {
+		case 1:
+			return new ActionTile(new FireAction());
+		case 2:
+			return new ActionTile(new IceAction());
+		case 3:
+			return new ActionTile(new DoubleMoveAction());
+		case 4:
+			return new ActionTile(new BacktrackAction());
+		default:
+			return this.drawFloorTile();
+		}
+		
+		//return this.drawFloorTile();
 		//return new ActionTile();
 	}
 	

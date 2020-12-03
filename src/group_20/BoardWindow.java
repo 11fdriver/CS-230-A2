@@ -20,6 +20,10 @@ public class BoardWindow extends BorderPane {
 	private Canvas gameCanvas;
 	private Canvas inventoryCanvas;
 	private GraphicsContext gc;
+	private Button backTrackActionButton = new Button("Backtrack Action");
+	private Button fireActionButton = new Button("Fire Action");
+	private Button iceActionButton = new Button("Ice Action");
+	private Button doubleMoveActionButton = new Button("Double Move Action");
 	
 	public BoardWindow(int TILE_WIDTH, Board board) {
 		this.TILE_WIDTH = TILE_WIDTH;
@@ -47,13 +51,12 @@ public class BoardWindow extends BorderPane {
 		this.setLeft(sidebar);
 		
 		//Backtrack
-		Button backTrackActionButton = new Button("Backtrack Action");
 		sidebar.getChildren().addAll(backTrackActionButton);
 		
 		backTrackActionButton.setOnAction(e -> {
 			Player p = this.board.getCurrentPlayer();
 			if (p.isWaiting()) {
-				p.setHasBeenClicked(true);
+				p.setChosenActionTile(new ActionTile(new BacktrackAction()));
 				synchronized (p) {
 					p.notify();
 				}
@@ -62,13 +65,12 @@ public class BoardWindow extends BorderPane {
 		});
 		
 		//Fire action
-		Button fireActionButton = new Button("Fire Action");
 		sidebar.getChildren().addAll(fireActionButton);
 		
 		fireActionButton.setOnAction(e -> {
 			Player p = this.board.getCurrentPlayer();
 			if (p.isWaiting()) {
-				p.setHasBeenClicked(true);
+				p.setChosenActionTile(new ActionTile(new FireAction()));
 				synchronized (p) {
 					p.notify();
 				}
@@ -77,13 +79,12 @@ public class BoardWindow extends BorderPane {
 		});
 		
 		//Ice action
-		Button iceActionButton = new Button("Ice Action");
 		sidebar.getChildren().addAll(iceActionButton);
 		
 		iceActionButton.setOnAction(e -> {
 			Player p = this.board.getCurrentPlayer();
 			if (p.isWaiting()) {
-				p.setHasBeenClicked(true);
+				p.setChosenActionTile(new ActionTile(new IceAction()));
 				synchronized (p) {
 					p.notify();
 				}
@@ -92,13 +93,12 @@ public class BoardWindow extends BorderPane {
 		});
 		
 		//Double move
-		Button doubleMoveActionButton = new Button("Double Move Action");
 		sidebar.getChildren().addAll(doubleMoveActionButton);
 		
 		doubleMoveActionButton.setOnAction(e -> {
 			Player p = this.board.getCurrentPlayer();
 			if (p.isWaiting()) {
-				p.setHasBeenClicked(true);
+				p.setChosenActionTile(new ActionTile(new DoubleMoveAction()));
 				synchronized (p) {
 					p.notify();
 				}
@@ -146,6 +146,10 @@ public class BoardWindow extends BorderPane {
 	
 	private void refreshBoard() {
 		//System.out.println("Refreshed");
+//		Inventory inv = this.board.getCurrentPlayer().getInventory();
+//		if (!inv.contains(new FireAction())) {
+//			this.fireActionButton.setDisable(true);
+//		}
 		this.gc.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 		this.board.draw();
 	}

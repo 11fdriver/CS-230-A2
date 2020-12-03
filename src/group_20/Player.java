@@ -22,7 +22,7 @@ public class Player {
 	/**
 	 * Inventory of player
 	 */
-	private ArrayList<ActionTile> inventory;
+	private Inventory inventory;
 	
 	/**
 	 * Keeps track of the number of moves a player can make
@@ -82,7 +82,7 @@ public class Player {
 		this.silkBag = silkbag;
 		this.TILE_WIDTH = TILE_WIDTH;
 		this.location = location;
-		this.inventory = inventory;
+		this.inventory = new Inventory(inventory);
 		this.previousLocations = previousLocations;
 		this.hasBeenBacktracked = hasBeenBacktracked;
 		this.numMoves = 1;
@@ -100,7 +100,7 @@ public class Player {
 		this.silkBag = silkBag;
 		this.TILE_WIDTH = TILE_WIDTH;
 		this.location = startingLocation;
-		this.inventory = new ArrayList<ActionTile>();
+		this.inventory = new Inventory();
 		this.previousLocations = new LocationList();
 		this.hasBeenBacktracked = false;
 		this.numMoves = 1;
@@ -112,9 +112,8 @@ public class Player {
 		this.numMoves = 1;
 		System.out.println("Drawing a tile");
 		this.stepOne();
-		System.out.println("Doing action on tile");
-		//this.stepTwo(); //Can't play action tiles until merge with Finn
-		this.getClickFromInventoryCanvas();
+		//System.out.println("Doing action on tile");
+		this.stepTwo();
 		this.currentStageOfTurn = 3;
 		while (this.numMoves > 0) {
 			this.decNumMoves(1);
@@ -140,8 +139,11 @@ public class Player {
 		//Skip step 2 if inventory is empty
 		if (!this.inventory.isEmpty()) {
 			//Allow the user to select a tile
-			ActionTile chosenTile = new ActionTile(null);//TODO: Change to user input
-			chosenTile.play(this, this.board); //Error but will be fixed when code merge
+			this.selectTileFromInventory();
+			System.out.println("'Playing' " + chosenActionTile.toString());
+			//chosenActionTile.play(this, this.board);
+		} else {
+			System.out.println("My inventory is empty -> Can't play an action tile :(");
 		}
 	}
 
@@ -309,7 +311,7 @@ public class Player {
 	 * Getter for player's inventory of ActionTile's
 	 * @return
 	 */
-	public ArrayList<ActionTile> getInventory() {
+	public Inventory getInventory() {
 		return this.inventory;
 	}
 	
@@ -317,7 +319,7 @@ public class Player {
 	 * Setter for inventory
 	 * @param inventory New inventory
 	 */
-	public void setInventory(ArrayList<ActionTile> inventory) {
+	public void setInventory(Inventory inventory) {
 		this.inventory = inventory;
 	}
 	
@@ -327,6 +329,10 @@ public class Player {
 	 */
 	public void addToInventory(ActionTile t) {
 		this.inventory.add(t);
+	}
+	
+	public void removeFromInventory(ActionTile t) {
+		this.inventory.remove(t);
 	}
 	
 	/**
@@ -429,7 +435,7 @@ public class Player {
 	public String inventoryToString() {
 		String str = "[";
 		if (this.inventory != null) {
-			for (int i = 0; i < this.inventory.size() -1; i++) {
+			for (int i = 0; i < this.inventory.getLength() -1; i++) {
 				str += "ActionTile,";
 				//ActionTile temp = this.inventory.get(i);
 			}
@@ -467,25 +473,23 @@ public class Player {
 		gc.setStroke(Color.BLACK);
 	}
 	
-	private boolean hasBeenClicked = false;
+	//dw these are just here for testing -> will move to top later
+	private ActionTile chosenActionTile = null;
 	private boolean isWaiting = false;
 	
-	public void setHasBeenClicked(boolean b) {
-		this.hasBeenClicked = b;
-	}
-	
-	public boolean getHasBeenClicked() {
-		return this.hasBeenClicked;
+	public void setChosenActionTile(ActionTile t) {
+		this.chosenActionTile = t;
+		this.inventory.remove(t);
 	}
 	
 	public boolean isWaiting() {
 		return this.isWaiting;
 	}
 	
-	public void getClickFromInventoryCanvas() {
+	public void selectTileFromInventory() {
 		synchronized (this) {
-			this.setHasBeenClicked(false);
-			while (!this.hasBeenClicked) {
+			this.setChosenActionTile(null);
+			while (this.chosenActionTile == null) {
 				this.isWaiting = true;
 				System.out.println("Select An Action Tile");
 				try {
