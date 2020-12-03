@@ -24,6 +24,7 @@ public class BoardWindow extends BorderPane {
 	private Button fireActionButton = new Button("Fire Action");
 	private Button iceActionButton = new Button("Ice Action");
 	private Button doubleMoveActionButton = new Button("Double Move Action");
+	private Button skipButton = new Button("Skip");
 	
 	public BoardWindow(int TILE_WIDTH, Board board) {
 		this.TILE_WIDTH = TILE_WIDTH;
@@ -103,6 +104,21 @@ public class BoardWindow extends BorderPane {
 					p.notify();
 				}
 				System.out.println("Double move action selected");
+			}
+		});
+		
+		//Skip button
+		sidebar.getChildren().addAll(skipButton);
+		
+		skipButton.setOnAction(e -> {
+			Player p = this.board.getCurrentPlayer();
+			if (p.isWaiting()) {
+				System.out.println("Is the tile null? " + ((new ActionTile(null)) == null));
+				p.setChosenActionTile(new ActionTile(null));
+				synchronized (p) {
+					p.notify();
+				}
+				System.out.println("Skipped playing action tile");
 			}
 		});
 		

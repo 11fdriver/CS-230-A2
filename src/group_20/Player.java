@@ -140,7 +140,11 @@ public class Player {
 		if (!this.inventory.isEmpty()) {
 			//Allow the user to select a tile
 			this.selectTileFromInventory();
-			System.out.println("'Playing' " + chosenActionTile.toString());
+			if (!(chosenActionTile.getAction() == null)) {
+				System.out.println("'Playing' " + chosenActionTile.toString());
+			} else {
+				System.out.println("Oh I guess you wanted to skip your turn.. fine by me");
+			}
 			//chosenActionTile.play(this, this.board);
 		} else {
 			System.out.println("My inventory is empty -> Can't play an action tile :(");
@@ -479,7 +483,9 @@ public class Player {
 	
 	public void setChosenActionTile(ActionTile t) {
 		this.chosenActionTile = t;
+		System.out.println("Removing action tile");
 		this.inventory.remove(t);
+		System.out.println("Removed action tile");
 	}
 	
 	public boolean isWaiting() {
