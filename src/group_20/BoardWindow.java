@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import javafx.animation.Animation;
 import javafx.animation.Timeline;
+import javafx.geometry.Insets;
 import javafx.animation.KeyFrame;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -50,6 +51,9 @@ public class BoardWindow extends BorderPane {
 		
 		VBox sidebar = new VBox();
 		this.setLeft(sidebar);
+		
+		sidebar.setPadding(new Insets(40));
+		sidebar.setSpacing(40);
 		
 		//Backtrack
 		sidebar.getChildren().addAll(backTrackActionButton);
@@ -168,6 +172,10 @@ public class BoardWindow extends BorderPane {
 //		}
 		this.gc.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 		this.board.draw();
+	}
+	
+	private void refreshInventoryPane() {
+		
 	}
 	
 	/**
