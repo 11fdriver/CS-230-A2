@@ -135,7 +135,7 @@ public class SilkBag {
 			directions.add(Direction.EAST);
 			directions.add(Direction.SOUTH);
 			directions.add(Direction.WEST);
-			return new Goal(TILE_WIDTH, "Goal_Tile_Animated-with-carpet-noise.gif", directions, orientation, null, null, null, 0, true);
+			return new Goal(TILE_WIDTH, "X_tile_with_alligners.png", directions, orientation, null, null, null, 0, false);
 		default:
 			switch (orientation) {
 			case NORTH:
@@ -165,7 +165,7 @@ public class SilkBag {
 		directions.add(Direction.WEST);
 		Direction orientation = Direction.EAST;
 		
-		FloorTile t = new Straight(120, "straight_tile_with_alligners.png", directions, orientation, null, null, null, 0);
+		FloorTile t = new Straight(120, "straight_tile_with_alligners.png", directions, orientation, null, null, null, 0, false);
 		System.out.println(t.getOrientation());
 		switch (t.getOrientation()) {
 		case NORTH:

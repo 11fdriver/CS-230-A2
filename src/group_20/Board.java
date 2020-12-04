@@ -45,8 +45,8 @@ public class Board extends Task<Void>{
 				new Player(this, this.silkBag,this.TILE_WIDTH,"Shelley-no-background.png",new Location(3,1))};
 		this.players = newPlayers;
 		this.currentPlayer = 0;
+		this.goalTile = (Goal) this.generateGoalTile();
 		this.populate();//TODO change from temp full population with random tiles
-		this.goalTile = new Goal(TILE_WIDTH, "Goal_Tile_Animated-with-carpet-noise.gif", null, Direction.NORTH, null, null, null, 0, true);
 		this.randomizeAllPlayerLocations();//For testing
 	}
 	
@@ -66,8 +66,8 @@ public class Board extends Task<Void>{
 				new Player(this, this.silkBag,this.TILE_WIDTH,"Shelley-no-background.png",new Location(0,0))};
 		this.players = newPlayers;
 		this.currentPlayer = 0;
+		this.goalTile = (Goal) this.generateGoalTile();
 		this.populate();//TODO change from temp full population with random tiles
-		this.goalTile = new Goal(TILE_WIDTH, "Goal_Tile_Animated-with-carpet-noise.gif", null, Direction.NORTH, null, null, null, 0, true);
 		this.randomizeAllPlayerLocations();//For testing
 	}
 	
@@ -88,14 +88,24 @@ public class Board extends Task<Void>{
 				new Player(this, this.silkBag,this.TILE_WIDTH,"Shelley-no-background.png",new Location(0,0))};
 		this.players = newPlayers;
 		this.currentPlayer = 0;
+		this.goalTile = (Goal) this.generateGoalTile();
 		this.populate();//TODO change from temp full population with random tiles
-		this.goalTile = new Goal(TILE_WIDTH, "Goal_Tile_Animated-with-carpet-noise.gif", null, Direction.NORTH, null, null, null, 0, true);
 		this.randomizeAllPlayerLocations();//For testing
 	}
 	
 	//redundant as of this version
 	private void placeKnownTiles(FloorTile[] knownFloorTile, Location[] floorTileLocation) {
 		
+	}
+	
+	//Just for testing
+	public FloorTile generateGoalTile() {
+		ArrayList<Direction> directions = new ArrayList<Direction>();
+		directions.add(Direction.NORTH);
+		directions.add(Direction.EAST);
+		directions.add(Direction.SOUTH);
+		directions.add(Direction.WEST);
+		return new Goal(TILE_WIDTH, "Goal_Tile_Animated-with-carpet-noise.gif", directions, Direction.NORTH, null, null, null, 0, true);
 	}
 	
 	//Just for testing
@@ -115,6 +125,11 @@ public class Board extends Task<Void>{
 				}
 			}
 		}
+		Random r = new Random();
+		int x = r.nextInt(this.width);
+		int y = r.nextInt(this.length);
+		System.out.println("Inserting tile at: " + x + "," + y);
+		this.gameBoard[x][y] = this.goalTile;
 		this.assignPlayersToTiles();
 	}
 	
@@ -674,12 +689,6 @@ public class Board extends Task<Void>{
 		
 		System.out.println("Starting Game");
 		while (!this.gameOver()) {
-//			Inventory inv = new Inventory();
-//			inv.add(new ActionTile(null));
-//			inv.draw(gc, this, TILE_WIDTH);
-			
-			//this.draw();
-			
 			this.getCurrentPlayer().takeTurn();
 			System.out.println("Advancing player");
 			this.advancePlayerTurn();
@@ -688,6 +697,7 @@ public class Board extends Task<Void>{
 			System.out.println("Next Player's Turn");
 			System.out.println("\nPlayer " + (this.currentPlayer+1) + "'s turn");
 		}
+		System.out.println("GAME OVER!!!!");
 		return null;
 	}
 }
