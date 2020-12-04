@@ -12,8 +12,8 @@ import javafx.scene.paint.Color;
 
 public class Corner extends FloorTile {
 	
-	public Corner(int TILE_WIDTH, String spriteFileLocation, ArrayList<Direction> directions, Direction orientation, Location location, Player player, FloorAction state, int lifetime) {
-		super(TILE_WIDTH, spriteFileLocation, directions, orientation, location, player, state, lifetime);
+	public Corner(int TILE_WIDTH, String spriteFileLocation, ArrayList<Direction> directions, Direction orientation, Location location, Player player, FloorAction state, int lifetime, boolean isFixed) {
+		super(TILE_WIDTH, spriteFileLocation, directions, orientation, location, player, state, lifetime, isFixed);
 	}
 	
 	public String toString() {

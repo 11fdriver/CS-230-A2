@@ -17,8 +17,8 @@ import javafx.scene.transform.Rotate;
 
 public class Straight extends FloorTile {
 
-	public Straight(int TILE_WIDTH, String spriteFileLocation, ArrayList<Direction> directions, Direction orientation, Location location, Player player, FloorAction state, int lifetime) {
-		super(TILE_WIDTH, spriteFileLocation, directions, orientation, location, player, state, lifetime);
+	public Straight(int TILE_WIDTH, String spriteFileLocation, ArrayList<Direction> directions, Direction orientation, Location location, Player player, FloorAction state, int lifetime, boolean isFixed) {
+		super(TILE_WIDTH, spriteFileLocation, directions, orientation, location, player, state, lifetime, isFixed);
 	}
 	
 	public String toString() {

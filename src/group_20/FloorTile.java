@@ -53,6 +53,11 @@ public class FloorTile extends Tile implements Subscriber {
 	private Image sprite;
 	
 	/**
+	 * Stores if the tile is fixed
+	 */
+	private boolean isFixed;
+	
+	/**
 	 * Construct new FloorTile.
 	 * <br>
 	 * Will <b>not</b> set a non-player state when there is already a Player.
@@ -62,7 +67,7 @@ public class FloorTile extends Tile implements Subscriber {
 	 * @param state			The current state of the tile, see {@link FloorAction}
 	 * @param lifetime		Turns left until {@code state} expires
 	 */
-	public FloorTile(int TILE_WIDTH, String spriteFileLocation, ArrayList<Direction> directions, Direction orientation, Location location, Player player, FloorAction state, int lifetime) {
+	public FloorTile(int TILE_WIDTH, String spriteFileLocation, ArrayList<Direction> directions, Direction orientation, Location location, Player player, FloorAction state, int lifetime, boolean isFixed) {
 		this.TILE_WIDTH = TILE_WIDTH;
 		this.loadSprite(spriteFileLocation); //Sets this.sprite
 		this.DIRECTIONS = directions;
@@ -74,6 +79,7 @@ public class FloorTile extends Tile implements Subscriber {
 			TurnNotifier.addSubscriber(this);
 			this.stateLifetime = lifetime;
 		}
+		this.isFixed = isFixed;
 	}
 	
 	/**
