@@ -166,6 +166,14 @@ public class FloorTile extends Tile implements Subscriber {
 	}
 	
 	/**
+	 * Checks if tile is fixed
+	 * @return True if tile is fixed
+	 */
+	public boolean isFixed() {
+		return this.isFixed;
+	}
+	
+	/**
 	 * Sets Player onto FloorTile.
 	 * @param p Player to put onto FloorTile. Null if unsetting.
 	 */

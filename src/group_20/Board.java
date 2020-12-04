@@ -46,7 +46,7 @@ public class Board extends Task<Void>{
 		this.players = newPlayers;
 		this.currentPlayer = 0;
 		this.populate();//TODO change from temp full population with random tiles
-		this.goalTile = new Goal(TILE_WIDTH, "Goal_Tile_Animated-with-carpet-noise.gif", null, Direction.NORTH, null, null, null, 0);
+		this.goalTile = new Goal(TILE_WIDTH, "Goal_Tile_Animated-with-carpet-noise.gif", null, Direction.NORTH, null, null, null, 0, true);
 		this.randomizeAllPlayerLocations();//For testing
 	}
 	
@@ -67,7 +67,7 @@ public class Board extends Task<Void>{
 		this.players = newPlayers;
 		this.currentPlayer = 0;
 		this.populate();//TODO change from temp full population with random tiles
-		this.goalTile = new Goal(TILE_WIDTH, "Goal_Tile_Animated-with-carpet-noise.gif", null, Direction.NORTH, null, null, null, 0);
+		this.goalTile = new Goal(TILE_WIDTH, "Goal_Tile_Animated-with-carpet-noise.gif", null, Direction.NORTH, null, null, null, 0, true);
 		this.randomizeAllPlayerLocations();//For testing
 	}
 	
@@ -89,7 +89,7 @@ public class Board extends Task<Void>{
 		this.players = newPlayers;
 		this.currentPlayer = 0;
 		this.populate();//TODO change from temp full population with random tiles
-		this.goalTile = new Goal(TILE_WIDTH, "Goal_Tile_Animated-with-carpet-noise.gif", null, Direction.NORTH, null, null, null, 0);
+		this.goalTile = new Goal(TILE_WIDTH, "Goal_Tile_Animated-with-carpet-noise.gif", null, Direction.NORTH, null, null, null, 0, true);
 		this.randomizeAllPlayerLocations();//For testing
 	}
 	
@@ -214,6 +214,27 @@ public class Board extends Task<Void>{
 		}
 	}
 	
+	public boolean rowContainsFixedTile(Location l) {
+		//Inserting at row
+		if (l.getX() == 0 || l.getX() == this.width-1) {
+			int y = l.getY();
+			for (int i = 0; i < this.width; i++) {
+				if (this.gameBoard[i][y].isFixed()) {
+					return true;
+				}
+			}
+		//Inserting at column
+		} else if (l.getY() == 0 || l.getY() == this.length-1) {
+			int x = l.getX();
+			for (int i = 0; i < this.length; i++) {
+				if (this.gameBoard[x][i].isFixed()) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
 //	public void insertTile(FloorTile t, Location l) {
 //		//Checks you aren't inserting at corners of the board
 //		if (!(l.equals(0,0) || l.equals(0,this.length - 1) ||
@@ -275,8 +296,10 @@ public class Board extends Task<Void>{
 		if ((this.isInBounds(l)) && //And isn't a corner
 				!(l.equals(0,0) || l.equals(0,this.length - 1) ||
 				l.equals(this.width - 1, 0) || l.equals(this.width - 1, this.length - 1))) {
-			if (l.getY() == 0 || l.getX() == 0 || 
-					l.getY() == this.length-1 || l.getX() == this.width-1) {
+			//If is an edge
+			if ((l.getY() == 0 || l.getX() == 0 || 
+					l.getY() == this.length-1 || l.getX() == this.width-1) &&
+					!this.rowContainsFixedTile(l)){ //And row/column doesn't contain fixed tiles
 				return true;
 			} else {
 				return false;

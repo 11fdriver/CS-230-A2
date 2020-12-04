@@ -85,7 +85,7 @@ public class SilkBag {
 				directions.add(Direction.SOUTH);
 				break;
 			}
-			return new Straight(TILE_WIDTH, "straight_tile_with_alligners.png", directions, orientation, null, null, null, 0);
+			return new Straight(TILE_WIDTH, "straight_tile_with_alligners.png", directions, orientation, null, null, null, 0, false);
 		case 2:
 			switch (orientation) {
 			case NORTH:
@@ -105,7 +105,7 @@ public class SilkBag {
 				directions.add(Direction.EAST);
 				break;
 			}
-			return new Corner(TILE_WIDTH, "Corner_Tile_with_alligners.png", directions, orientation, null, null, null, 0);
+			return new Corner(TILE_WIDTH, "Corner_Tile_with_alligners.png", directions, orientation, null, null, null, 0, false);
 		case 3:
 			switch (orientation) {
 			case NORTH:
@@ -129,13 +129,13 @@ public class SilkBag {
 				directions.add(Direction.WEST);
 				break;
 			}
-			return new TShaped(TILE_WIDTH, "T_Tile_With_alligners.png", directions, orientation, null, null, null, 0);
+			return new TShaped(TILE_WIDTH, "T_Tile_With_alligners.png", directions, orientation, null, null, null, 0, false);
 		case 4:
 			directions.add(Direction.NORTH);
 			directions.add(Direction.EAST);
 			directions.add(Direction.SOUTH);
 			directions.add(Direction.WEST);
-			return new Goal(TILE_WIDTH, "Goal_Tile_Animated-with-carpet-noise.gif", directions, orientation, null, null, null, 0);
+			return new Goal(TILE_WIDTH, "Goal_Tile_Animated-with-carpet-noise.gif", directions, orientation, null, null, null, 0, true);
 		default:
 			switch (orientation) {
 			case NORTH:
@@ -155,7 +155,7 @@ public class SilkBag {
 				directions.add(Direction.SOUTH);
 				break;
 			}
-			return new Straight(TILE_WIDTH, "straight_tile_with_alligners.png", directions, orientation, null, null, null, 0);
+			return new Straight(TILE_WIDTH, "straight_tile_with_alligners.png", directions, orientation, null, null, null, 0, false);
 		}
 	}
 	

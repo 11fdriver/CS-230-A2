@@ -181,16 +181,16 @@ public class BoardWindow extends BorderPane {
 	/**
 	 * Just for testing rn
 	 */
-	private void drawInventory() {
-		ArrayList<Direction> directions = new ArrayList<Direction>();
-		directions.add(Direction.SOUTH);
-		directions.add(Direction.WEST);
-		Direction orientation = Direction.EAST;
-		
-		FloorTile t = new Straight(TILE_WIDTH, "straight_tile_with_alligners.png", directions, orientation, null, null, null, 0);
-		
-		for (int i = 0; i < this.board.getLength(); i++) {
-			t.draw(inventoryCanvas.getGraphicsContext2D(), 0, i*TILE_WIDTH);
-		}
-	}
+//	private void drawInventory() {
+//		ArrayList<Direction> directions = new ArrayList<Direction>();
+//		directions.add(Direction.SOUTH);
+//		directions.add(Direction.WEST);
+//		Direction orientation = Direction.EAST;
+//		
+//		FloorTile t = new Straight(TILE_WIDTH, "straight_tile_with_alligners.png", directions, orientation, null, null, null, 0);
+//		
+//		for (int i = 0; i < this.board.getLength(); i++) {
+//			t.draw(inventoryCanvas.getGraphicsContext2D(), 0, i*TILE_WIDTH);
+//		}
+//	}
 }
