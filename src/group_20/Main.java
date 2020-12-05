@@ -40,8 +40,10 @@ public class Main extends Application {
 		
 		//Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
 		
-		Scene scene = new Scene(new BoardWindow(this.TILE_WIDTH, this.currentBoard), WINDOW_WIDTH, WINDOW_HEIGHT);
-		primaryStage.setScene(scene);
+		
+		Scene loadGame = new Scene(new LoadGameWindow(), WINDOW_WIDTH, WINDOW_HEIGHT);
+		//Scene scene = new Scene(new BoardWindow(this.TILE_WIDTH, this.currentBoard), WINDOW_WIDTH, WINDOW_HEIGHT);
+		primaryStage.setScene(loadGame);
 		primaryStage.show();
 		
 //		System.out.println("HERE");

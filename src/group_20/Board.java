@@ -181,7 +181,7 @@ public class Board extends Task<Void>{
 		Random r = new Random();
 		int x = r.nextInt(this.width);
 		int y = r.nextInt(this.length);
-		System.out.println("Inserting tile at: " + x + "," + y);
+		//System.out.println("Inserting tile at: " + x + "," + y);
 		this.gameBoard[x][y] = this.goalTile;
 		this.assignPlayersToTiles();
 	}
