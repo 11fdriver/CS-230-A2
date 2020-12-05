@@ -29,7 +29,7 @@ public class Main extends Application {
 	private static final int WINDOW_HEIGHT = CANVAS_HEIGHT + 100;
 	private static final int WINDOW_WIDTH = CANVAS_WIDTH + 300;
 	public static Canvas canvas = new Canvas(CANVAS_WIDTH, CANVAS_HEIGHT);
-	Board currentBoard = new Board(canvas,TILE_WIDTH,BOARD_WIDTH,BOARD_LENGTH);
+	Board currentBoard = new Board(canvas.getGraphicsContext2D(),BOARD_WIDTH,BOARD_LENGTH);
 	
 	public static void main(String[] args) {
 		System.out.println(Screen.getScreens().get(1).getBounds().getWidth() + "x" + Screen.getScreens().get(1).getBounds().getHeight());

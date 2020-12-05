@@ -69,14 +69,11 @@ public class Board extends Task<Void>{
 //	private Double yClick; //Think redundant??
 	
 	//For testing
-	public Board(Canvas canvas, int TILE_WIDTH, int width, int length) {
-		this.canvas = canvas;
-		this.gc = canvas.getGraphicsContext2D();
-		this.TILE_WIDTH = TILE_WIDTH;
+	public Board(GraphicsContext gc, int width, int length) {
+		this.gc = gc;
 		this.boardID = 1;
 		this.length = length;
 		this.width = width;
-		this.silkBag = new SilkBag(this.TILE_WIDTH);
 		this.gameBoard = new FloorTile[width][length];		
 		//player1 = new Player(this, this.silkBag, new Location(0,0));
 		Player[] newPlayers = {new Player(this, 1, new Location(0,1),null),
@@ -91,13 +88,11 @@ public class Board extends Task<Void>{
 	}
 	
 	//For testing too
-	public Board(int width, int length, int TILE_WIDTH) {
+	public Board(int width, int length) {
 		this.gc = null;
-		this.TILE_WIDTH = TILE_WIDTH;
 		this.boardID = 1;
 		this.length = length;
 		this.width = width;
-		this.silkBag = new SilkBag(this.TILE_WIDTH);
 		this.gameBoard = new FloorTile[width][length];		
 		//player1 = new Player(this, this.silkBag, new Location(0,0));
 		Player[] newPlayers = {new Player(this, 1, new Location(0,1),null),
@@ -127,11 +122,6 @@ public class Board extends Task<Void>{
 		this.randomizeAllPlayerLocations();//For testing
 	}
 	
-	//redundant as of this version
-	private void placeKnownTiles(FloorTile[] knownFloorTile, Location[] floorTileLocation) {
-		
-	}
-	
 	//Just for testing
 	public FloorTile generateGoalTile() {
 		ArrayList<Direction> directions = new ArrayList<Direction>();
@@ -139,7 +129,7 @@ public class Board extends Task<Void>{
 		directions.add(Direction.EAST);
 		directions.add(Direction.SOUTH);
 		directions.add(Direction.WEST);
-		return new Goal(TILE_WIDTH, "Goal_Tile_Animated-with-carpet-noise.gif", directions, Direction.NORTH, null, null, null, 0, true,null);
+		return new Goal(directions,null, null, null, 0, true);
 	}
 	
 	//Just for testing
@@ -595,7 +585,7 @@ public class Board extends Task<Void>{
 		for (int i = 0; i < this.width; i++) {
 			for (int j = 0; j < this.length; j++) {
 				FloorTile currentTile = this.gameBoard[i][j];
-				currentTile.draw(this.gc,i*TILE_WIDTH, j*TILE_WIDTH);
+				currentTile.draw(this.gc,i*Main.TILE_WIDTH, j*Main.TILE_WIDTH);
 			}
 		}
 		
@@ -719,25 +709,25 @@ public class Board extends Task<Void>{
 		if (this.canMove(playerLocation, Direction.NORTH)) {
 			Location lNorth = playerLocation.check(Direction.NORTH);
 			FloorTile tNorth = this.getTileAt(lNorth);
-			tNorth.highlight(this.gc, lNorth.getX()*this.TILE_WIDTH, lNorth.getY()*this.TILE_WIDTH);
+			tNorth.highlight(this.gc, lNorth.getX()*Main.TILE_WIDTH, lNorth.getY()*Main.TILE_WIDTH,null);
 			//System.out.println("Valid move at: " + lNorth.toString());
 		}
 		if (this.canMove(playerLocation, Direction.EAST)) {
 			Location lEast = playerLocation.check(Direction.EAST);
 			FloorTile tEast = this.getTileAt(lEast);
-			tEast.highlight(this.gc, lEast.getX()*this.TILE_WIDTH, lEast.getY()*this.TILE_WIDTH);
+			tEast.highlight(this.gc, lEast.getX()*Main.TILE_WIDTH, lEast.getY()*Main.TILE_WIDTH,null);
 			//System.out.println("Valid move at: " + lEast.toString());
 		}
 		if (this.canMove(playerLocation, Direction.SOUTH)) {
 			Location lSouth = playerLocation.check(Direction.SOUTH);
 			FloorTile tSouth = this.getTileAt(lSouth);
-			tSouth.highlight(this.gc, lSouth.getX()*this.TILE_WIDTH, lSouth.getY()*this.TILE_WIDTH);
+			tSouth.highlight(this.gc, lSouth.getX()*Main.TILE_WIDTH, lSouth.getY()*Main.TILE_WIDTH,null);
 			//System.out.println("Valid move at: " + lSouth.toString());
 		}
 		if (this.canMove(playerLocation, Direction.WEST)) {
 			Location lWest = playerLocation.check(Direction.WEST);
 			FloorTile tWest = this.getTileAt(lWest);
-			tWest.highlight(this.gc, lWest.getX()*this.TILE_WIDTH, lWest.getY()*this.TILE_WIDTH);
+			tWest.highlight(this.gc, lWest.getX()*Main.TILE_WIDTH, lWest.getY()*Main.TILE_WIDTH,null);
 			//System.out.println("Valid move at: " + lWest.toString());
 		}
 	}
@@ -750,7 +740,7 @@ public class Board extends Task<Void>{
 			for (int j = 0; j < this.length; j++) {
 				Location l = new Location(i,j);
 				if (this.canInsertAt(l)) {
-					this.gameBoard[i][j].highlight(this.gc, i*this.TILE_WIDTH, j*this.TILE_WIDTH);
+					this.gameBoard[i][j].highlight(this.gc, i*Main.TILE_WIDTH, j*Main.TILE_WIDTH,null);
 				}
 			}
 		}
@@ -763,8 +753,8 @@ public class Board extends Task<Void>{
 	 * @return Corresponding board index[x][y]
 	 */
 	public Location getCoordinateOfClick(Double xClick, Double yClick) {
-		int x = (int) Math.round(xClick)/this.TILE_WIDTH;
-		int y = (int) Math.round(yClick)/this.TILE_WIDTH;
+		int x = (int) Math.round(xClick)/Main.TILE_WIDTH;
+		int y = (int) Math.round(yClick)/Main.TILE_WIDTH;
 		return new Location(x,y);
 	}
 	
