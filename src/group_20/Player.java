@@ -1,5 +1,6 @@
 package group_20;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,7 +13,25 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 
 public class Player {
-	private final int TILE_WIDTH;
+	/**
+	 * 
+	 */
+	private static final String SEP = File.separator;
+	
+	/**
+	 * 
+	 */
+	private static final String CONFIG_DIR_PATH = ".lairofdagon" + SEP;
+	
+	/**
+	 * 
+	 */
+	private static final String TILE_IMG_DIR_PATH = CONFIG_DIR_PATH + "img" + SEP;
+	
+	/**
+	 * 
+	 */
+	private static final String HIGHLIGHT_IMG_FILEPATH = TILE_IMG_DIR_PATH + "highlight_img_name.png";//TODO change to actual file name
 	
 	/**
 	 * location of player
@@ -33,11 +52,6 @@ public class Player {
 	 * Reference to the current game board
 	 */
 	private Board board;
-	
-	/**
-	 * Reference to the current silk bag
-	 */
-	private SilkBag silkBag;
 	
 	/**
 	 * List of up to last 3 previous locations
@@ -85,6 +99,11 @@ public class Player {
 	private Profile profile;
 	
 	/**
+	 * Player identifier from 1 to 4 (inclusive)
+	 */
+	private int playerNumber;
+	
+	/**
 	 * Full Constructor to be called when loading a player object
 	 * @param board
 	 * @param silkbag
@@ -92,16 +111,16 @@ public class Player {
 	 * @param inventory
 	 * @param previousLocations
 	 */
-	public Player(Board board, SilkBag silkbag, int TILE_WIDTH, String spriteFilename, Location location, ArrayList<ActionTile> inventory, LocationList previousLocations, boolean hasBeenBacktracked) {
+	public Player(Board board, int playerNumber, Location location, Inventory inventory, LocationList previousLocations, boolean hasBeenBacktracked, Profile profile) {
 		this.board = board;
-		this.silkBag = silkbag;
-		this.TILE_WIDTH = TILE_WIDTH;
+		this.playerNumber = playerNumber;
 		this.location = location;
-		this.inventory = new Inventory(inventory);
+		this.inventory = inventory;
 		this.previousLocations = previousLocations;
 		this.hasBeenBacktracked = hasBeenBacktracked;
+		this.profile = profile;
 		this.numMoves = 1;
-		this.loadSprite(spriteFilename);
+		this.loadSprite();
 	}
 	
 	/**
@@ -110,16 +129,16 @@ public class Player {
 	 * @param silkBag
 	 * @param startingLocation
 	 */
-	public Player(Board board, SilkBag silkBag, int TILE_WIDTH, String spriteFilename, Location startingLocation) {
+	public Player(Board board, int playerNumber, Location startingLocation, Profile profile) {
 		this.board = board;
-		this.silkBag = silkBag;
-		this.TILE_WIDTH = TILE_WIDTH;
+		this.playerNumber = playerNumber;
 		this.location = startingLocation;
 		this.inventory = new Inventory();
 		this.previousLocations = new LocationList();
 		this.hasBeenBacktracked = false;
+		this.profile = profile;
 		this.numMoves = 1;
-		this.loadSprite(spriteFilename);
+		this.loadSprite();
 	}
 	
 	public void takeTurn() {
@@ -240,7 +259,7 @@ public class Player {
 	 * @return ActionTile if action tile was drawn or null if FloorTile was drawn
 	 */
 	public void drawTile() {
-		Tile drawnTile = silkBag.drawTile();
+		Tile drawnTile = SilkBag.removeTile();
 		//System.out.println(drawnTile.toString());
 		
 		//If is ActionTile
@@ -473,8 +492,8 @@ public class Player {
 	 * @param gc Graphics Context to draw onto
 	 */
 	public void draw(GraphicsContext gc) {
-		int x = this.getLocation().getX()*TILE_WIDTH + (TILE_WIDTH/4);
-		int y = this.getLocation().getY()*TILE_WIDTH;
+		int x = this.getLocation().getX()*Main.TILE_WIDTH + (Main.TILE_WIDTH/4);
+		int y = this.getLocation().getY()*Main.TILE_WIDTH;
 		gc.drawImage(sprite, x, y);
 	}
 	
@@ -504,10 +523,29 @@ public class Player {
 	 * Loads player's sprite from given file location
 	 * @param filename File name of sprite
 	 */
-	public void loadSprite(String filename) {
+	public void loadSprite() {
 		Image image = null;
+		String filename = TILE_IMG_DIR_PATH;
+		switch (this.playerNumber) {
+		case 1:
+			filename += "Howard-no-background.png";
+			break;
+		case 2:
+			filename += "Dagon-no-background.png";
+			break;
+		case 3:
+			filename += "Nightgaunt-no-background.png";
+			break;
+		case 4:
+			filename += "Shelley-no-background.png";
+			break;
+		default:
+			filename += "Howard-no-background.png";
+			break;
+		}
+		
 		try {
-			image = new Image(new FileInputStream(filename),(this.TILE_WIDTH/3)*2, (this.TILE_WIDTH/3)*2,true,true);
+			image = new Image(new FileInputStream(filename),(Main.TILE_WIDTH/3)*2, (Main.TILE_WIDTH/3)*2,true,true);
 		} catch (IOException e) {
 			System.out.println("Unable to find sprite file: " + filename);
 		}
@@ -528,9 +566,9 @@ public class Player {
 	 */
 	public void highlight(GraphicsContext gc) {
 		gc.setStroke(Color.MAGENTA);
-		int x = this.getLocation().getX()*TILE_WIDTH;
-		int y = this.getLocation().getY()*TILE_WIDTH;
-		gc.strokeOval(x, y, (TILE_WIDTH), (TILE_WIDTH));
+		int x = this.getLocation().getX()*Main.TILE_WIDTH;
+		int y = this.getLocation().getY()*Main.TILE_WIDTH;
+		gc.strokeOval(x, y, (Main.TILE_WIDTH), (Main.TILE_WIDTH));
 		gc.setStroke(Color.BLACK);
 	}
 	
