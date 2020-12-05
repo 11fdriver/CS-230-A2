@@ -90,7 +90,7 @@ public class FloorTile extends Tile implements Subscriber {
 	 * @param state			The current state of the tile, see {@link FloorAction}
 	 * @param lifetime		Turns left until {@code state} expires
 	 */
-	public FloorTile(ArrayList<Direction> directions, Direction orientation, Location location, Player player, FloorAction state, int lifetime, boolean fixed) {
+	public FloorTile(ArrayList<Direction> directions, Location location, Player player, FloorAction state, int lifetime, boolean fixed) {
 		//this.loadSprite(spriteFileLocation); //Sets this.sprite
 		this.DIRECTIONS = directions;
 		this.calculateRotation();

@@ -5,8 +5,8 @@ import javafx.scene.canvas.GraphicsContext;
 
 public class Goal extends FloorTile {
 	
-	public Goal(ArrayList<Direction> directions, Direction orientation, Location location, Player player, FloorAction state, int lifetime, boolean isFixed) {
-		super(directions, orientation, location, player, state, lifetime, isFixed);
+	public Goal(ArrayList<Direction> directions, Location location, Player player, FloorAction state, int lifetime, boolean isFixed) {
+		super(directions, location, player, state, lifetime, isFixed);
 	}
 	
 	public String toString() {
