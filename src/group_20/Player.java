@@ -80,6 +80,11 @@ public class Player {
 	private boolean isWaiting = false;
 	
 	/**
+	 * The profile linked to this object for storing stats
+	 */
+	private Profile profile;
+	
+	/**
 	 * Full Constructor to be called when loading a player object
 	 * @param board
 	 * @param silkbag
@@ -395,6 +400,22 @@ public class Player {
 	 */
 	public boolean getHasBeenBacktracked() {
 		return this.hasBeenBacktracked;
+	}
+	
+	/**
+	 * Setter for profile
+	 * @param profile New reference for profile
+	 */
+	public void setProfile(Profile profile) {
+		this.profile = profile;
+	}
+	
+	/**
+	 * Getter for profile
+	 * @return Player's profile
+	 */
+	public Profile getProfile() {
+		return this.profile;
 	}
 	
 	/**
