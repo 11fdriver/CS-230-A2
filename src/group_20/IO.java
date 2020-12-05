@@ -1,3 +1,5 @@
+package group_20;
+
 import java.io.*;
 import java.util.Scanner;
 

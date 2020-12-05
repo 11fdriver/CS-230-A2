@@ -1,4 +1,4 @@
-
+package group_20;
 
 /**
  *	Interface for Objects that should be able to subscribe to Notifiers. 

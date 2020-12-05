@@ -1,4 +1,4 @@
-
+package group_20;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;

@@ -1,3 +1,5 @@
+package group_20;
+
 import javafx.scene.canvas.GraphicsContext;
 
 public class IceAction extends FloorAction {

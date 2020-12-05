@@ -1,3 +1,5 @@
+package group_20;
+
 abstract public class Load extends IO{
 
     public abstract void load();//this needs a more appropriate name
