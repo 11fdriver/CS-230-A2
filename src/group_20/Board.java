@@ -183,6 +183,7 @@ public class Board extends Task<Void>{
 		int y = r.nextInt(this.length);
 		//System.out.println("Inserting tile at: " + x + "," + y);
 		this.gameBoard[x][y] = this.goalTile;
+		this.goalTile.setLocation(new Location(x,y));
 		this.assignPlayersToTiles();
 	}
 	
@@ -199,6 +200,7 @@ public class Board extends Task<Void>{
 	}
 	
 	//TODO currently ejected tiles are not returned to the silk bag
+	//TODO make sure tile locations are updated
 	/**
 	 * Inserts a given tile at a given location if the location is valid
 	 * @param t Tile to insert onto board
