@@ -858,4 +858,11 @@ public class Board extends Task<Void>{
 		System.out.println("GAME OVER!!!!");
 		return null;
 	}
+	
+	/**
+	 * Should update the leaderboard on who won and lost
+	 */
+	public void updateState() {
+		
+	}
 }

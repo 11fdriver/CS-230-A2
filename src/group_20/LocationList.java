@@ -2,8 +2,14 @@ package group_20;
 
 
 public class LocationList {
+	/**
+	 * List of 3 locations
+	 */
 	private Location[] list;
 	
+	/**
+	 * 
+	 */
 	public LocationList() {
 		this.list = new Location[3];
 	}
