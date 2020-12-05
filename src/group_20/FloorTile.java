@@ -57,7 +57,7 @@ public class FloorTile extends Tile implements Subscriber {
 	 */
 	private boolean isFixed;
 	
-	private Image highlightSprite;
+	//private Image highlightSprite;
 	
 	/**
 	 * Construct new FloorTile.
@@ -82,7 +82,7 @@ public class FloorTile extends Tile implements Subscriber {
 			this.stateLifetime = lifetime;
 		}
 		this.isFixed = isFixed;
-		this.loadHighlightSprite();
+		//this.loadHighlightSprite();
 	}
 	
 	/**
@@ -305,10 +305,10 @@ public class FloorTile extends Tile implements Subscriber {
 	 * @param gc GraphicsContext to draw onto
 	 */
 	public void highlight(GraphicsContext gc, int x, int y) {
-//		gc.setStroke(Color.ANTIQUEWHITE); //Can change colour if you want
-//		gc.strokeOval(x, y, this.TILE_WIDTH, this.TILE_WIDTH);
-//		gc.setStroke(Color.BLACK); //Just resets to black for now
-		gc.drawImage(this.highlightSprite, x, y);
+		gc.setStroke(Color.ANTIQUEWHITE); //Can change colour if you want
+		gc.strokeOval(x, y, this.TILE_WIDTH, this.TILE_WIDTH);
+		gc.setStroke(Color.BLACK); //Just resets to black for now
+		//gc.drawImage(this.highlightSprite, x, y);
 	}
   
   @Override
@@ -317,13 +317,13 @@ public class FloorTile extends Tile implements Subscriber {
     return "";
 	}
   
-  	public void loadHighlightSprite() {
-  		Image image = null;
-		try {
-			image = new Image(new FileInputStream("Ice-Transition-animation.gif"),this.TILE_WIDTH, this.TILE_WIDTH,true,true);
-		} catch (IOException e) {
-			//TODO add code
-		}
-		this.highlightSprite = (image);
-  	}
+//  	public void loadHighlightSprite() {
+//  		Image image = null;
+//		try {
+//			image = new Image(new FileInputStream("Ice-Transition-animation.gif"),this.TILE_WIDTH, this.TILE_WIDTH,true,true);
+//		} catch (IOException e) {
+//			//TODO add code
+//		}
+//		this.highlightSprite = (image);
+//  	}
 }
