@@ -37,6 +37,11 @@ public class Profile implements Saveable {
 	private int losses;
 	
 	/**
+	 * Board IDs for games player has played.
+	 */
+	private ArrayList<Integer> playedBoards;
+
+	/**
 	 * Amount of games Profile has played overall.
 	 */
 	private int played;
@@ -59,7 +64,7 @@ public class Profile implements Saveable {
 	 * @param losses	Amount of losses.
 	 * @param played	Amount of games participated in.
 	 */
-	public Profile(int id, String name, int wins, int losses, int played) {
+	public Profile(int id, String name, int wins, int losses, int played, ArrayList<Integer> playedBoards) {
 		// Don't trust users to keep profile IDs unique.
 		for (Profile p : profiles) {
 			if (p.ID == id) {
@@ -79,6 +84,7 @@ public class Profile implements Saveable {
 		this.wins = wins;
 		this.losses = losses;
 		this.played = played;
+		this.playedBoards = playedBoards;
 		profiles.add(this);
 	}
 	
@@ -116,7 +122,6 @@ public class Profile implements Saveable {
 	
 	/**
 	 * Increase amount of games won.
-	 * <br>
 	 * This should be used at the end of a game.
 	 */
 	public void incWins() {
@@ -132,7 +137,6 @@ public class Profile implements Saveable {
 	
 	/**
 	 * Increase amount of games lost.
-	 * <br>
 	 * This should be used at the end of a game.
 	 */
 	public void incLosses() {
@@ -147,23 +151,29 @@ public class Profile implements Saveable {
 	}
 	
 	/**
-	 * Increase amount of games played.
-	 * <br>
-	 * This should be used at the <b>beginning</b> of a game.
+	 * Increase amount of games played, 
+	 * adding new boardID if board is not played before.
+	 * @param boardID
 	 */
-	public void incPlayed() {
+	public void playOnBoard(int boardID) {
+		if (!playedBoards.contains(boardID)) {
+			playedBoards.add(boardID);
+		}
 		played++;
 	}
-
+	
 	@Override
 	public String saveFormat() {
-		return "{Profile, " +
-				ID + ", " +
-				name + ", " +
-				wins + ", " +
-				losses + ", " +
-				played + ", " +
-				"Profile}";
+		String str = String.format("{Profile, %03d, %s, %d, %d, %d, %s, %s, [",
+				ID,name,wins,losses,played);
+		for (int bID : playedBoards) {
+			str += bID + ", ";
+		}
+		if (str.endsWith(", ")) { // Profile may have played no boards.
+			str = str.substring(0, str.length() - 2);
+		}
+		str += "], Profile}";
+		return str;
 	}
 	
 }
