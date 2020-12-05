@@ -5,7 +5,7 @@ import java.util.*;
 /**
  * Profile stores user-specific data. 
  */
-public class Profile {
+public class Profile implements Saveable {
 	/**
 	 * Stores the next available Profile ID.
 	 */
@@ -153,6 +153,17 @@ public class Profile {
 	 */
 	public void incPlayed() {
 		played++;
+	}
+
+	@Override
+	public String saveFormat() {
+		return "{Profile, " +
+				ID + ", " +
+				name + ", " +
+				wins + ", " +
+				losses + ", " +
+				played + ", " +
+				"Profile}";
 	}
 	
 }
