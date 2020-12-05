@@ -53,6 +53,7 @@ public class Profile implements Saveable {
 	public Profile(String name) {
 		this.ID = nextID++;
 		this.name = name;
+		this.playedBoards = new ArrayList<Integer>();
 		profiles.add(this);
 	}
 	
@@ -63,6 +64,7 @@ public class Profile implements Saveable {
 	 * @param wins		Amount of wins.
 	 * @param losses	Amount of losses.
 	 * @param played	Amount of games participated in.
+	 * @param playedBoards ArrayList of boardIDs that a Profile has played on.
 	 */
 	public Profile(int id, String name, int wins, int losses, int played, ArrayList<Integer> playedBoards) {
 		// Don't trust users to keep profile IDs unique.
@@ -88,6 +90,10 @@ public class Profile implements Saveable {
 		profiles.add(this);
 	}
 	
+	/**
+	 * Get list of all Profiles created.
+	 * @return ArrayList of all Profiles
+	 */
 	public static ArrayList<Profile> getAll() {
 		return profiles;
 	}
