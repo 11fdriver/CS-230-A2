@@ -70,6 +70,16 @@ public class Player {
 	private int currentStageOfTurn;
 	
 	/**
+	 * The current action tile the player has chosen to play
+	 */
+	private ActionTile chosenActionTile = null;
+	
+	/**
+	 * Stores if the player it waiting for input from the GUI
+	 */
+	private boolean isWaiting = false;
+	
+	/**
 	 * Full Constructor to be called when loading a player object
 	 * @param board
 	 * @param silkbag
@@ -278,6 +288,10 @@ public class Player {
 		return this.tileToInsert != null;
 	}
 	
+	/**
+	 * Returns the current tile the player has chosen to insert onto board
+	 * @return Tile player is waiting to insert
+	 */
 	public FloorTile getTileToInsert() {
 		return this.tileToInsert;
 	}
@@ -415,6 +429,9 @@ public class Player {
 		this.numMoves -= decAmount;
 	}
 	
+	/**
+	 * Removes the pointer to this player from the tile on the board at the location of this player
+	 */
 	public void removeFromCurrentTile() {
 		FloorTile currentlyOn = this.board.getTileAt(this.location);
 		if (currentlyOn != null) {
@@ -422,17 +439,29 @@ public class Player {
 		}
 	}
 	
+	/**
+	 * Adds a pointer to this player to the tile at this player's location on the board
+	 */
 	public void addToCurrentTile() {
 		FloorTile currentlyOn = this.board.getTileAt(this.location);
 		currentlyOn.setPlayer(this);
 	}
 	
+	/**
+	 * Draws the player on a given graphics context
+	 * @param gc Graphics Context to draw onto
+	 */
 	public void draw(GraphicsContext gc) {
 		int x = this.getLocation().getX()*TILE_WIDTH + (TILE_WIDTH/4);
 		int y = this.getLocation().getY()*TILE_WIDTH;
 		gc.drawImage(sprite, x, y);
 	}
 	
+	/**
+	 * Sets the player to a random location on the board
+	 * @param boardWidth Width of board
+	 * @param boardLength Length of board
+	 */
 	public void randomizeLocation(int boardWidth, int boardLength) {
 		Random r = new Random();
 		int x = r.nextInt(boardWidth - 1);
@@ -440,25 +469,20 @@ public class Player {
 		this.setLocation(new Location(x,y));
 	}
 	
-	public String inventoryToString() {
-		String str = "[";
-		if (this.inventory != null) {
-			for (int i = 0; i < this.inventory.getLength() -1; i++) {
-				str += "ActionTile,";
-				//ActionTile temp = this.inventory.get(i);
-			}
-			str += "ActionTile";
-		}
-		str += "]";
-		return str;
-	}
-	
+	/**
+	 * Converts the player object to a readable string
+	 * @return Player object as a readable string
+	 */
 	public String toString() {
 		return "Location: " + this.location.toString() + "\n"
 				+ "Previous Locations: " + this.previousLocations.toString() + "\n"
-				+ "Inventory: " + this.inventoryToString();
+				+ "Inventory: " + this.inventory.toString();
 	}
 	
+	/**
+	 * Loads player's sprite from given file location
+	 * @param filename File name of sprite
+	 */
 	public void loadSprite(String filename) {
 		Image image = null;
 		try {
@@ -469,10 +493,18 @@ public class Player {
 		this.sprite = image;
 	}
 	
+	/**
+	 * Getter for currentStageOfTurn
+	 * @return Current stage of player's turn
+	 */
 	public int getCurrentStageOfTurn() {
 		return this.currentStageOfTurn;
 	}
 	
+	/**
+	 * Highlights player on the given graphics context
+	 * @param gc Graphics context to draw highlight on
+	 */
 	public void highlight(GraphicsContext gc) {
 		gc.setStroke(Color.MAGENTA);
 		int x = this.getLocation().getX()*TILE_WIDTH;
@@ -481,10 +513,10 @@ public class Player {
 		gc.setStroke(Color.BLACK);
 	}
 	
-	//dw these are just here for testing -> will move to top later
-	private ActionTile chosenActionTile = null;
-	private boolean isWaiting = false;
-	
+	/**
+	 * Sets the chosen action tile for player to use
+	 * @param t Action tile for player to use
+	 */
 	public void setChosenActionTile(ActionTile t) {
 		this.chosenActionTile = t;
 		System.out.println("Removing action tile");
@@ -492,10 +524,18 @@ public class Player {
 		System.out.println("Removed action tile");
 	}
 	
+	/**
+	 * Checks of the player is waiting for input from GUI
+	 * @return True if player is waiting for input from GUI
+	 */
 	public boolean isWaiting() {
 		return this.isWaiting;
 	}
 	
+	/**
+	 * Sets the player object to wait for input from the GUI
+	 * - Sets the value of chosenActionTile to corresponding input from GUI
+	 */
 	public void selectTileFromInventory() {
 		synchronized (this) {
 			this.setChosenActionTile(null);
