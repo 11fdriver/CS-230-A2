@@ -278,6 +278,10 @@ public class Player {
 		return this.tileToInsert != null;
 	}
 	
+	public FloorTile getTileToInsert() {
+		return this.tileToInsert;
+	}
+	
 	/**
 	 * Allows the player to move in a direction
 	 * @param d Direction to move
