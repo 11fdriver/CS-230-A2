@@ -18,27 +18,27 @@ public class FloorTile extends Tile implements Subscriber {
 	/**
 	 * 
 	 */
-	private static final String SEP = File.separator;
+	protected static final String SEP = File.separator;
 	
 	/**
 	 * 
 	 */
-	private static final String CONFIG_DIR_PATH = ".lairofdagon" + SEP;
+	protected static final String CONFIG_DIR_PATH = ".lairofdagon" + SEP;
 	
 	/**
 	 * 
 	 */
-	private static final String TILE_IMG_DIR_PATH = CONFIG_DIR_PATH + "img" + SEP;
+	protected static final String TILE_IMG_DIR_PATH = CONFIG_DIR_PATH + "img" + SEP;
 	
 	/**
 	 * 
 	 */
-	private static final String HIGHLIGHT_IMG_FILEPATH = TILE_IMG_DIR_PATH + "highlight_img_name.png";//TODO change to actual file name
+	protected static final String HIGHLIGHT_IMG_FILEPATH = TILE_IMG_DIR_PATH + "highlight_img_name.png";//TODO change to actual file name
 	
 	/**
 	 * ArrayList containing exit/entry points.
 	 */
-	private final ArrayList<Direction> DIRECTIONS;
+	protected final ArrayList<Direction> DIRECTIONS;
 	
 	/**
 	 * Location of tile.

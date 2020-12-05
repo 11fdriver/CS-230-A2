@@ -12,10 +12,6 @@ import javafx.scene.input.MouseEvent;
 //TODO make sure can't push fixed tiles
 //TODO currently tiles don't really keep track of players: There's a lot of null pointers and pointers which aren't valid any more. Fix this.
 public class Board extends Task<Void>{
-	/**
-	 * Width of tiles -> Used for image scaling
-	 */
-	private final int TILE_WIDTH;
 	
 	/**
 	 * Reference to the board template used
@@ -60,11 +56,6 @@ public class Board extends Task<Void>{
 	private int currentPlayer;
 	
 	/**
-	 * Canvas of board
-	 */
-	private Canvas canvas;
-	
-	/**
 	 * Graphic context of board
 	 */
 	private GraphicsContext gc;
@@ -88,10 +79,10 @@ public class Board extends Task<Void>{
 		this.silkBag = new SilkBag(this.TILE_WIDTH);
 		this.gameBoard = new FloorTile[width][length];		
 		//player1 = new Player(this, this.silkBag, new Location(0,0));
-		Player[] newPlayers = {new Player(this, this.silkBag,this.TILE_WIDTH,"Howard-no-background.png", new Location(0,1)),
-				new Player(this, this.silkBag,this.TILE_WIDTH,"Dagon-no-background.png",new Location(1,1)),
-				new Player(this, this.silkBag,this.TILE_WIDTH,"Nightgaunt-no-background.png",new Location(2,1)),
-				new Player(this, this.silkBag,this.TILE_WIDTH,"Shelley-no-background.png",new Location(3,1))};
+		Player[] newPlayers = {new Player(this, 1, new Location(0,1),null),
+				new Player(this,2,new Location(1,1),null),
+				new Player(this, 3,new Location(2,1),null),
+				new Player(this, 4,new Location(3,1),null)};
 		this.players = newPlayers;
 		this.currentPlayer = 0;
 		this.goalTile = (Goal) this.generateGoalTile();
@@ -109,10 +100,10 @@ public class Board extends Task<Void>{
 		this.silkBag = new SilkBag(this.TILE_WIDTH);
 		this.gameBoard = new FloorTile[width][length];		
 		//player1 = new Player(this, this.silkBag, new Location(0,0));
-		Player[] newPlayers = {new Player(this, this.silkBag,this.TILE_WIDTH,"Howard-no-background.png", new Location(0,0)),
-				new Player(this, this.silkBag,this.TILE_WIDTH,"Dagon-no-background.png",new Location(0,0)),
-				new Player(this, this.silkBag,this.TILE_WIDTH,"Nightgaunt-no-background.png",new Location(0,0)),
-				new Player(this, this.silkBag,this.TILE_WIDTH,"Shelley-no-background.png",new Location(0,0))};
+		Player[] newPlayers = {new Player(this, 1, new Location(0,1),null),
+				new Player(this,2,new Location(1,1),null),
+				new Player(this, 3,new Location(2,1),null),
+				new Player(this, 4,new Location(3,1),null)};
 		this.players = newPlayers;
 		this.currentPlayer = 0;
 		this.goalTile = (Goal) this.generateGoalTile();
@@ -120,23 +111,17 @@ public class Board extends Task<Void>{
 		this.randomizeAllPlayerLocations();//For testing
 	}
 	
-	public Board(Canvas canvas, int TILE_WIDTH,int boardID, int width, int length, SilkBag silkBag, FloorTile[][] gameBoard) {
-		this.canvas = canvas;
-		this.gc = canvas.getGraphicsContext2D();
-		this.TILE_WIDTH = TILE_WIDTH;
+	public Board(int boardID, int width, int length, FloorTile[][] gameBoard, Player[] players, int startingPlayer) {
 		this.boardID = boardID;
 		this.length = length;
 		this.width = width;
-		this.silkBag = silkBag;
 		this.gameBoard = gameBoard;
-		//this.gameBoard = new FloorTile[width][length];		
-		//player1 = new Player(this, this.silkBag, new Location(0,0));
-		Player[] newPlayers = {new Player(this, this.silkBag,this.TILE_WIDTH,"Howard-no-background.png", new Location(0,0)),
-				new Player(this, this.silkBag,this.TILE_WIDTH,"Dagon-no-background.png",new Location(0,0)),
-				new Player(this, this.silkBag,this.TILE_WIDTH,"Nightgaunt-no-background.png",new Location(0,0)),
-				new Player(this, this.silkBag,this.TILE_WIDTH,"Shelley-no-background.png",new Location(0,0))};
-		this.players = newPlayers;
-		this.currentPlayer = 0;
+//		Player[] newPlayers = {new Player(this, 1, new Location(0,1),null),
+//				new Player(this,2,new Location(1,1),null),
+//				new Player(this, 3,new Location(2,1),null),
+//				new Player(this, 4,new Location(3,1),null)};
+		this.players = players;
+		this.currentPlayer = startingPlayer;
 		this.goalTile = (Goal) this.generateGoalTile();
 		this.populate();//TODO change from temp full population with random tiles
 		this.randomizeAllPlayerLocations();//For testing
@@ -154,7 +139,7 @@ public class Board extends Task<Void>{
 		directions.add(Direction.EAST);
 		directions.add(Direction.SOUTH);
 		directions.add(Direction.WEST);
-		return new Goal(TILE_WIDTH, "Goal_Tile_Animated-with-carpet-noise.gif", directions, Direction.NORTH, null, null, null, 0, true);
+		return new Goal(TILE_WIDTH, "Goal_Tile_Animated-with-carpet-noise.gif", directions, Direction.NORTH, null, null, null, 0, true,null);
 	}
 	
 	//Just for testing
