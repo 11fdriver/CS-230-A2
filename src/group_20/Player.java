@@ -612,4 +612,35 @@ public class Player {
 			this.isWaiting = false;
 		}
 	}
+	
+	public String saveFormat() {
+		//(Board board, int playerNumber, Location location, Inventory inventory, LocationList previousLocations, boolean hasBeenBacktracked, Profile profile)
+		String str = "{Player," +
+				this.playerNumber + "," +
+				this.location.toString() + "," +
+				this.inventory.saveFormat() + "," +
+				this.previousLocations.toString() + "," +
+				this.hasBeenBacktracked + ",";
+		if (this.profile == null) {
+			str += "null,";
+		} else {
+			str += this.profile.getProfileID() + ",";
+		}
+		str += "Player}";
+		return str;
+	}
+	
+	public static void main(String[] args) {
+		Inventory inv = new Inventory();
+		LocationList locList = new LocationList();
+		Player p = new Player(null,1,new Location(1,7), inv, locList, false, null);
+		System.out.println(p.saveFormat());
+		inv.add(new ActionTile(new FireAction()));
+		inv.add(new ActionTile(new FireAction()));
+		inv.add(new ActionTile(new IceAction()));
+		locList.add(new Location(1,7));
+		locList.add(new Location(1,3));
+		locList.add(new Location(2,7));
+		System.out.println(p.saveFormat());
+	}
 }

@@ -86,6 +86,19 @@ public class Inventory {
 		
 	}
 	
+	public String saveFormat() {
+		if (this.isEmpty()) {
+			return "{Inventory,empty,Inventory}";
+		} else {
+			String str = "{Inventory,";
+			for (int i = 0; i < this.inv.size()-1; i++) {
+				str += this.inv.get(i).saveFormat() + ",";
+			}
+			str += this.inv.get(this.inv.size()-1).saveFormat() + ",Inventory}";
+			return str;
+		}
+	}
+	
 	public static void main(String[] agrs) {
 		Inventory i = new Inventory();
 		i.printString();
@@ -102,6 +115,8 @@ public class Inventory {
 		i.add(new ActionTile(new BacktrackAction()));
 		i.add(new ActionTile(new DoubleMoveAction()));
 		i.printString();
+		
+		System.out.println(i.saveFormat());
 
 	}
 }
