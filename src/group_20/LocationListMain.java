@@ -1,4 +1,6 @@
 
+
+
 public class LocationListMain {
 	public static void main(String[] agrs) {
 		LocationList ls = new LocationList();

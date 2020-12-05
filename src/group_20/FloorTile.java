@@ -1,346 +1,329 @@
+
+
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
 
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.image.BufferedImage;
-import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 
-import javax.imageio.ImageIO;
-
-public class FloorTile extends Tile {
-	//def = default
-	private int side; 
-	private boolean isFixed;
-	private int orientation;
-	private boolean onFire;
-	private boolean isFrozen;
+/**
+ * Class for a Tile that can be placed onto the {@link Board}.
+ */
+public class FloorTile extends Tile implements Subscriber {
+	/**
+	 * Width of tiles -> Used in sprite scaling when loading sprite
+	 */
+	private final int TILE_WIDTH;
+	
+	/**
+	 * ArrayList containing exit/entry points.
+	 */
+	private final ArrayList<Direction> DIRECTIONS;
+	
+	/**
+	 * Location of tile.
+	 */
 	private Location location;
-	private Player myPlayer;
-	private int defSide;
-	private boolean defFixed;
-	private int defOrientation;
-	private boolean defFire;
-	private boolean defFrozen;
-	private Location defLocation;
-	private Player defPlayer;
-	ArrayList <Integer> degrees = new ArrayList <Integer>();
 	
-	public FloorTile(int side, boolean isFixed, int orientation, boolean onFire, boolean isFrozen, Location location, Player myPlayer) {
-		this.setSide(side);
-		this.setDefSide(side); 
-		this.setFixed(isFixed);
-		this.setDefFixed(isFixed); 
-		this.setOrientation(orientation);
-		this.setDefOrientation(orientation); 
-		this.setOnFire(onFire);
-		this.setDefFire(onFire); 
-		this.setFrozen(isFrozen);
-		this.setDefFrozen(isFrozen);
-		this.setLocation(location);
-		this.setDefLocation(location);
-		this.setMyPlayer(myPlayer);
-		this.setDefPlayer(myPlayer);
-	}
+	/**
+	 * Player that is currently on tile.
+	 */
+	private Player player;
 	
-	public String toString() {
-		String result = "";
-		result += "Its side length is " + getSide() + "\n";
-		if (getIsFixed() == true) {
-			result += "It is fixed" + "\n";
-		} else {
-			result += "It is not fixed" + "\n";
-		} 
-		if (getIsFrozen() == true) {
-			result += "It is frozen" + "\n";
-		} else {
-			result += "It is not frozen" + "\n";
-		} 
-		if (isOnFire() == true) {
-			result += "It is on fire" + "\n";
-		} else {
-			result += "It is not on fire" + "\n";
-		} 
-		result += "Its orientation is " + getOrientation() + " degrees" + "\n";
-		result += "Its position on the board is " + getLocation().getX() + "," + getLocation().getY() + "\n";
-		if (getMyPlayer() == null) {
-			result += "It does not contain a player" + "\n";
-		} else {
-			result += "It contains a player" + "\n";
+	/**
+	 * Set when a FloorAction is used on a FloorTile
+	 */
+	private FloorAction state;
+	
+	/**
+	 * The length of time until the state expires.
+	 */
+	private int stateLifetime;
+	
+	/**
+	 * Orientation of tile clockwise from 12 o'clock
+	 */
+	private Direction orientation;
+	
+	/**
+	 * Stores image of tile for drawing
+	 */
+	private Image sprite;
+	
+	/**
+	 * Stores if the tile is fixed
+	 */
+	private boolean isFixed;
+	
+	//private Image highlightSprite;
+	
+	/**
+	 * Construct new FloorTile.
+	 * <br>
+	 * Will <b>not</b> set a non-player state when there is already a Player.
+	 * @param directions	Directions which a player can enter or exit a tile via.
+	 * @param location		Location at which this tile is on the {@link Board}.
+	 * @param player		The {@link Player} on this tile.
+	 * @param state			The current state of the tile, see {@link FloorAction}
+	 * @param lifetime		Turns left until {@code state} expires
+	 */
+	public FloorTile(int TILE_WIDTH, String spriteFileLocation, ArrayList<Direction> directions, Direction orientation, Location location, Player player, FloorAction state, int lifetime, boolean isFixed) {
+		this.TILE_WIDTH = TILE_WIDTH;
+		this.loadSprite(spriteFileLocation); //Sets this.sprite
+		this.DIRECTIONS = directions;
+		this.orientation = orientation;
+		this.location = location;
+		this.player = player;
+		if (null == player || (null != state && state.acceptsPlayer())) {
+			this.state = state;
+			TurnNotifier.addSubscriber(this);
+			this.stateLifetime = lifetime;
 		}
-		return result;
-	}
-
-	/**
-	 * @return the side
-	 */
-	public int getSide() {
-		return side;
-	}
-
-	/**
-	 * @param side the side to set
-	 */
-	public void setSide(int side) {
-		this.side = side;
+		this.isFixed = isFixed;
+		//this.loadHighlightSprite();
 	}
 	
 	/**
-	 * @return the isFixed
+	 * Whether a player can move to this tile via the given Direction,
+	 * assuming that they can exit from their current tile.
+	 * <br>
+	 * A {@link Player} cannot move to a tile if a {@link FloorAction} prevents it, or if it already occupied.
+	 * @param d Direction from which the Player would like to move
+	 * @return True if a Player can move to this tile
 	 */
-	public boolean getIsFixed() {
-		return isFixed;
+	public boolean canEnterFrom(Direction d) {
+		return (null == state || state.acceptsPlayer()) && null == player && DIRECTIONS.contains(d);
 	}
-
+	
 	/**
-	 * @param isFixed the isFixed to set
+	 * Whether a player can exit in the desired {@link Direction},
+	 * assuming that they can enter to the next tile.
+	 * @param d Direction to which the Player would like to move
+	 * @return True if a Player can move from this tile
 	 */
-	public void setFixed(boolean isFixed) {
-		this.isFixed = isFixed;
+	public boolean canExitTo(Direction d) {
+		return DIRECTIONS.contains(d);
 	}
-
+	
 	/**
-	 * @return the orientation
+	 * Whether a FloorTile can be shifted across the {@link Board}.
+	 * @return True if shifting is possible
 	 */
-	public int getOrientation() {
-		return orientation;
+	public boolean canShift() {
+		return (null == state || state.acceptsShift());
 	}
-
+	
 	/**
-	 * @param orientation the orientation to set
+	 * Allows a FloorAction to affect the FloorTile, subscribing to the TurnNotifier.
+	 * <br>
+	 * Will <b>not</b> set a non-player state when there is already a Player.
+	 * @param action Action being used on this FloorTile
 	 */
-	public void setOrientation(int orientation) {
+	public void setState(FloorAction action) {
+		if (null != player && !action.acceptsPlayer()) { // Don't set non-player state if already a player
+			return;
+		}
+		this.state = action;
+		this.stateLifetime = action.getLifetime();
+		TurnNotifier.addSubscriber(this);
+	}
+	
+	/**
+	 * Getter for TILE_WIDTH
+	 * @return TILE_WIDTH
+	 */
+	public int getTileWidth() {
+		return this.TILE_WIDTH;
+	}
+	
+	 /**
+	  * Setter for orientation
+	  * @param orientation New value
+	  */
+	public void setOrientation(Direction orientation) {
 		this.orientation = orientation;
 	}
-
+	
 	/**
-	 * @return the onFire
+	 * Getter for orientation
+	 * @return Orientation of this tile
 	 */
-	public boolean isOnFire() {
-		return onFire;
-	}
-
-	/**
-	 * @param onFire the onFire to set
-	 */
-	public void setOnFire(boolean onFire) {
-		this.onFire = onFire;
-	}
-
-	/**
-	 * @return the isFrozen
-	 */
-	public boolean getIsFrozen() {
-		return isFrozen;
-	}
-
-	/**
-	 * @param isFrozen the isFrozen to set
-	 */
-	public void setFrozen(boolean isFrozen) {
-		this.isFrozen = isFrozen;
-	}
-
-	/**
-	 * @return the defSide
-	 */
-	public int getDefSide() {
-		return defSide;
-	}
-
-	/**
-	 * @param defSide the defSide to set
-	 */
-	public void setDefSide(int defSide) {
-		this.defSide = defSide;
-	}
-
-	/**
-	 * @return the defFixed
-	 */
-	public boolean isDefFixed() {
-		return defFixed;
-	}
-
-	/**
-	 * @param defFixed the defFixed to set
-	 */
-	public void setDefFixed(boolean defFixed) {
-		this.defFixed = defFixed;
-	}
-
-	/**
-	 * @return the defOrientation
-	 */
-	public int getDefOrientation() {
-		return defOrientation;
-	}
-
-	/**
-	 * @param defOrientation the defOrientation to set
-	 */
-	public void setDefOrientation(int defOrientation) {
-		this.defOrientation = defOrientation;
-	}
-
-	/**
-	 * @return the defFire
-	 */
-	public boolean isDefFire() {
-		return defFire;
-	}
-
-	/**
-	 * @param defFire the defFire to set
-	 */
-	public void setDefFire(boolean defFire) {
-		this.defFire = defFire;
-	}
-
-	/**
-	 * @return the defFrozen
-	 */
-	public boolean isDefFrozen() {
-		return defFrozen;
-	}
-
-	/**
-	 * @param defFrozen the defFrozen to set
-	 */
-	public void setDefFrozen(boolean defFrozen) {
-		this.defFrozen = defFrozen;
-	}
-
-	/**
-	 * @return the defLocation
-	 */
-	public Location getDefLocation() {
-		return defLocation;
-	}
-
-	/**
-	 * @param defLocation the defLocation to set
-	 */
-	public void setDefLocation(Location defLocation) {
-		this.defLocation = defLocation;
-	}
-
-	/**
-	 * @return the defPlayer
-	 */
-	public Player getDefPlayer() {
-		return defPlayer;
-	}
-
-	/**
-	 * @param defPlayer the defPlayer to set
-	 */
-	public void setDefPlayer(Player defPlayer) {
-		this.defPlayer = defPlayer;
+	public Direction getOrientation() {
+		return this.orientation;
 	}
 	
 	/**
-	 * @return the Location
+	 * @return FloorTile's location.
 	 */
 	public Location getLocation() {
-		return location;
+		return this.location.copy();
 	}
-
+	
 	/**
-	 * @param Location the Location to set
+	 * @param loc New location for FloorTile
 	 */
-	public void setLocation(Location location) {
-		this.location = location;
+	public void setLocation(Location loc) {
+		this.location = loc;
 	}
-
+	
 	/**
-	 * @return the myPlayer
+	 * Checks if tile is fixed
+	 * @return True if tile is fixed
 	 */
-	public Player getMyPlayer() {
-		return myPlayer;
+	public boolean isFixed() {
+		return this.isFixed;
 	}
-
+	
 	/**
-	 * @param myPlayer the myPlayer to set
+	 * Sets Player onto FloorTile.
+	 * @param p Player to put onto FloorTile. Null if unsetting.
 	 */
-	public void setMyPlayer(Player myPlayer) {
-		this.myPlayer = myPlayer;
+	public void setPlayer(Player p) {
+		this.player = p;
 	}
 	
-	public void draw(int x, int y, GraphicsContext g, int tileWidth) {
-		g.strokeRect(x, y, tileWidth, tileWidth);
+	/**
+	 * Getter for player
+	 * @return Tile's player
+	 */
+	public Player getPlayer() {
+		return this.player;
 	}
 	
-	BufferedImage img;
-	public void draw(Graphics g) throws IOException {
-		img = ImageIO.read(new File("C:\\Users\\Owner\\Pictures\\EmptyTile.png"));
-		g.drawImage(img, 0, 0, null);
-	}
-	
-	/*public void paint(Graphics g) throws IOException {
-		BufferedImage img = ImageIO.read(new File("C:\\Users\\Owner\\Pictures\\EmptyTile.png"));
-		g.drawImage(img, 0, 0, null);
-    }
-	
-	public Dimension getPreferredSize() throws IOException {
-		BufferedImage img = ImageIO.read(new File("C:\\Users\\Owner\\Pictures\\EmptyTile.png"));
-		if (img == null) {
-             return new Dimension(100,100);
-        } else {
-           return new Dimension(img.getWidth(null), img.getHeight(null));
-       }
-    }*/
-	
+	/**
+	 * Checks if tile contains a player
+	 * @return True if tile contains a player
+	 */
 	public boolean hasPlayer() {
-		if (getMyPlayer() == null) {
-			return false;
-		} else {
-			return true;
+		return this.player != null;
+	}
+	
+	/**
+	 * Setter for sprite
+	 * @param sprite New sprite
+	 */
+	public void setSprite(Image sprite) {
+		this.sprite = sprite;
+	}
+	
+	/**
+	 * Getter for sprite
+	 * @return Sprite for this tile
+	 */
+	public Image getSprite() {
+		return this.sprite;
+	}
+	
+	/**
+	 * update(), in this context, decrements the remaining lifetime of the state,
+	 * unsubscribing from the notifier, and resetting the state, when at 0.
+	 */
+	@Override
+	public void update() {
+		if (0 == --stateLifetime) {
+			this.state = null;
+			TurnNotifier.delSubscriber(this);
 		}
-	}
-	
-	public void randomizeOrientation() {
-		degrees.add(0);
-		degrees.add(90);
-		degrees.add(180);
-		degrees.add(270);
-		Collections.shuffle(degrees);
-		this.setOrientation(degrees.get(0));
-	}
-	
-	public void notifyMe() {
-		if (getIsFrozen() == true) {
-			setFrozen(false);
-		} 
-		if (isOnFire() == true) {
-			setOnFire(false);
-		}
-	}
-	
-	public void reset() {
-		this.setSide(defSide);
-		this.setFixed(defFixed);
-		this.setOrientation(defOrientation);
-		this.setOnFire(defFire);
-		this.setFrozen(defFrozen);
-		this.setLocation(defLocation);
-		this.setMyPlayer(defPlayer);
 	}
 
-	public static void main(String args[]) {
-		FloorTile f1 = new FloorTile (5, true, 90, false, false, new Location (0,0), null);
-		FloorTile f2 = new FloorTile (5, false, 90, true, true, new Location (1,2), null);
-		System.out.println(f1.toString());
-		f1.randomizeOrientation();
-		System.out.println(f1.getOrientation());
-		f1.reset();
-		System.out.println(f1.toString());
-		System.out.println(f2.toString());
-		f2.notifyMe();
-		f2.randomizeOrientation();
-		System.out.println(f2.toString());
+//	@Override
+//	public void draw(Location loc) {
+//		boolean n = DIRECTIONS.contains(Direction.NORTH);
+//		boolean e = DIRECTIONS.contains(Direction.EAST);
+//		boolean s = DIRECTIONS.contains(Direction.SOUTH);
+//		boolean w = DIRECTIONS.contains(Direction.WEST);
+//		switch (DIRECTIONS.size()) {
+//		case 2:
+//			if (n && e) {
+//				// Draw Corner from North to East
+//			} else if (n && s) {
+//				// Draw Straight from East to West
+//			} else if (n && w) {
+//				// Draw Corner from North to West
+//			} else if (e && s) {
+//				// Draw Corner from East to South
+//			} else if (e && w) {
+//				// Draw Straight from East to West
+//			} else if (s && w) {
+//				// Draw Corner from South to West
+//			}
+//
+//		case 3:
+//			if (n && e && s) {
+//				// Draw T-Shaped with North, East, South
+//			} else if (e && s && w) {
+//				// Draw T-Shaped with East, South, West
+//			} else if (s && w && n) {
+//				// Draw T-Shaped with South, West, North
+//			} else if (w && n && e) {
+//				// Draw T-Shaped with West, North, East
+//			}
+//		case 4:
+//			; // Draw goal;
+//		}
+//	}
+	
+	@Override
+	public void draw(GraphicsContext gc, int x, int y) {
+		//TODO probably set this method to abstract -> There shouldn't really be code here
 	}
+	
+	/**
+	 * Sets value for this.sprite to image at file location
+	 * @param fileLocation File location of sprite image
+	 */
+	public void loadSprite(String fileLocation) {
+		Image image = null;
+		try {
+			image = new Image(new FileInputStream(fileLocation),this.TILE_WIDTH, this.TILE_WIDTH,true,true);
+		} catch (IOException e) {
+			//TODO add code
+		}
+		this.setSprite(image);
+	}
+	
+	@Override
+	public String saveFormat() {
+		// TODO Auto-generated method stub
+		String str = "FT{";
+		for (Direction d : DIRECTIONS) {
+			str += d.toString();
+			str += ",";
+		}
+		str += // player.saveFormat() + ";" + // TODO: Player needs to implement Saveable
+			state.saveFormat() + ";" +
+			String.valueOf(stateLifetime) + "}";
+		return str ;
+	}
+	
+	/**
+	 * Highlights this tile on the board
+	 * @param x X coordinate to draw
+	 * @param y Y coordinate to draw
+	 * @param gc GraphicsContext to draw onto
+	 */
+	public void highlight(GraphicsContext gc, int x, int y) {
+		gc.setStroke(Color.ANTIQUEWHITE); //Can change colour if you want
+		gc.strokeOval(x, y, this.TILE_WIDTH, this.TILE_WIDTH);
+		gc.setStroke(Color.BLACK); //Just resets to black for now
+		//gc.drawImage(this.highlightSprite, x, y);
+	}
+  
+  @Override
+	public String toString() {
+		// TODO: Write toString()
+    return "";
+	}
+  
+//  	public void loadHighlightSprite() {
+//  		Image image = null;
+//		try {
+//			image = new Image(new FileInputStream("Ice-Transition-animation.gif"),this.TILE_WIDTH, this.TILE_WIDTH,true,true);
+//		} catch (IOException e) {
+//			//TODO add code
+//		}
+//		this.highlightSprite = (image);
+//  	}
 }
