@@ -7,6 +7,7 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.scene.layout.BorderPane;
@@ -20,7 +21,7 @@ import javafx.scene.control.Button;
 public class Main extends Application {
 	private static final int SHAPE_SIZE = 20;
 	private static final int SHAPE_SIZE_UPPER_BOUND = 100;
-	private static final int TILE_WIDTH = 120;
+	public static final int TILE_WIDTH = 80;
 	private static final int BOARD_WIDTH = 9;
 	private static final int BOARD_LENGTH = 9;
 	private static final int CANVAS_HEIGHT = TILE_WIDTH * BOARD_LENGTH;
@@ -31,6 +32,7 @@ public class Main extends Application {
 	Board currentBoard = new Board(canvas,TILE_WIDTH,BOARD_WIDTH,BOARD_LENGTH);
 	
 	public static void main(String[] args) {
+		System.out.println(Screen.getScreens().get(1).getBounds().getWidth() + "x" + Screen.getScreens().get(1).getBounds().getHeight());
 		launch(args);
 	}
 
@@ -41,9 +43,9 @@ public class Main extends Application {
 		//Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
 		
 		
-		Scene loadGame = new Scene(new CreateGameWindow(), WINDOW_WIDTH, WINDOW_HEIGHT);
-		//Scene scene = new Scene(new BoardWindow(this.TILE_WIDTH, this.currentBoard), WINDOW_WIDTH, WINDOW_HEIGHT);
-		primaryStage.setScene(loadGame);
+		//Scene scene = new Scene(new CreateGameWindow(), WINDOW_WIDTH, WINDOW_HEIGHT);
+		Scene scene = new Scene(new BoardWindow(this.TILE_WIDTH, this.currentBoard), WINDOW_WIDTH, WINDOW_HEIGHT);
+		primaryStage.setScene(scene);
 		primaryStage.show();
 		
 //		System.out.println("HERE");
