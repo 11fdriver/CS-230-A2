@@ -12,21 +12,70 @@ import javafx.scene.input.MouseEvent;
 //TODO make sure can't push fixed tiles
 //TODO currently tiles don't really keep track of players: There's a lot of null pointers and pointers which aren't valid any more. Fix this.
 public class Board extends Task<Void>{
+	/**
+	 * Width of tiles -> Used for image scaling
+	 */
 	private final int TILE_WIDTH;
+	
+	/**
+	 * Reference to the board template used
+	 */
 	private int boardID;
+	
+	/**
+	 * Length of the board
+	 */
 	private int length;
+	
+	/**
+	 * Width of the board
+	 */
 	private int width;
+	
+	/**
+	 * Matrix representing the physical game board
+	 */
 	private FloorTile[][] gameBoard;
+	
+	/**
+	 * Silk bag of the board
+	 */
 	private SilkBag silkBag;
+	
 	//private Player player1;
+	
+	/**
+	 * The Board's goal tile
+	 */
 	private Goal goalTile;
+	
+	/**
+	 * List of players on the board
+	 */
 	private Player[] players;
+	
+	/**
+	 * Index in player list of current player taking their turn
+	 */
 	private int currentPlayer;
+	
+	/**
+	 * Canvas of board
+	 */
 	private Canvas canvas;
+	
+	/**
+	 * Graphic context of board
+	 */
 	private GraphicsContext gc;
+	
+	/**
+	 * Location of last click on board
+	 */
 	private Location lastClickLocation;
-	private Double xClick; //Think redundant??
-	private Double yClick; //Think redundant??
+	
+//	private Double xClick; //Think redundant??
+//	private Double yClick; //Think redundant??
 	
 	//For testing
 	public Board(Canvas canvas, int TILE_WIDTH, int width, int length) {
@@ -114,6 +163,10 @@ public class Board extends Task<Void>{
 		this.populate();
 	}
 	
+	/**
+	 * Randomly populates the board.
+	 * Probably just a method for testing
+	 */
 	private void populate() {
 		//Populates non fixed spaces with random tiles
 		//Somehow need to put the fixed tiles in first???
@@ -133,6 +186,10 @@ public class Board extends Task<Void>{
 		this.assignPlayersToTiles();
 	}
 	
+	/**
+	 * Assigns players to the tiles they're on
+	 * As in makes tiles point to the players standing on them
+	 */
 	public void assignPlayersToTiles() {
 		for (Player p: this.players) {
 			Location playerLocation = p.getLocation().copy();
@@ -141,17 +198,12 @@ public class Board extends Task<Void>{
 		}
 	}
 	
-	public void startGame() {
-		//while (!this.gameOver()) {
-			this.getCurrentPlayer().takeTurn();
-			this.advancePlayerTurn();
-			this.draw();
-		//}
-	}
-	
-	//TODO players ejected can be placed on top of another player
-	//TODO not allow insert if row/column contains fixed tiles
-		//Currently doesn't factor in fixed tiles
+	//TODO currently ejected tiles are not returned to the silk bag
+	/**
+	 * Inserts a given tile at a given location if the location is valid
+	 * @param t Tile to insert onto board
+	 * @param l Location to insert tile at
+	 */
 	public void insertTile(FloorTile t, Location l) {
 		//Checks you aren't inserting at corners of the board
 		if (!(l.equals(0,0) || l.equals(0,this.length - 1) ||
@@ -324,11 +376,17 @@ public class Board extends Task<Void>{
 		}
 	}
 	
+	//TODO
 	public void returnToBag(FloorTile t) {
 		//this.silkBag.returnTile(t);//TODO change returnTile(Tile t) to returnTile(FloorTile t) in silkbag class
 	}
 	
-	//TODO fix errors
+	/**
+	 * Checks if a player could move from location 'l' in direction 'd'
+	 * @param l Location of player
+	 * @param d Direction to move
+	 * @return True if player can move from 'l' in direction 'd'
+	 */
 	public boolean canMove(Location l, Direction d) {
 		FloorTile currentTile = this.getTileAt(l);
 		Location locationOfOppositeTile = l.copy();
@@ -343,6 +401,11 @@ public class Board extends Task<Void>{
 		return false;
 	}
 	
+	/**
+	 * Checks if given location is in bounds of board
+	 * @param l Location to check
+	 * @return True if l is on bounds of the board
+	 */
 	public boolean isInBounds(Location l) {
 		if (l.getX() >= 0 && l.getX() < this.width &&
 				l.getY() >= 0 && l.getY() < this.length) {
@@ -352,10 +415,16 @@ public class Board extends Task<Void>{
 		}
 	}
 	
+	//For testing
 	public FloorTile[] tempTestCalculateArea() {
 		return this.calculateArea(this.gameBoard[0][0]);
 	}
 	
+	/**
+	 * Find a given tile on the board and then calculates the 3x3 around it
+	 * @param t Tile on board
+	 * @return 3x3 of tiles around the tile
+	 */
 	public FloorTile[] calculateArea(FloorTile t) {
 		Location l = null;
 		for (int i = 0; i < this.width; i++) {
@@ -369,6 +438,12 @@ public class Board extends Task<Void>{
 		return calculateArea(l);
 	}
 	
+	/**
+	 * Very bad method for calculating 3x3 area around a given tile
+	 * Think Finn implemented a better one in the action tile classes
+	 * @param l Location of center tile
+	 * @return All tiles in bounds of board in a 3x3 area around l
+	 */
 	public FloorTile[] calculateArea(Location l) {
 		if (this.isInBounds(l)) {
 			ArrayList<FloorTile> tilesInBounds = new ArrayList<FloorTile>();
@@ -429,34 +504,63 @@ public class Board extends Task<Void>{
 		}
 	}
 	
+	/**
+	 * Setter for length of board
+	 * @param length New length of board
+	 */
 	public void setLength(int length) {
 		this.length = length;
 	}
 	
+	/**
+	 * Setter for width of board
+	 * @param width New value for width
+	 */
 	public void setWidth(int width) {
 		this.width = width;
 	}
 	
+	/**
+	 * Getter for length of board
+	 * @return Length of board
+	 */
 	public int getLength() {
 		return this.length;
 	}
 	
+	/**
+	 * Getter for width of board
+	 * @return Width of board
+	 */
 	public int getWidth() {
 		return this.width;
 	}
 	
+	/**
+	 * Sets players on the board
+	 * @param players New list of players
+	 */
 	public void setPlayers(Player[] players) {
 		this.players = players;
 	}
 	
+	/**
+	 * Returns list of players
+	 * @return All players on board
+	 */
 	public Player[] getPlayers() {
 		return this.players;
 	}
 	
+	//Change order of players by giving a new list of players. Not sure this is needed?
 	public void changePlayerOrder(Player[] playerOrder) {
 		
 	}
 	
+	/**
+	 * Checks if game has finished
+	 * @return True if game has finished
+	 */
 	public boolean gameOver() {
 		return this.goalTile.hasPlayer();
 	}
@@ -464,9 +568,14 @@ public class Board extends Task<Void>{
 	//Sets player of FloorTile at given location
 	//As in finds FloorTile at location and then sets the tile's player pointer
 	public void setPlayer(Player p, Location l) {
-		
+		//Not sure if this is needed
 	}
 	
+	/**
+	 * Gets the tile at a given location
+	 * @param l Location of tile
+	 * @return Tile at location
+	 */
 	public FloorTile getTileAt(Location l) {
 		if (this.isInBounds(l)) {
 			return this.gameBoard[l.getX()][l.getY()];
@@ -475,33 +584,40 @@ public class Board extends Task<Void>{
 		}
 	}
 	
+	/**
+	 * Sets board's graphics context
+	 * @param gc New graphics context
+	 */
 	public void setGraphicsContext(GraphicsContext gc) {
 		this.gc = gc;
 	}
 	
+	/**
+	 * Getter for graphics context
+	 * @return Board's graphics context
+	 */
 	public GraphicsContext getGraphicsContext() {
 		return this.gc;
 	}
 	
+	/**
+	 * Draws the board onto the board's GraphicsContext
+	 */
 	public void draw() {
+		//Draws all tiles
 		for (int i = 0; i < this.width; i++) {
 			for (int j = 0; j < this.length; j++) {
-				//System.out.println("Drawing tile at (" + i + "," + j + ")");
 				FloorTile currentTile = this.gameBoard[i][j];
 				currentTile.draw(this.gc,i*TILE_WIDTH, j*TILE_WIDTH);
-				//Highlights current player
-//				if (currentTile.getMyPlayer() == this.getCurrentPlayer()) {
-//					currentTile.highlight(i*tileWidth, j*tileWidth, gc, tileWidth);
-//				}
 			}
 		}
 		
-		//this.getCurrentPlayer().draw(gc, tileWidth);
-		
+		//Draws all players
 		for (Player p: this.players) {
 			p.draw(this.gc);
 		}
 		
+		//Highlights appropriate tiles depending on player's turn state
 		switch (this.getCurrentPlayer().getCurrentStageOfTurn()) {
 		case 1:
 			this.highlightValidInsertLocations();
@@ -513,11 +629,17 @@ public class Board extends Task<Void>{
 		this.getCurrentPlayer().highlight(this.gc);
 	}
 	
-	//Just for testing animation
+	/**
+	 * Returns the current player taking their turn
+	 * @return Current player taking their turn
+	 */
 	public Player getCurrentPlayer() {
 		return this.players[this.currentPlayer];
 	}
 	
+	/**
+	 * Sets the board to reference the next player in the player list
+	 */
 	public void advancePlayerTurn() {
 		this.currentPlayer++;
 		if (this.currentPlayer > 3) {
@@ -525,78 +647,84 @@ public class Board extends Task<Void>{
 		}
 	}
 	
+	/**
+	 * Randomized all player locations
+	 */
 	public void randomizeAllPlayerLocations() {
 		for (Player p: this.players) {
 			p.randomizeLocation(this.width, this.length);
 		}
 	}
 	
-	public void insertRandomTile() {
-		FloorTile tileToInsert = this.silkBag.drawFloorTile();
-		Location insertLocation = this.getRandomInsertLocation();
-		this.insertTile(tileToInsert, insertLocation);
-	}
+//	public void insertRandomTile() {
+//		FloorTile tileToInsert = this.silkBag.drawFloorTile();
+//		Location insertLocation = this.getRandomInsertLocation();
+//		this.insertTile(tileToInsert, insertLocation);
+//	}
 	
-	public Location getRandomInsertLocation() {
-		int x = 0;
-		int y = 0;
-		
-		Random r = new Random();
-		int bound = r.nextInt(5);
-		
-		switch (bound) {
-		case 1:
-			x = 0;
-			y = r.nextInt(this.length-2)+1;
-			break;
-		case 2:
-			y = this.length-1;
-			x = r.nextInt(this.width-2)+1;
-			break;
-		case 3:
-			y = 0;
-			x = r.nextInt(this.width-2)+1;
-			break;
-		case 4:
-			x = this.width-1;
-			y = r.nextInt(this.length-2)+1;
-			break;
-		default:
-			y = 1;
-			x = 1;
-		}
-		
-		return new Location(x,y);
-	}
+//	public Location getRandomInsertLocation() {
+//		int x = 0;
+//		int y = 0;
+//		
+//		Random r = new Random();
+//		int bound = r.nextInt(5);
+//		
+//		switch (bound) {
+//		case 1:
+//			x = 0;
+//			y = r.nextInt(this.length-2)+1;
+//			break;
+//		case 2:
+//			y = this.length-1;
+//			x = r.nextInt(this.width-2)+1;
+//			break;
+//		case 3:
+//			y = 0;
+//			x = r.nextInt(this.width-2)+1;
+//			break;
+//		case 4:
+//			x = this.width-1;
+//			y = r.nextInt(this.length-2)+1;
+//			break;
+//		default:
+//			y = 1;
+//			x = 1;
+//		}
+//		
+//		return new Location(x,y);
+//	}
 	
-	public void movePlayer(Double xMouseClick, Double yMouseClick) {
-		Location clickLocation = this.getCoordinateOfClick(xMouseClick, yMouseClick);
-		int playerX = this.getCurrentPlayer().getLocation().getX();
-		int playerY = this.getCurrentPlayer().getLocation().getY();
-		
-		Direction directionToMove = null;
-		if (clickLocation.getY() == playerY+1 && clickLocation.getX() == playerX) {
-			directionToMove = Direction.SOUTH;
-		} else if (clickLocation.getY() == playerY-1 && clickLocation.getX() == playerX) {
-			directionToMove = Direction.NORTH;
-		} else if (clickLocation.getX() == playerX+1 && clickLocation.getY() == playerY) {
-			directionToMove = Direction.EAST;
-		} else if (clickLocation.getX() == playerX-1 && clickLocation.getY() == playerY) {
-			directionToMove = Direction.WEST;
-		}
-		
-		if (directionToMove != null) {
-			//System.out.println("Attempting to move");
-			if (this.canMove(this.getCurrentPlayer().getLocation(), directionToMove)) {
-				this.getCurrentPlayer().move(directionToMove);
-			} else {
-				System.out.println("Can't move to selected tile");
-			}
-		} else {
-			System.out.println("Selected tile is too far away from current player");
-		}
-	}
+//	public void movePlayer(Double xMouseClick, Double yMouseClick) {
+//		Location clickLocation = this.getCoordinateOfClick(xMouseClick, yMouseClick);
+//		int playerX = this.getCurrentPlayer().getLocation().getX();
+//		int playerY = this.getCurrentPlayer().getLocation().getY();
+//		
+//		Direction directionToMove = null;
+//		if (clickLocation.getY() == playerY+1 && clickLocation.getX() == playerX) {
+//			directionToMove = Direction.SOUTH;
+//		} else if (clickLocation.getY() == playerY-1 && clickLocation.getX() == playerX) {
+//			directionToMove = Direction.NORTH;
+//		} else if (clickLocation.getX() == playerX+1 && clickLocation.getY() == playerY) {
+//			directionToMove = Direction.EAST;
+//		} else if (clickLocation.getX() == playerX-1 && clickLocation.getY() == playerY) {
+//			directionToMove = Direction.WEST;
+//		}
+//		
+//		if (directionToMove != null) {
+//			//System.out.println("Attempting to move");
+//			if (this.canMove(this.getCurrentPlayer().getLocation(), directionToMove)) {
+//				this.getCurrentPlayer().move(directionToMove);
+//			} else {
+//				System.out.println("Can't move to selected tile");
+//			}
+//		} else {
+//			System.out.println("Selected tile is too far away from current player");
+//		}
+//	}
 	
+	/**
+	 * Highlights on the canvas the valid moves that the current player can make
+	 */
 	public void highlightValidMoves() {
 		Location playerLocation = this.getCurrentPlayer().getLocation();
 		//FloorTile currentTile = this.getTileAt(playerLocation);
@@ -627,6 +755,9 @@ public class Board extends Task<Void>{
 		}
 	}
 	
+	/**
+	 * Highlights on the canvas the valid insert locations a tile can be inserted at
+	 */
 	public void highlightValidInsertLocations() {
 		for (int i = 0; i < this.width; i++) {
 			for (int j = 0; j < this.length; j++) {
@@ -638,31 +769,58 @@ public class Board extends Task<Void>{
 		}
 	}
 	
+	/**
+	 * Converts raw coordinates into a board index[x][y]
+	 * @param xClick X coordinate of click
+	 * @param yClick Y coordinate of click
+	 * @return Corresponding board index[x][y]
+	 */
 	public Location getCoordinateOfClick(Double xClick, Double yClick) {
 		int x = (int) Math.round(xClick)/this.TILE_WIDTH;
 		int y = (int) Math.round(yClick)/this.TILE_WIDTH;
 		return new Location(x,y);
 	}
 	
+	/**
+	 * Setter for last click location
+	 * @param x Raw X coordinate of click
+	 * @param y Raw Y coordinate of click
+	 */
 	public void setLastClickLocation(Double x, Double y) {
 		System.out.println("Updated last click location");
 		this.lastClickLocation = this.getCoordinateOfClick(x, y);
 	}
 	
+	/**
+	 * Setter for last click location
+	 * @param l Location of click
+	 */
 	public void setLastClickLocation(Location l) {
 		System.out.println("(Probably) Cleared last click location");
 		this.lastClickLocation = l;
 	}
 	
+	/**
+	 * Getter for last click location on board
+	 * @return Last click location on board
+	 */
 	public Location getlastClickLocation() {
 		return this.lastClickLocation;
 	}
 	
+	/**
+	 * Interrupts the thread until a click is made on the board and returns the tile clicked
+	 * @return Tile clicked
+	 */
 	public FloorTile getTileAtClick() {
 		this.getLocationAtClick();
 		return this.getTileAt(this.lastClickLocation);
 	}
 	
+	/**
+	 * Interrupts the thread until a click is made on the board and returns the location clicked
+	 * @return Location clicked
+	 */
 	public Location getLocationAtClick() {
 		synchronized (this) {
 			this.setLastClickLocation(null);
@@ -681,12 +839,12 @@ public class Board extends Task<Void>{
 	}
 	
 	@Override
+	/**
+	 * Called when thread is started
+	 * @return Void
+	 * @throws Exception
+	 */
 	protected Void call() throws Exception {
-//		System.out.println("Starting game");
-//		this.getTileAtClick();
-//		System.out.println("Getting another click");
-//		this.getTileAtClick();
-		
 		System.out.println("Starting Game");
 		while (!this.gameOver()) {
 			this.getCurrentPlayer().takeTurn();
