@@ -2,6 +2,7 @@ package group_20;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.function.Function;
 
 import javafx.concurrent.Task;
 import javafx.event.EventHandler;
@@ -587,6 +588,39 @@ public class Board extends Task<Void>{
 			System.out.println("You clicked!");
 		}
 		return this.lastClickLocation;
+	}
+	
+	/**
+	 * Highlights each tile that matches a filter lambda.
+	 * @param f Filter function
+	 */
+	private void highlightTilesMatching(Function<FloorTile, Boolean> f) {
+		for (FloorTile[] row : this.gameBoard) {
+			for (FloorTile t : row) {
+				if (f.apply(t)) {
+					Location loc = t.getLocation();
+					t.highlight( // TODO: Shouldn't need to provide any args to this
+							loc.getX() * TILE_WIDTH,
+							loc.getY() * TILE_WIDTH,
+							gc, TILE_WIDTH);
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Return a Tile that matches a filter lambda.
+	 * @param f Filter function
+	 * @return A FloorTile matching {@code f}
+	 */
+	public FloorTile getTileAtClickMatching(Function<FloorTile, Boolean> f) {
+		highlightTilesMatching(f);
+		FloorTile t;
+		do {
+			t = getTileAtClick();
+		} while (!f.apply(t));
+		// draw(); // Reset the board visuals
+		return t;
 	}
 	
 	@Override

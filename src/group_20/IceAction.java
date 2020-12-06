@@ -10,6 +10,11 @@ public class IceAction extends FloorAction {
 	 * Whether Action allows tile-shifting.
 	 */
 	private final boolean CAN_SHIFT = true;
+
+	/**
+	 * How many turns for each player before IceAction expires.
+	 */
+	private final int LIFETIME_ROUNDS = 1;
 	
 	@Override
 	public void draw(Location loc) {
@@ -21,11 +26,15 @@ public class IceAction extends FloorAction {
 		return "IceAction";
 	}
 
+	
 	@Override
 	public void apply(Player p, Board b) {
-		// TODO: Here we need to
-		// - Get Player input for a center tile.
-		// - Pass surrounding tiles 'this'.
+		FloorTile chosen = b.getTileAtClick();
+		for (FloorTile tile : getTilesAround(chosen, b)) {
+			if (null == tile)
+				continue;
+			tile.setState(this);
+		}
 	}
 
 	@Override
@@ -36,6 +45,11 @@ public class IceAction extends FloorAction {
 	@Override
 	public boolean acceptsShift() {
 		return this.CAN_SHIFT;
+	}
+
+	@Override
+	public int getLifetime() {
+		return LIFETIME_ROUNDS * Player.amount();
 	}
 
 }

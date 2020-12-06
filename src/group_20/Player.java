@@ -465,4 +465,12 @@ public class Player {
 		gc.strokeOval(x, y, (TILE_WIDTH), (TILE_WIDTH));
 		gc.setStroke(Color.BLACK);
 	}
+	
+	/**
+	 * Increase amount of moves a Player can make during their next turn
+	 * @param n
+	 */
+	public void addMoves(int n) {
+		numMoves += n;
+	}
 }
