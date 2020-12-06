@@ -335,6 +335,14 @@ public class Player {
 	}
 	
 	/**
+	 * Getter for player number
+	 * @return Player number
+	 */
+	public int getPlayerNumber() {
+		return this.playerNumber;
+	}
+	
+	/**
 	 * Setter for current location
 	 * @param location New location
 	 */

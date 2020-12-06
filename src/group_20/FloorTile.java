@@ -315,9 +315,21 @@ public class FloorTile extends Tile implements Subscriber {
 			str += d.toString();
 			str += ",";
 		}
-		str += // player.saveFormat() + ";" + // TODO: Player needs to implement Saveable
-			state.saveFormat() + ";" +
-			String.valueOf(stateLifetime) + "}";
+		//str += // player.saveFormat() + ";" + // TODO: Player needs to implement Saveable
+			//state.saveFormat() + ";" +
+		if (this.hasPlayer()) {
+			str += this.player.getPlayerNumber() + ",";
+		} else {
+			str += "null,";
+		}
+		
+		if (this.state != null) {
+			str += state.saveFormat() + ",";
+		} else {
+			str += "null,";
+		}
+		
+		str += String.valueOf(stateLifetime) + "}";
 		return str ;
 	}
 	

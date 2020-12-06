@@ -845,16 +845,16 @@ public class Board extends Task<Void>{
 		String str = "{Board," +
 				this.boardID + "," +
 				this.width + "," +
-				this.length + ",";
+				this.length + ",\n";
 		for (int i = 0; i < this.width; i++) {
 			for (int j = 0; j < this.length; j++) {
-				str += this.gameBoard[i][j].saveFormat() + ",";
+				str += this.gameBoard[i][j].saveFormat() + ",\n";
 			}
 		}
 		for (int i = 0; i < this.players.length; i++) {
-			str += this.players[i].saveFormat() + ",";
+			str += this.players[i].saveFormat() + ",\n";
 		}
-		str += this.currentPlayer + "Board}";
+		str += this.currentPlayer + ",Board}";
 		return str;
 	}
 }
