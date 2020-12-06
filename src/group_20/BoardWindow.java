@@ -43,21 +43,20 @@ public class BoardWindow extends BorderPane {
 	private Button iceActionButton = new Button();
 	private Button doubleMoveActionButton = new Button();
 	private Button skipButton = new Button();
-	private Text t5 = new Text();
-	private Text t6 = new Text();
-	private Text t7 = new Text();
-	private Text t8 = new Text();
-	private VBox sidebar = new VBox();
+	private Text backtrackActionAmount = new Text();
+	private Text fireActionAmount = new Text();
+	private Text iceActionAmount = new Text();
+	private Text doubleMoveActionAmount = new Text();
+	private VBox playerInventoryPane = new VBox();
 	private VBox backtrackPane = new VBox();
 	private VBox firePane = new VBox();
 	private VBox icePane = new VBox();
 	private VBox doublemovePane = new VBox();
 	private VBox skipPane = new VBox();
-	private VBox nextTile = new VBox();
-	private int backtrackAmount = 0;
-	private int fireAmount = 0;
-	private int iceAmount = 0;
-	private int doublemoveAmount = 0;
+	private int backtrackInventoryAmount = 0;
+	private int fireInventoryAmount = 0;
+	private int iceInventoryAmount = 0;
+	private int doubleMoveInventoryAmount = 0;
 	
 	public BoardWindow(int TILE_WIDTH, Board board) {
 		this.TILE_WIDTH = TILE_WIDTH;
@@ -85,32 +84,37 @@ public class BoardWindow extends BorderPane {
 		try {
 			backgroundImg = new FileInputStream("title_screen_animation_no_text.gif");
 			Image gameBackground = new Image(backgroundImg);
-			BackgroundImage menuImage = new BackgroundImage(gameBackground, BackgroundRepeat.ROUND, BackgroundRepeat.ROUND, null, null); 
-			this.setBackground(new Background(menuImage));
+			BackgroundImage gameSessionImage = new BackgroundImage(gameBackground, BackgroundRepeat.ROUND, BackgroundRepeat.ROUND, null, null); 
+			this.setBackground(new Background(gameSessionImage));
 		} catch (FileNotFoundException e2) {
 			e2.printStackTrace();
 		} 
-		this.setLeft(sidebar);
+		
+		this.setLeft(playerInventoryPane);
 		
 		FileInputStream backtrackButtonImage;
 		try {
 			backtrackButtonImage = new FileInputStream("backtrack-icon.png");
 			Image backtrackImage = new Image(backtrackButtonImage); 
-	        ImageView imageView = new ImageView(backtrackImage);
-	        backTrackActionButton.setGraphic(imageView);
+	        ImageView backtrackButtonImageView = new ImageView(backtrackImage);
+	        backTrackActionButton.setGraphic(backtrackButtonImageView);
 	        backTrackActionButton.setStyle("-fx-background-color: Black");
 	        backTrackActionButton.setTooltip(new Tooltip("Press this to play a Backtrack Action!"));
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
 		}
-		Text t = new Text("Backtrack");
-		backtrackPane.getChildren().addAll(t);
-		backtrackPane.getChildren().addAll(backTrackActionButton);
-		backtrackPane.getChildren().addAll(returnBacktrack());
-		t.setFont(Font.font ("Verdana", 20));
-		t.setFill(Color.WHITE);
-		t5.setFont(Font.font ("Verdana", 20));
-		t5.setFill(Color.WHITE);
+		
+		Text backtrackLabel = new Text("Backtrack");
+		backtrackLabel.setFont(Font.font ("Verdana", 20));
+		backtrackLabel.setFill(Color.WHITE);
+		
+		backtrackPane.getChildren().add(backtrackLabel);
+		backtrackPane.getChildren().add(backTrackActionButton);
+		backtrackPane.getChildren().add(returnBacktrack());
+		
+		backtrackActionAmount.setFont(Font.font ("Verdana", 20));
+		backtrackActionAmount.setFill(Color.WHITE);
+		
 		backTrackActionButton.setOnAction(e -> {
 			Player p = this.board.getCurrentPlayer();
 			if (p.isWaiting()) {
@@ -128,21 +132,25 @@ public class BoardWindow extends BorderPane {
 		try {
 			fireButtonImage = new FileInputStream("cast-fire-button.png");
 			Image fireImage = new Image(fireButtonImage); 
-	        ImageView imageView2 = new ImageView(fireImage);
-	        fireActionButton.setGraphic(imageView2);
+	        ImageView fireButtonImageView = new ImageView(fireImage);
+	        fireActionButton.setGraphic(fireButtonImageView);
 	        fireActionButton.setStyle("-fx-background-color: Black");
 	        fireActionButton.setTooltip(new Tooltip("Press this to play a Fire Action!"));
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
 		}
-		Text t1 = new Text("Fire");
-		firePane.getChildren().addAll(t1);
-		firePane.getChildren().addAll(fireActionButton);
-		firePane.getChildren().addAll(returnFire());
-		t1.setFont(Font.font ("Verdana", 20));
-		t1.setFill(Color.WHITE);
-		t6.setFont(Font.font ("Verdana", 20));
-		t6.setFill(Color.WHITE);
+		
+		Text fireLabel = new Text("Fire");
+		fireLabel.setFont(Font.font ("Verdana", 20));
+		fireLabel.setFill(Color.WHITE);
+		
+		firePane.getChildren().add(fireLabel);
+		firePane.getChildren().add(fireActionButton);
+		firePane.getChildren().add(returnFire());
+
+		fireActionAmount.setFont(Font.font ("Verdana", 20));
+		fireActionAmount.setFill(Color.WHITE);
+		
 		fireActionButton.setOnAction(e -> {
 			Player p = this.board.getCurrentPlayer();
 			if (p.isWaiting()) {
@@ -160,21 +168,24 @@ public class BoardWindow extends BorderPane {
 		try {
 			iceButtonImage = new FileInputStream("cast-ice-button.png");
 			Image iceImage = new Image(iceButtonImage); 
-	        ImageView imageView3 = new ImageView(iceImage);
-	        iceActionButton.setGraphic(imageView3);
+	        ImageView iceButtonImageView = new ImageView(iceImage);
+	        iceActionButton.setGraphic(iceButtonImageView);
 	        iceActionButton.setStyle("-fx-background-color: Black");
 	        iceActionButton.setTooltip(new Tooltip("Press this to play a Ice Action!"));
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
 		}
-		Text t2 = new Text("Ice");
-		icePane.getChildren().addAll(t2);
-		icePane.getChildren().addAll(iceActionButton);
-		icePane.getChildren().addAll(returnIce());
-		t2.setFont(Font.font ("Verdana", 20));
-		t2.setFill(Color.WHITE);
-		t7.setFont(Font.font ("Verdana", 20));
-		t7.setFill(Color.WHITE);
+		Text iceLabel = new Text("Ice");
+		iceLabel.setFont(Font.font ("Verdana", 20));
+		iceLabel.setFill(Color.WHITE);
+		
+		icePane.getChildren().add(iceLabel);
+		icePane.getChildren().add(iceActionButton);
+		icePane.getChildren().add(returnIce());
+
+		iceActionAmount.setFont(Font.font ("Verdana", 20));
+		iceActionAmount.setFill(Color.WHITE);
+		
 		iceActionButton.setOnAction(e -> {
 			Player p = this.board.getCurrentPlayer();
 			if (p.isWaiting()) {
@@ -192,21 +203,24 @@ public class BoardWindow extends BorderPane {
 		try {
 			doubleButtonImage = new FileInputStream("double-turn-icon.png");
 			Image doubleImage = new Image(doubleButtonImage); 
-	        ImageView imageView4 = new ImageView(doubleImage);
-	        doubleMoveActionButton.setGraphic(imageView4);
+	        ImageView doubleMoveImageView = new ImageView(doubleImage);
+	        doubleMoveActionButton.setGraphic(doubleMoveImageView);
 	        doubleMoveActionButton.setStyle("-fx-background-color: Black");
 	        doubleMoveActionButton.setTooltip(new Tooltip("Press this to play a Double Move Action!"));
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
 		}
-		Text t3 = new Text("Double Move");
-		doublemovePane.getChildren().addAll(t3);
-		doublemovePane.getChildren().addAll(doubleMoveActionButton);
-		doublemovePane.getChildren().addAll(returnDoubleMove());
-		t3.setFont(Font.font ("Verdana", 20));
-		t3.setFill(Color.WHITE);
-		t8.setFont(Font.font ("Verdana", 20));
-		t8.setFill(Color.WHITE);
+		Text doubleMoveLabel = new Text("Double Move");
+		doubleMoveLabel.setFont(Font.font ("Verdana", 20));
+		doubleMoveLabel.setFill(Color.WHITE);
+		
+		doublemovePane.getChildren().add(doubleMoveLabel);
+		doublemovePane.getChildren().add(doubleMoveActionButton);
+		doublemovePane.getChildren().add(returnDoubleMove());
+
+		doubleMoveActionAmount.setFont(Font.font ("Verdana", 20));
+		doubleMoveActionAmount.setFill(Color.WHITE);
+		
 		doubleMoveActionButton.setOnAction(e -> {
 			Player p = this.board.getCurrentPlayer();
 			if (p.isWaiting()) {
@@ -224,18 +238,20 @@ public class BoardWindow extends BorderPane {
 		try {
 			skipButtonImage = new FileInputStream("skip.png");
 			Image skipImage = new Image(skipButtonImage); 
-	        ImageView imageView6 = new ImageView(skipImage);
-	        skipButton.setGraphic(imageView6);
+	        ImageView skipButtonImageView = new ImageView(skipImage);
+	        skipButton.setGraphic(skipButtonImageView);
 	        skipButton.setStyle("-fx-background-color: Black");
 	        skipButton.setTooltip(new Tooltip("Press this if you don't want to play an Action Tile!"));
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
 		}
-		Text t4 = new Text("Skip");
-		skipPane.getChildren().addAll(t4);
-		skipPane.getChildren().addAll(skipButton);
-		t4.setFont(Font.font ("Verdana", 20));
-		t4.setFill(Color.WHITE);
+		Text skipButtonLabel = new Text("Skip");
+		skipButtonLabel.setFont(Font.font ("Verdana", 20));
+		skipButtonLabel.setFill(Color.WHITE);
+		
+		skipPane.getChildren().add(skipButtonLabel);
+		skipPane.getChildren().add(skipButton);
+
 		skipButton.setOnAction(e -> {
 			Player p = this.board.getCurrentPlayer();
 			if (p.isWaiting()) {
@@ -248,9 +264,9 @@ public class BoardWindow extends BorderPane {
 			}
 		});
 		
-		sidebar.getChildren().addAll(backtrackPane, firePane, icePane, doublemovePane, skipPane);
-		sidebar.setPadding(new Insets(20));
-		sidebar.setSpacing(10);
+		playerInventoryPane.getChildren().addAll(backtrackPane, firePane, icePane, doublemovePane, skipPane);
+		playerInventoryPane.setPadding(new Insets(20));
+		playerInventoryPane.setSpacing(10);
 		
 		Thread tr = new Thread(board);
 		tr.setDaemon(true);
@@ -267,13 +283,16 @@ public class BoardWindow extends BorderPane {
 			refreshBoard();
 		});
 		
-		FlowPane fp = new FlowPane();
-		fp.setAlignment(javafx.geometry.Pos.CENTER);
-		Button b1 = new Button("Save & Exit");
-		Button b2 = new Button("End Turn");
-		fp.setPadding(new Insets(30));
-		fp.getChildren().addAll(b1, b2);
-		this.setBottom(fp);
+		FlowPane optionPane = new FlowPane();
+		optionPane.setAlignment(javafx.geometry.Pos.CENTER);
+		
+		Button saveExitButton = new Button("Save & Exit");
+		Button endTurnButton = new Button("End Turn");
+		
+		optionPane.setPadding(new Insets(30));
+		optionPane.getChildren().addAll(saveExitButton, endTurnButton);
+		
+		this.setBottom(optionPane);
 	}
 	
 	private void refreshBoard() {
@@ -285,62 +304,62 @@ public class BoardWindow extends BorderPane {
 	public void inventoryRefresh() {
 		Player p = board.getCurrentPlayer();
 		Inventory inv = p.getInventory();
-		backtrackAmount = inv.getNum(new BacktrackAction());
-		fireAmount = inv.getNum(new FireAction());
-		iceAmount = inv.getNum(new IceAction());
-		doublemoveAmount = inv.getNum(new DoubleMoveAction());
+		backtrackInventoryAmount = inv.getNum(new BacktrackAction());
+		fireInventoryAmount = inv.getNum(new FireAction());
+		iceInventoryAmount = inv.getNum(new IceAction());
+		doubleMoveInventoryAmount = inv.getNum(new DoubleMoveAction());
 		
-		if (backtrackAmount < 1) {
+		if (backtrackInventoryAmount < 1) {
 			backTrackActionButton.setDisable(true);
-			t5.setText("x" + backtrackAmount);
+			backtrackActionAmount.setText("x" + backtrackInventoryAmount);
 		} else {
 			backTrackActionButton.setDisable(false);
-			t5.setText("x" + backtrackAmount);
+			backtrackActionAmount.setText("x" + backtrackInventoryAmount);
 		}
 		
-		if (fireAmount < 1) {
+		if (fireInventoryAmount < 1) {
 			fireActionButton.setDisable(true);
-			t6.setText("x" + fireAmount);
+			fireActionAmount.setText("x" + fireInventoryAmount);
 		} else {
 			fireActionButton.setDisable(false);
-			t6.setText("x" + fireAmount);
+			fireActionAmount.setText("x" + fireInventoryAmount);
 		}
 		
-		if (iceAmount < 1) {
+		if (iceInventoryAmount < 1) {
 			iceActionButton.setDisable(true);
-			t7.setText("x" + iceAmount);
+			iceActionAmount.setText("x" + iceInventoryAmount);
 		} else {
 			iceActionButton.setDisable(false);
-			t7.setText("x" + iceAmount);
+			iceActionAmount.setText("x" + iceInventoryAmount);
 		}
 		
-		if (doublemoveAmount < 1) {
+		if (doubleMoveInventoryAmount < 1) {
 			doubleMoveActionButton.setDisable(true);
-			t8.setText("x" + doublemoveAmount);
+			doubleMoveActionAmount.setText("x" + doubleMoveInventoryAmount);
 		} else {
 			doubleMoveActionButton.setDisable(false);
-			t8.setText("x" + doublemoveAmount);
+			doubleMoveActionAmount.setText("x" + doubleMoveInventoryAmount);
 		}
 	}
 	
 	public Text returnBacktrack() {
 		inventoryRefresh();
-		return this.t5;
+		return this.backtrackActionAmount;
 	}
 	
 	public Text returnFire() {
 		inventoryRefresh();
-		return this.t6;
+		return this.fireActionAmount;
 	}
 	
 	public Text returnIce() {
 		inventoryRefresh();
-		return this.t7;
+		return this.iceActionAmount;
 	}
 	
 	public Text returnDoubleMove() {
 		inventoryRefresh();
-		return this.t8;
+		return this.doubleMoveActionAmount;
 	}
 	
 }
