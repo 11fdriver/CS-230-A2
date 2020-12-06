@@ -30,6 +30,19 @@ public class MessageOfTheDay {
 		//System.out.println(decrypt("CAB"));
 	}
 	
+	public static String getMessage() throws IOException {
+		String puzzle = "";
+		puzzle = getPuzzle();
+		//System.out.println(puzzle);
+		
+		String key = decrypt(puzzle);
+		
+		String MOTD = "";
+		MOTD = getMOTD(key);
+		//System.out.println(MOTD);
+		return MOTD;
+	}
+	
 	public static String getPuzzle() throws IOException {
 //		URL url = new URL("http://cswebcat.swansea.ac.uk/puzzle");
 //		HttpURLConnection con = (HttpURLConnection) url.openConnection();
