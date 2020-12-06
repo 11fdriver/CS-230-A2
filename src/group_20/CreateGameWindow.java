@@ -57,6 +57,19 @@ public class CreateGameWindow extends BorderPane{
 				rb2.setToggleGroup(group);
 				rb3.setToggleGroup(group);
 				
+				rb1.setOnAction(e -> {
+					System.out.println("Radio button 1 clicked");
+					this.changePlayersShown(2);
+				});
+				rb2.setOnAction(e -> {
+					System.out.println("Radio button 2 clicked");
+					this.changePlayersShown(3);
+				});
+				rb3.setOnAction(e -> {
+					System.out.println("Radio button 3 clicked");
+					this.changePlayersShown(4);
+				});
+				
 				//ComboBox<String> player1Profiles = new ComboBox<String>();
 				Text player1Text = new Text("Player 1's Profile: ");
 				FlowPane fpPlayer1 = new FlowPane();
@@ -81,10 +94,32 @@ public class CreateGameWindow extends BorderPane{
 				fpPlayer4.setAlignment(javafx.geometry.Pos.CENTER);
 				fpPlayer4.getChildren().addAll(player4Text,player4Profiles);
 				
+				player1Profiles.setOnAction(e -> {
+					//removeValueFromComboBoxes(player1Profiles.getValue());
+					System.out.println(player1Profiles.getValue());
+				});
+				
+				player2Profiles.setOnInputMethodTextChanged(e -> {
+					//removeValueFromComboBoxes(player2Profiles.getValue());
+					System.out.println(player2Profiles.getValue());
+				});
+				
+				player3Profiles.setOnInputMethodTextChanged(e -> {
+					//removeValueFromComboBoxes(player3Profiles.getValue());
+					System.out.println(player3Profiles.getValue());
+				});
+				
+				player4Profiles.setOnInputMethodTextChanged(e -> {
+					//removeValueFromComboBoxes(player4Profiles.getValue());
+					System.out.println(player4Profiles.getValue());
+				});
+				
 				vb.getChildren().addAll(rb1,rb2,rb3,fpPlayer1,fpPlayer2,fpPlayer3,fpPlayer4);
 				vb.setAlignment(javafx.geometry.Pos.CENTER);
 				this.setCenter(vb);
 				
+				this.changePlayersShown(0);
+				this.addValueToComboBoxes("Guest");
 				this.loadProfileNames();
 	}
 	
@@ -103,11 +138,73 @@ public class CreateGameWindow extends BorderPane{
 		File[] listOfFiles = folder.listFiles();
 		
 		for (File f: listOfFiles) {
-			player1Profiles.getItems().add(f.getName());
-			player2Profiles.getItems().add(f.getName());
-			player3Profiles.getItems().add(f.getName());
-			player4Profiles.getItems().add(f.getName());
+			addValueToComboBoxes(f.getName());
 			System.out.println(f.getName());
 		}
+	}
+	
+	public void changePlayersShown(int numPlayersToShow) {
+		this.clearProfileSelection();
+		switch (numPlayersToShow) {
+		case 2:
+			player1Profiles.setDisable(false);
+			player2Profiles.setDisable(false);
+			player3Profiles.setDisable(true);
+			player4Profiles.setDisable(true);
+			break;
+		case 3:
+			player1Profiles.setDisable(false);
+			player2Profiles.setDisable(false);
+			player3Profiles.setDisable(false);
+			player4Profiles.setDisable(true);
+			break;
+		case 4:
+			player1Profiles.setDisable(false);
+			player2Profiles.setDisable(false);
+			player3Profiles.setDisable(false);
+			player4Profiles.setDisable(false);
+			break;
+		default:
+			player1Profiles.setDisable(true);
+			player2Profiles.setDisable(true);
+			player3Profiles.setDisable(true);
+			player4Profiles.setDisable(true);	
+		}
+	}
+	
+	public void addValueToComboBoxes(String val) {
+		player1Profiles.getItems().add(val);
+		player2Profiles.getItems().add(val);
+		player3Profiles.getItems().add(val);
+		player4Profiles.getItems().add(val);
+	}
+	
+//	public void removeValueFromComboBoxes(String str) {
+//		if (str != null) {
+//			player1Profiles.getItems().remove(str);
+//			player2Profiles.getItems().remove(str);
+//			player3Profiles.getItems().remove(str);
+//			player4Profiles.getItems().remove(str);
+//		}
+//	}
+	
+	public void clearProfileSelection() {
+//		if (player1Profiles.getValue() != null) {
+//			addValueToComboBoxes(player1Profiles.getValue());
+//		}
+//		if (player2Profiles.getValue() != null) {
+//			addValueToComboBoxes(player2Profiles.getValue());
+//		}
+//		if (player3Profiles.getValue() != null) {
+//			addValueToComboBoxes(player3Profiles.getValue());
+//		}
+//		if (player4Profiles.getValue() != null) {
+//			addValueToComboBoxes(player4Profiles.getValue());
+//		}
+		
+		player1Profiles.getSelectionModel().clearSelection();
+		player2Profiles.getSelectionModel().clearSelection();
+		player3Profiles.getSelectionModel().clearSelection();
+		player4Profiles.getSelectionModel().clearSelection();
 	}
 }

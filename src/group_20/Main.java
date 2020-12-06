@@ -43,10 +43,11 @@ public class Main extends Application {
 		
 		//Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
 		
-		//Scene scene = new Scene(new leaderboardWindow(),WINDOW_WIDTH, WINDOW_HEIGHT);
-		//Scene scene = new Scene(new CreateGameWindow(), WINDOW_WIDTH, WINDOW_HEIGHT);
-		Scene scene = new Scene(new BoardWindow(TILE_WIDTH, currentBoard), WINDOW_WIDTH, WINDOW_HEIGHT);
-		primaryStage.setScene(scene);
+		Scene leaderboard = new Scene(new leaderboardWindow(),WINDOW_WIDTH, WINDOW_HEIGHT);
+		Scene createGame = new Scene(new CreateGameWindow(), WINDOW_WIDTH, WINDOW_HEIGHT);
+		Scene loadGame = new Scene(new LoadGameWindow(), WINDOW_WIDTH, WINDOW_HEIGHT);
+		//Scene game = new Scene(new BoardWindow(TILE_WIDTH, currentBoard), WINDOW_WIDTH, WINDOW_HEIGHT);
+		primaryStage.setScene(createGame);
 		primaryStage.show();
 		
 //		System.out.println("HERE");
