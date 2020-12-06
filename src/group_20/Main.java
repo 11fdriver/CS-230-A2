@@ -43,9 +43,9 @@ public class Main extends Application {
 		
 		//Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
 		
-		Scene scene = new Scene(new leaderboardWindow(),WINDOW_WIDTH, WINDOW_HEIGHT);
+		//Scene scene = new Scene(new leaderboardWindow(),WINDOW_WIDTH, WINDOW_HEIGHT);
 		//Scene scene = new Scene(new CreateGameWindow(), WINDOW_WIDTH, WINDOW_HEIGHT);
-		//Scene scene = new Scene(new BoardWindow(TILE_WIDTH, currentBoard), WINDOW_WIDTH, WINDOW_HEIGHT);
+		Scene scene = new Scene(new BoardWindow(TILE_WIDTH, currentBoard), WINDOW_WIDTH, WINDOW_HEIGHT);
 		primaryStage.setScene(scene);
 		primaryStage.show();
 		

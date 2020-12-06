@@ -116,8 +116,7 @@ public class Player {
 	 * @param inventory
 	 * @param previousLocations
 	 */
-	public Player(Board board, int playerNumber, Location location, Inventory inventory, LocationList previousLocations, boolean hasBeenBacktracked, Profile profile) {
-		this.board = board;
+	public Player(int playerNumber, Location location, Inventory inventory, LocationList previousLocations, boolean hasBeenBacktracked, Profile profile) {
 		this.playerNumber = playerNumber;
 		this.location = location;
 		this.inventory = inventory;
@@ -135,8 +134,7 @@ public class Player {
 	 * @param silkBag
 	 * @param startingLocation
 	 */
-	public Player(Board board, int playerNumber, Location startingLocation, Profile profile) {
-		this.board = board;
+	public Player(int playerNumber, Location startingLocation, Profile profile) {
 		this.playerNumber = playerNumber;
 		this.location = startingLocation;
 		this.inventory = new Inventory();
@@ -340,6 +338,21 @@ public class Player {
 			this.addToCurrentTile();
 		}
 		System.out.println("Player Moved!");
+	}
+	 /**
+	  * Setter for board
+	  * @param board New board reference
+	  */
+	public void setBoard(Board board) {
+		this.board = board;
+	}
+	
+	/**
+	 * Getter for board
+	 * @return Player's board pointer
+	 */
+	public Board getBoard() {
+		return this.board;
 	}
 	
 	/**
@@ -665,7 +678,7 @@ public class Player {
 	public static void main(String[] args) {
 		Inventory inv = new Inventory();
 		LocationList locList = new LocationList();
-		Player p = new Player(null,1,new Location(1,7), inv, locList, false, null);
+		Player p = new Player(1,new Location(1,7), inv, locList, false, null);
 		System.out.println(p.saveFormat());
 		inv.add(new ActionTile(new FireAction()));
 		inv.add(new ActionTile(new FireAction()));

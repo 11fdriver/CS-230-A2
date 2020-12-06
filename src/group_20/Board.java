@@ -69,11 +69,12 @@ public class Board extends Task<Void>{
 		this.width = width;
 		this.gameBoard = new FloorTile[width][length];		
 		//player1 = new Player(this, this.silkBag, new Location(0,0));
-		Player[] newPlayers = {new Player(this, 1, new Location(0,1),null),
-				new Player(this,2,new Location(1,1),null),
-				new Player(this, 3,new Location(2,1),null),
-				new Player(this, 4,new Location(3,1),null)};
+		Player[] newPlayers = {new Player(1, new Location(0,1),null),
+				new Player(2,new Location(1,1),null),
+				new Player(3,new Location(2,1),null),
+				new Player(4,new Location(3,1),null)};
 		this.players = newPlayers;
+		this.assignPlayersToBoard();
 		this.currentPlayer = 0;
 		this.goalTile = (Goal) this.generateGoalTile();
 		this.populate();//TODO change from temp full population with random tiles
@@ -88,11 +89,12 @@ public class Board extends Task<Void>{
 		this.width = width;
 		this.gameBoard = new FloorTile[width][length];		
 		//player1 = new Player(this, this.silkBag, new Location(0,0));
-		Player[] newPlayers = {new Player(this, 1, new Location(0,1),null),
-				new Player(this,2,new Location(1,1),null),
-				new Player(this, 3,new Location(2,1),null),
-				new Player(this, 4,new Location(3,1),null)};
+		Player[] newPlayers = {new Player(1, new Location(0,1),null),
+				new Player(2,new Location(1,1),null),
+				new Player(3,new Location(2,1),null),
+				new Player(4,new Location(3,1),null)};
 		this.players = newPlayers;
+		this.assignPlayersToBoard();
 		this.currentPlayer = 0;
 		this.goalTile = (Goal) this.generateGoalTile();
 		this.populate();//TODO change from temp full population with random tiles
@@ -109,10 +111,17 @@ public class Board extends Task<Void>{
 //				new Player(this, 3,new Location(2,1),null),
 //				new Player(this, 4,new Location(3,1),null)};
 		this.players = players;
+		this.assignPlayersToBoard();
 		this.currentPlayer = startingPlayer;
 		this.goalTile = (Goal) this.generateGoalTile();
 		this.populate();//TODO change from temp full population with random tiles
 		this.randomizeAllPlayerLocations();//For testing
+	}
+	
+	public void assignPlayersToBoard() {
+		for (Player p: this.players) {
+			p.setBoard(this);
+		}
 	}
 	
 	//Just for testing
