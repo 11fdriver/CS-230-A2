@@ -58,6 +58,16 @@ public class Board extends Task<Void>{
 	 */
 	private Location lastClickLocation;
 	
+	/**
+	 * State of game if waiting for user to either continue or exit
+	 */
+	private boolean waitingForExitOrContinue;
+	
+	/**
+	 * Stores if GUI has given relevant input to change state of waitingForExitOrContinue
+	 */
+	private boolean continueGame;
+	
 //	private Double xClick; //Think redundant??
 //	private Double yClick; //Think redundant??
 	
@@ -817,6 +827,32 @@ public class Board extends Task<Void>{
 		return this.lastClickLocation;
 	}
 	
+	public boolean isWaitingForExitOrContinue() {
+		return this.waitingForExitOrContinue;
+	}
+	
+	public void setContinueGame(boolean b) {
+		this.continueGame = true;
+	}
+	
+	public void checkForExitGame() {
+		synchronized (this) {
+			this.continueGame = false;
+			while (!this.continueGame) {
+				this.waitingForExitOrContinue = true;
+				try {
+					System.out.println("Would you like to Save&Exit or Continue Playing?");
+					this.wait();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			System.out.println("Continuing game!!!");
+			this.waitingForExitOrContinue = false;
+		}
+	}
+	
 	@Override
 	/**
 	 * Called when thread is started
@@ -830,6 +866,7 @@ public class Board extends Task<Void>{
 			System.out.println("Advancing player");
 			this.advancePlayerTurn();
 			System.out.println("Drawing board");
+			this.checkForExitGame();
 			//this.draw();
 			System.out.println("Next Player's Turn");
 			System.out.println("\nPlayer " + (this.currentPlayer+1) + "'s turn");

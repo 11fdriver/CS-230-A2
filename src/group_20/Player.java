@@ -654,6 +654,7 @@ public class Player {
 			this.isWaiting = false;
 		}
 	}
+	
 	 /**
 	  * Converts player objects to string in correct format for saving
 	  * @return Player as formatted string

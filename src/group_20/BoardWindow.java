@@ -10,6 +10,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
@@ -137,27 +138,31 @@ public class BoardWindow extends BorderPane {
 			refreshBoard();
 		});
 		
-//		this.setLeft(inventoryCanvas);
-//		drawInventory();
-//		
-//		this.inventoryCanvas.setOnMouseClicked(e -> {
-//			this.board.getCurrentPlayer().setHasBeenClicked(true);
-//			Player p = this.board.getCurrentPlayer();
-//			if (p.isWaiting()) {
-//			//if (tr.getState() == Thread.State.WAITING) {
-//			synchronized (p) {
-//				p.notify();
-//			}
-//			}
-//			//System.out.println("You clicked + " + e.getX() + "," + e.getY());
-//		});
+		FlowPane fp = new FlowPane();
+		fp.setAlignment(javafx.geometry.Pos.CENTER);
+		Button endTurnButton = new Button("End turn");
+		Button saveAndExitButton = new Button("Save & Exit");
+		fp.getChildren().addAll(saveAndExitButton,endTurnButton);
+		//fp.setPadding(new Insets(Main.TILE_WIDTH));
+		this.setBottom(fp);
 		
-//		Button button1 = new Button("Button");
-//		sidebar.getChildren().addAll(button1);
-//		
-//		button1.setOnAction(e -> {
-//			
-//		});
+		endTurnButton.setOnMouseClicked(e -> {
+			if (this.board.isWaitingForExitOrContinue()) {
+				this.board.setContinueGame(true);
+				synchronized (this.board) {
+					board.notify();
+				}
+				System.out.println("Player wanted to continue O_O");
+				refreshBoard();
+			}
+		});
+		
+		saveAndExitButton.setOnMouseClicked(e -> {
+			if (this.board.isWaitingForExitOrContinue()) {
+				System.out.println("oh... bye then...");
+				System.exit(0);
+			}
+		});
 	}
 	
 	private void refreshBoard() {
