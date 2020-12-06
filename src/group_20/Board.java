@@ -34,13 +34,6 @@ public class Board extends Task<Void>{
 	private FloorTile[][] gameBoard;
 	
 	/**
-	 * Silk bag of the board
-	 */
-	private SilkBag silkBag;
-	
-	//private Player player1;
-	
-	/**
 	 * The Board's goal tile
 	 */
 	private Goal goalTile;
@@ -148,7 +141,7 @@ public class Board extends Task<Void>{
 		for (int i = 0; i < this.width; i++) {
 			for (int j = 0; j < length; j++) {
 				if (this.gameBoard[i][j] == null) {
-					this.gameBoard[i][j] = silkBag.drawFloorTile();
+					this.gameBoard[i][j] = SilkBag.drawFloorTile();
 					this.gameBoard[i][j].setLocation(new Location(i,j));
 				}
 			}
@@ -839,7 +832,25 @@ public class Board extends Task<Void>{
 	/**
 	 * Should update the leaderboard on who won and lost
 	 */
-	public void updateState() {
+	public void updateScores() {
 		
+	}
+	
+	public String saveFormat() {
+		//(int boardID, int width, int length, FloorTile[][] gameBoard, Player[] players, int startingPlayer)
+		String str = "{Board," +
+				this.boardID + "," +
+				this.width + "," +
+				this.length + ",";
+		for (int i = 0; i < this.width; i++) {
+			for (int j = 0; j < this.length; j++) {
+				str += this.gameBoard[i][j].saveFormat() + ",";
+			}
+		}
+		for (int i = 0; i < this.players.length; i++) {
+			str += this.players[i].saveFormat() + ",";
+		}
+		str += this.currentPlayer + "Board}";
+		return str;
 	}
 }

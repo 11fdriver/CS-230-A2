@@ -612,7 +612,10 @@ public class Player {
 			this.isWaiting = false;
 		}
 	}
-	
+	 /**
+	  * Converts player objects to string in correct format for saving
+	  * @return Player as formatted string
+	  */
 	public String saveFormat() {
 		//(Board board, int playerNumber, Location location, Inventory inventory, LocationList previousLocations, boolean hasBeenBacktracked, Profile profile)
 		String str = "{Player," +
