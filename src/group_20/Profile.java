@@ -1,49 +1,83 @@
 import java.util.*;
 
 public class Profile {
-	private static int noOfBoard;	//final modifier NOT yet implemented
+	private static int noOfBoard;
 	private static int nextProfileID = 1;	//profileID starts at 1, for profileID "empty" check
 	private int profileID;
 	private String name;
-	private Integer[] gamesPlayed;
-	private Integer[] wins;
-	private Integer[] losses;
-	private String[] lastGameDateTime;	//NOT yet implemented
-
-	//----------------------------------------------------------------------------------------------------
-	//for TESTING Leaderboard class
-
-	private static ArrayList<Profile> arrayListOfProfileInstances;
-
-	public static ArrayList<Profile> getArrayListOfProfileInstances() {	//for TESTING Leaderboard class
-		return arrayListOfProfileInstances;
-	}
-	//----------------------------------------------------------------------------------------------------
+	private int[] gamesPlayed;
+	private int[] wins;
+	private int[] losses;
+	private String[] lastGameDateTime;	//NOT implemented
 	
+	public static void main(String[] args) {
+		setNoOfBoard(4);
+
+		int[][] profile0 = {{1,2,3}, {1,1,1} ,{0,1,2}};	//Alice
+		int[][] profile1 = {{6,5,4}, {3,3,3} ,{3,2,1}};	//Bob
+		int[][] profile2 = {{7,8,9}, {1,1,1} ,{0,1,2}};	//Chuck
+		int[][] profile3 = {{1,2,3}, {1,1,1} ,{0,1,2}};	//Craig
+		int[][] profile4 = {{1,2,3}, {1,1,1} ,{0,1,2}};	//Charlie
+
+		Profile testprofile0 = new Profile("Alice", profile0[0], profile0[1], profile0[2]);
+		Profile testprofile1 = new Profile("Bob", profile1[0], profile1[1], profile1[2]);
+		Profile testprofile2 = new Profile("Chuck", profile2[0], profile2[1], profile2[2]);
+		Profile testprofile3 = new Profile("Craig", profile3[0], profile3[1], profile3[2]);
+		Profile testprofile4 = new Profile("Charlie", profile4[0], profile4[1], profile4[2]);
+
+		System.out.println(testprofile2.toString());
+		testprofile2.updateProfile(2, true);
+		System.out.println("testprofile2.updateProfile(2, true);");
+		System.out.println(testprofile2.toString());
+		
+		System.out.print("\ntestprofile2.getProfileID(): ");
+		System.out.println(testprofile2.getProfileID());
+
+		System.out.print("testprofile2.getName(): ");
+		System.out.println(testprofile2.getName());
+
+		System.out.print("testprofile2.getGamesPlayed(): ");
+		System.out.println(Arrays.toString(testprofile2.getGamesPlayed()));
+
+		System.out.print("testprofile2.getGamesPlayed(2): ");
+		System.out.println(testprofile2.getGamesPlayed(2));
+
+		System.out.print("testprofile2.getWins(): ");
+		System.out.println(Arrays.toString(testprofile2.getWins()));
+
+		System.out.print("testprofile2.getWins(2): ");
+		System.out.println(testprofile2.getWins(2));
+
+		System.out.print("testprofile2.getLosses(): ");
+		System.out.println(Arrays.toString(testprofile2.getLosses()));
+		
+		System.out.print("testprofile2.getLosses(2): ");
+		System.out.println(testprofile2.getLosses(2));
+
+	}
+
 	public Profile(String name) {
 		setProfileID();
 		setName(name);
-		gamesPlayed = new Integer[noOfBoard];
-		wins = new Integer[noOfBoard];
-		losses = new Integer[noOfBoard];
+		gamesPlayed = new int[noOfBoard];
+		wins = new int[noOfBoard];
+		losses = new int[noOfBoard];
 
-		arrayListOfProfileInstances.add(this);	
+		Leaderboard.arrayListOfProfileInstances.add(this);	//for TESTING Leaderboard class
 	}
 
-	public Profile(String name,Integer[] gamesPlayed, Integer[] wins, Integer[] losses) {
+	public Profile(String name, int[] gamesPlayed, int[] wins, int[] losses) {
 		setProfileID();
 		setName(name);
 		setGamesPlayed(gamesPlayed);
 		setWins(wins);
 		setLosses(losses);
 
-		arrayListOfProfileInstances.add(this);	//for TESTING Leaderboard class
+		Leaderboard.arrayListOfProfileInstances.add(this);	//for TESTING Leaderboard class
 	}
-	
+
 	public void updateProfile(int boardID, boolean winLoss) {
 		gamesPlayed[boardID] ++;
-		
-		//somehow update lastGameDateTime
 		
 		if (winLoss) {
 			wins[boardID] ++;
@@ -51,12 +85,13 @@ public class Profile {
 			losses[boardID] ++;
 		}
 	}
-	
-	//Getters
-	public List<Object> getStats(int boardID) {
-		return Arrays.asList(name, gamesPlayed[boardID], wins[boardID], losses[boardID]);
+
+	public String toString() {
+		return String.valueOf(profileID) + ", " + name + ", " + Arrays.toString(gamesPlayed) + ", " + Arrays.toString(wins) + ", " + Arrays.toString(losses);
 	}
 	
+	//Getters
+
 	public int getProfileID() {
 		return profileID;
 	}
@@ -65,35 +100,32 @@ public class Profile {
 		return name;
 	}
 	
-	public Integer[] getGamesPlayed() {
+	public int[] getGamesPlayed() {
 		return gamesPlayed;
 	}
 
-	public Integer getGamesPlayed(int boardID) {
+	public int getGamesPlayed(int boardID) {
 		return gamesPlayed[boardID];
 	}
 	
-	public Integer[] getWins() {
+	public int[] getWins() {
 		return wins;
 	}
 
-	public Integer getWins(int boardID) {
+	public int getWins(int boardID) {
 		return wins[boardID];
 	}
 	
-	public Integer[] getLosses() {
+	public int[] getLosses() {
 		return losses;
 	}
 	
-	public Integer getLosses(int boardID) {
+	public int getLosses(int boardID) {
 		return losses[boardID];
 	}
 	
-	public String[] getLastGameDateTime() {
-		return null;
-	}
-	
 	//Setters
+
 	public static void setNoOfBoard(int noOfBoard) {
 		Profile.noOfBoard = noOfBoard;
 	}
@@ -119,19 +151,15 @@ public class Profile {
 		this.name = name;
 	}
 	
-	public void setGamesPlayed(Integer[] gamesPlayed) {
+	public void setGamesPlayed(int[] gamesPlayed) {
 		this.gamesPlayed = gamesPlayed;
 	}
 
-	public void setWins(Integer[] wins) {
+	public void setWins(int[] wins) {
 		this.wins = wins;
 	}
 
-	public void setLosses(Integer[] losses) {
+	public void setLosses(int[] losses) {
 		this.losses = losses;
-	}
-
-	public void setLastGameDateTime(String[] lastGameDateTime) {
-		this.lastGameDateTime = lastGameDateTime;
 	}
 }
