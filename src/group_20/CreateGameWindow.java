@@ -15,37 +15,78 @@ import javafx.scene.text.Text;
 public class CreateGameWindow extends BorderPane{
 	private final int BUTTON_MAX_WIDTH = 100;
 	private final int BUTTON_MAX_HEIGHT = 60;
-	private ComboBox<String> templatesDropDown = new ComboBox<String>();
-	private ComboBox<String> player1Profiles = new ComboBox<String>();
-	private ComboBox<String> player2Profiles = new ComboBox<String>();
-	private ComboBox<String> player3Profiles = new ComboBox<String>();
-	private ComboBox<String> player4Profiles = new ComboBox<String>();
+	private ComboBox<String> templatesDropdown = new ComboBox<String>();
+	private ComboBox<String> player1ProfileDropdown = new ComboBox<String>();
+	private ComboBox<String> player2ProfileDropdown = new ComboBox<String>();
+	private ComboBox<String> player3ProfileDropdown = new ComboBox<String>();
+	private ComboBox<String> player4ProfileDropdown = new ComboBox<String>();
+	private String templateFileName;
+	private int numPlayers;
+	private String[] playerProfiles = new String[4];
+//	private String player1Profile;
+//	private String player2Profile;
+//	private String player3Profile;
+//	private String player4Profile;
 	
 	public CreateGameWindow() {
 		//Top of GUI
 				FlowPane fp = new FlowPane();
 				fp.setAlignment(javafx.geometry.Pos.CENTER);
-				Text t = new Text("Select a board template: ");
-				Button select = new Button("Select");
-				fp.getChildren().addAll(t,templatesDropDown,select);
+				Text templateText = new Text("Select a board template: ");
+				Button selectButton = new Button("Select");
+				fp.getChildren().addAll(templateText,templatesDropdown,selectButton);
 				this.setTop(fp);
 				
 				//Bottom of GUI
 				BorderPane bp = new BorderPane();
 				Button backButton = new Button("Back");
-				Button startGameButton = new Button("Create Game");
-				startGameButton.setMinSize(BUTTON_MAX_WIDTH, BUTTON_MAX_HEIGHT);
+				Button createGameButton = new Button("Create Game");
+				createGameButton.setMinSize(BUTTON_MAX_WIDTH, BUTTON_MAX_HEIGHT);
 				//backButton.autosize();
 				//startGameButton.autosize();
-				bp.setRight(startGameButton);
+				bp.setRight(createGameButton);
 				bp.setLeft(backButton);
 				bp.setPadding(new Insets(10));
 				this.setBottom(bp);
 				
 				this.loadSavedGameNames();
 				
-				select.setOnMouseClicked(e -> {
-					System.out.println(templatesDropDown.getValue());
+				selectButton.setOnMouseClicked(e -> {
+					System.out.println(templatesDropdown.getValue());
+				});
+				
+				createGameButton.setOnMouseClicked(e -> {
+					if (validValuesSelected()) {
+						System.out.println("Yeah valid values selected");
+						//Create new BoardWindow from a Board object
+						System.out.println("Number of players: " + numPlayers);
+						System.out.println("Template selected: " + templatesDropdown.getValue());
+						if (playerProfiles[0] == null || playerProfiles[0].equals("Guest")) {
+							System.out.println("Player 1's Profile: null");
+						} else {
+							System.out.println("Player 1's Profile: " + playerProfiles[0]);
+						}
+						
+						if (playerProfiles[1] == null || playerProfiles[1].equals("Guest")) {
+							System.out.println("Player 2's Profile: null");
+						} else {
+							System.out.println("Player 2's Profile: " + playerProfiles[1]);
+						}
+						
+						if (playerProfiles[2] == null || playerProfiles[2].equals("Guest")) {
+							System.out.println("Player 3's Profile: null");
+						} else {
+							System.out.println("Player 3's Profile: " + playerProfiles[2]);
+						}
+						
+						if (playerProfiles[3] == null || playerProfiles[3].equals("Guest")) {
+							System.out.println("Player 4's Profile: null");
+						} else {
+							System.out.println("Player 4's Profile: " + playerProfiles[3]);
+						}
+					} else {
+						System.out.println("Invalid selection");
+					}
 				});
 				
 				VBox vb = new VBox();
@@ -60,58 +101,65 @@ public class CreateGameWindow extends BorderPane{
 				rb1.setOnAction(e -> {
 					System.out.println("Radio button 1 clicked");
 					this.changePlayersShown(2);
+					this.numPlayers = 2;
 				});
 				rb2.setOnAction(e -> {
 					System.out.println("Radio button 2 clicked");
 					this.changePlayersShown(3);
+					this.numPlayers = 3;
 				});
 				rb3.setOnAction(e -> {
 					System.out.println("Radio button 3 clicked");
 					this.changePlayersShown(4);
+					this.numPlayers = 4;
 				});
 				
 				//ComboBox<String> player1Profiles = new ComboBox<String>();
 				Text player1Text = new Text("Player 1's Profile: ");
 				FlowPane fpPlayer1 = new FlowPane();
 				fpPlayer1.setAlignment(javafx.geometry.Pos.CENTER);
-				fpPlayer1.getChildren().addAll(player1Text,player1Profiles);
+				fpPlayer1.getChildren().addAll(player1Text,player1ProfileDropdown);
 				
 				//ComboBox<String> player2Profiles = new ComboBox<String>();
 				Text player2Text = new Text("Player 2's Profile: ");
 				FlowPane fpPlayer2 = new FlowPane();
 				fpPlayer2.setAlignment(javafx.geometry.Pos.CENTER);
-				fpPlayer2.getChildren().addAll(player2Text,player2Profiles);
+				fpPlayer2.getChildren().addAll(player2Text,player2ProfileDropdown);
 				
 				//ComboBox<String> player3Profiles = new ComboBox<String>();
 				Text player3Text = new Text("Player 3's Profile: ");
 				FlowPane fpPlayer3 = new FlowPane();
 				fpPlayer3.setAlignment(javafx.geometry.Pos.CENTER);
-				fpPlayer3.getChildren().addAll(player3Text,player3Profiles);
+				fpPlayer3.getChildren().addAll(player3Text,player3ProfileDropdown);
 				
 				//ComboBox<String> player4Profiles = new ComboBox<String>();
 				Text player4Text = new Text("Player 4's Profile: ");
 				FlowPane fpPlayer4 = new FlowPane();
 				fpPlayer4.setAlignment(javafx.geometry.Pos.CENTER);
-				fpPlayer4.getChildren().addAll(player4Text,player4Profiles);
+				fpPlayer4.getChildren().addAll(player4Text,player4ProfileDropdown);
 				
-				player1Profiles.setOnAction(e -> {
+				player1ProfileDropdown.setOnAction(e1 -> {
 					//removeValueFromComboBoxes(player1Profiles.getValue());
-					System.out.println(player1Profiles.getValue());
+					System.out.println(player1ProfileDropdown.getValue());
+					this.playerProfiles[0] = player1ProfileDropdown.getValue();
 				});
 				
-				player2Profiles.setOnInputMethodTextChanged(e -> {
+				player2ProfileDropdown.setOnAction(e2 -> {
 					//removeValueFromComboBoxes(player2Profiles.getValue());
-					System.out.println(player2Profiles.getValue());
+					System.out.println(player2ProfileDropdown.getValue());
+					this.playerProfiles[1] = player2ProfileDropdown.getValue();
 				});
 				
-				player3Profiles.setOnInputMethodTextChanged(e -> {
+				player3ProfileDropdown.setOnAction(e3 -> {
 					//removeValueFromComboBoxes(player3Profiles.getValue());
-					System.out.println(player3Profiles.getValue());
+					System.out.println(player3ProfileDropdown.getValue());
+					this.playerProfiles[2] = player3ProfileDropdown.getValue();
 				});
 				
-				player4Profiles.setOnInputMethodTextChanged(e -> {
+				player4ProfileDropdown.setOnAction(e4 -> {
 					//removeValueFromComboBoxes(player4Profiles.getValue());
-					System.out.println(player4Profiles.getValue());
+					System.out.println(player4ProfileDropdown.getValue());
+					this.playerProfiles[3] = player4ProfileDropdown.getValue();
 				});
 				
 				vb.getChildren().addAll(rb1,rb2,rb3,fpPlayer1,fpPlayer2,fpPlayer3,fpPlayer4);
@@ -128,7 +176,7 @@ public class CreateGameWindow extends BorderPane{
 		File[] listOfFiles = folder.listFiles();
 		
 		for (File f: listOfFiles) {
-			templatesDropDown.getItems().add(f.getName());
+			templatesDropdown.getItems().add(f.getName());
 			System.out.println(f.getName());
 		}
 	}
@@ -147,64 +195,72 @@ public class CreateGameWindow extends BorderPane{
 		this.clearProfileSelection();
 		switch (numPlayersToShow) {
 		case 2:
-			player1Profiles.setDisable(false);
-			player2Profiles.setDisable(false);
-			player3Profiles.setDisable(true);
-			player4Profiles.setDisable(true);
+			player1ProfileDropdown.setDisable(false);
+			player2ProfileDropdown.setDisable(false);
+			player3ProfileDropdown.setDisable(true);
+			player4ProfileDropdown.setDisable(true);
 			break;
 		case 3:
-			player1Profiles.setDisable(false);
-			player2Profiles.setDisable(false);
-			player3Profiles.setDisable(false);
-			player4Profiles.setDisable(true);
+			player1ProfileDropdown.setDisable(false);
+			player2ProfileDropdown.setDisable(false);
+			player3ProfileDropdown.setDisable(false);
+			player4ProfileDropdown.setDisable(true);
 			break;
 		case 4:
-			player1Profiles.setDisable(false);
-			player2Profiles.setDisable(false);
-			player3Profiles.setDisable(false);
-			player4Profiles.setDisable(false);
+			player1ProfileDropdown.setDisable(false);
+			player2ProfileDropdown.setDisable(false);
+			player3ProfileDropdown.setDisable(false);
+			player4ProfileDropdown.setDisable(false);
 			break;
 		default:
-			player1Profiles.setDisable(true);
-			player2Profiles.setDisable(true);
-			player3Profiles.setDisable(true);
-			player4Profiles.setDisable(true);	
+			player1ProfileDropdown.setDisable(true);
+			player2ProfileDropdown.setDisable(true);
+			player3ProfileDropdown.setDisable(true);
+			player4ProfileDropdown.setDisable(true);	
 		}
 	}
 	
 	public void addValueToComboBoxes(String val) {
-		player1Profiles.getItems().add(val);
-		player2Profiles.getItems().add(val);
-		player3Profiles.getItems().add(val);
-		player4Profiles.getItems().add(val);
+		player1ProfileDropdown.getItems().add(val);
+		player2ProfileDropdown.getItems().add(val);
+		player3ProfileDropdown.getItems().add(val);
+		player4ProfileDropdown.getItems().add(val);
 	}
 	
-//	public void removeValueFromComboBoxes(String str) {
-//		if (str != null) {
-//			player1Profiles.getItems().remove(str);
-//			player2Profiles.getItems().remove(str);
-//			player3Profiles.getItems().remove(str);
-//			player4Profiles.getItems().remove(str);
-//		}
-//	}
-	
 	public void clearProfileSelection() {
-//		if (player1Profiles.getValue() != null) {
-//			addValueToComboBoxes(player1Profiles.getValue());
-//		}
-//		if (player2Profiles.getValue() != null) {
-//			addValueToComboBoxes(player2Profiles.getValue());
-//		}
-//		if (player3Profiles.getValue() != null) {
-//			addValueToComboBoxes(player3Profiles.getValue());
-//		}
-//		if (player4Profiles.getValue() != null) {
-//			addValueToComboBoxes(player4Profiles.getValue());
-//		}
+		player1ProfileDropdown.getSelectionModel().clearSelection();
+		player2ProfileDropdown.getSelectionModel().clearSelection();
+		player3ProfileDropdown.getSelectionModel().clearSelection();
+		player4ProfileDropdown.getSelectionModel().clearSelection();
 		
-		player1Profiles.getSelectionModel().clearSelection();
-		player2Profiles.getSelectionModel().clearSelection();
-		player3Profiles.getSelectionModel().clearSelection();
-		player4Profiles.getSelectionModel().clearSelection();
+		for (int i = 0; i < numPlayers; i++) {
+			playerProfiles[i] = null;
+		}
+	}
+	
+	private boolean validValuesSelected() {
+		if (templatesDropdown.getValue() == null) {
+			System.out.println("No template selected");
+			return false;
+		}
+		
+		if (numPlayers == 0) {
+			System.out.println("No player number selected");
+			return false;
+		}
+		
+		
+		for (int i = 0; i < this.numPlayers; i++) {
+			String compA = this.playerProfiles[i];
+			for (int j = 0; j < this.numPlayers; j++) {
+				String compB = this.playerProfiles[j];
+				if ((i != j) && (compA != null && compB != null) && (!compA.equals("Guest")) && (!compB.equals("Guest")) && (compA.equals(compB))) {
+					System.out.println("Duplicate profiles picked");
+					return false;
+				}
+			}
+		}
+		
+		return true;
 	}
 }

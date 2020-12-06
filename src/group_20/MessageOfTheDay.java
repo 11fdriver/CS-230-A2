@@ -100,7 +100,10 @@ public class MessageOfTheDay {
 	
 	public static char shiftChar(char c, int shiftAmount) {
 		int ascii = (int) c;
-		ascii += shiftAmount;
+		if (ascii > 64 && ascii < 91) {
+			ascii += shiftAmount;
+		}
+		
 		while (ascii < 65) {
 			ascii += 26;
 		}

@@ -2,12 +2,8 @@ package group_20;
 
 import java.util.ArrayList;
 import java.util.Random;
-
 import javafx.concurrent.Task;
-import javafx.event.EventHandler;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.input.MouseEvent;
 
 //TODO make sure can't push fixed tiles
 //TODO currently tiles don't really keep track of players: There's a lot of null pointers and pointers which aren't valid any more. Fix this.
