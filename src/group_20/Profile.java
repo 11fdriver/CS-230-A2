@@ -5,12 +5,12 @@ public class Profile {
 	private static int nextProfileID = 1;	//profileID starts at 1, for profileID "empty" check
 	private int profileID;
 	private String name;
-	private int[] gamesPlayed;
-	private int[] wins;
-	private int[] losses;
+	private int[] numGamesPlayed;
+	private int[] numWins;
+	private int[] numLosses;
 	private String[] lastGameDateTime;	//NOT implemented
 
-	public static int controllerBoardID;
+	public static int boardIDToShow;
 	
 	public static void main(String[] args) {
 		//test code removed
@@ -19,35 +19,35 @@ public class Profile {
 	public Profile(String name) {
 		setProfileID();
 		setName(name);
-		gamesPlayed = new int[noOfBoard];
-		wins = new int[noOfBoard];
-		losses = new int[noOfBoard];
+		numGamesPlayed = new int[noOfBoard];
+		numWins = new int[noOfBoard];
+		numLosses = new int[noOfBoard];
 
 		Leaderboard.arrayListOfProfileInstances.add(this);	//for TESTING Leaderboard class
 	}
 
-	public Profile(String name, int[] gamesPlayed, int[] wins, int[] losses) {
+	public Profile(String name, int[] numGamesPlayed, int[] numWins, int[] numLosses) {
 		setProfileID();
 		setName(name);
-		setGamesPlayed(gamesPlayed);
-		setWins(wins);
-		setLosses(losses);
+		setNumGamesPlayed(numGamesPlayed);
+		setNumWins(numWins);
+		setNumLosses(numLosses);
 
 		Leaderboard.arrayListOfProfileInstances.add(this);	//for TESTING Leaderboard class
 	}
 
 	public void updateProfile(int boardID, boolean winLoss) {
-		gamesPlayed[boardID] ++;
+		numGamesPlayed[boardID] ++;
 		
 		if (winLoss) {
-			wins[boardID] ++;
+			numWins[boardID] ++;
 		} else {
-			losses[boardID] ++;
+			numLosses[boardID] ++;
 		}
 	}
 
 	public String toString() {
-		return String.valueOf(profileID) + ", " + name + ", " + Arrays.toString(gamesPlayed) + ", " + Arrays.toString(wins) + ", " + Arrays.toString(losses);
+		return String.valueOf(profileID) + ", " + name + ", " + Arrays.toString(numGamesPlayed) + ", " + Arrays.toString(numWins) + ", " + Arrays.toString(numLosses);
 	}
 	
 	//Getters
@@ -60,40 +60,40 @@ public class Profile {
 		return name;
 	}
 	
-	public int getGamesPlayed() {
-		return gamesPlayed[controllerBoardID];
+	public int getNumGamesPlayed() {
+		return numGamesPlayed[boardIDToShow];
 	}
 	
-	/*public int[] getGamesPlayed() {
-		return gamesPlayed;
+	/*public int[] getNumGamesPlayed() {
+		return numGamesPlayed;
+	}*/
+
+	public int getNumGamesPlayed(int boardID) {
+		return numGamesPlayed[boardID];
+	}
+	
+	public int getNumWins() {
+		return numWins[boardIDToShow];
+	}
+	
+	/*public int[] getNumWins() {
+		return numWins;
 	}
 
-	public int getGamesPlayed(int boardID) {
-		return gamesPlayed[boardID];
+	public int getNumWins(int boardID) {
+		return numWins[boardID];
 	}*/
 	
-	public int getWins() {
-		return wins[controllerBoardID];
-	}
-	
-	/*public int[] getWins() {
-		return wins;
+	public int getNumLosses() {
+		return numLosses[boardIDToShow];
 	}
 
-	public int getWins(int boardID) {
-		return wins[boardID];
-	}*/
-	
-	public int getLosses() {
-		return losses[controllerBoardID];
-	}
-
-	/*public int[] getLosses() {
-		return losses;
+	/*public int[] getNumLosses() {
+		return numLosses;
 	}
 	
-	public int getLosses(int boardID) {
-		return losses[boardID];
+	public int getNumLosses(int boardID) {
+		return numLosses[boardID];
 	}*/
 
 	public static int getNoOfBoard() {
@@ -127,15 +127,15 @@ public class Profile {
 		this.name = name;
 	}
 	
-	public void setGamesPlayed(int[] gamesPlayed) {
-		this.gamesPlayed = gamesPlayed;
+	public void setNumGamesPlayed(int[] numGamesPlayed) {
+		this.numGamesPlayed = numGamesPlayed;
 	}
 
-	public void setWins(int[] wins) {
-		this.wins = wins;
+	public void setNumWins(int[] numWins) {
+		this.numWins = numWins;
 	}
 
-	public void setLosses(int[] losses) {
-		this.losses = losses;
+	public void setNumLosses(int[] numLosses) {
+		this.numLosses = numLosses;
 	}
 }

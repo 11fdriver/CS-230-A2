@@ -1,3 +1,4 @@
+import java.util.*;
 import javafx.application.*;
 import javafx.collections.*;
 import javafx.scene.*;
@@ -5,31 +6,31 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
 import javafx.stage.*;
-import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.*;
 
 public class LeaderboardWindow extends Application{
+    private int boardIDInput = 0;
+
+    private int getBoardIDInput() {
+        return boardIDInput;
+    }
+
+    private void setBoardIDInput(int boardIDInput) {
+        this.boardIDInput = boardIDInput;
+    }
+
     public static void main(String[] args) {
         launch(args);
     }
 
-    @Override
     public void start(Stage primaryStage) {
-        ObservableList<Profile> observableList = FXCollections.observableArrayList(Leaderboard.arrayListOfProfileInstances);
-    
-        FilteredList<Profile> filteredList = new FilteredList<>(observableList, p -> true);
-
-        System.out.println(getProfile());
-        System.out.println(observableList);
-        System.out.println(filteredList);
-
-        //-----
+        //--------------------
         //test code, create Profile instances
-        Profile.controllerBoardID = 0;
         Profile.setNoOfBoard(3);
 
         int[][] profile0 = {{171,115,83}, {88,75,55} ,{83,40,28}};	//Alice
 		int[][] profile1 = {{92,81,144}, {79,34,100} ,{13,47,44}};	//Bob
-		int[][] profile2 = {{154,63,91}, {91,30,17} ,{62,33,74}};	//Chuck
+		int[][] profile2 = {{154,0,91}, {91,0,17} ,{62,0,74}};	//Chuck
 		int[][] profile3 = {{88,96,68}, {59,66,47} ,{29,30,21}};	//Craig
 		int[][] profile4 = {{155,115,101}, {55,37,79} ,{100,78,22}};	//Charlie
 
@@ -38,22 +39,23 @@ public class LeaderboardWindow extends Application{
 		Profile testprofile2 = new Profile("Chuck", profile2[0], profile2[1], profile2[2]);
 		Profile testprofile3 = new Profile("Craig", profile3[0], profile3[1], profile3[2]);
 		Profile testprofile4 = new Profile("Charlie", profile4[0], profile4[1], profile4[2]);
-        //-----
+        //--------------------
 
         TableView<Profile> table = new TableView<Profile>();
-        table.setItems(getProfile());
+        table.getItems().clear();
+        table.setItems(getProfile(getBoardIDInput()));
 
         TableColumn<Profile, String> nameColumn = new TableColumn<>("Name");
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         
         TableColumn<Profile, Integer> winColumn = new TableColumn<>("Wins");
-        winColumn.setCellValueFactory(new PropertyValueFactory<>("wins"));
+        winColumn.setCellValueFactory(new PropertyValueFactory<>("numWins"));
 
         TableColumn<Profile, Integer> lossColumn = new TableColumn<>("Losses");
-        lossColumn.setCellValueFactory(new PropertyValueFactory<>("losses"));
+        lossColumn.setCellValueFactory(new PropertyValueFactory<>("numLosses"));
 
         TableColumn<Profile, Integer> gameColumn = new TableColumn<>("Games Played");
-        gameColumn.setCellValueFactory(new PropertyValueFactory<>("gamesPlayed"));
+        gameColumn.setCellValueFactory(new PropertyValueFactory<>("numGamesPlayed"));
         
         table.getColumns().addAll(nameColumn,winColumn,lossColumn,gameColumn);
         winColumn.setSortType(TableColumn.SortType.DESCENDING);
@@ -66,10 +68,22 @@ public class LeaderboardWindow extends Application{
         toggleButton2.setToggleGroup(toggleGroup);
 
         toggleButton1.setOnAction(actionEvent -> {
+            table.getItems().clear();
+            table.setItems(getProfile(getBoardIDInput()));
+           
+            table.getSortOrder().clear();
+            table.getSortOrder().add(winColumn);
+            
             winColumn.setSortType(TableColumn.SortType.ASCENDING);
         });
 
         toggleButton2.setOnAction(actionEvent -> {
+            table.getItems().clear();
+            table.setItems(getProfile(getBoardIDInput()));
+
+            table.getSortOrder().clear();
+            table.getSortOrder().add(winColumn);
+
             winColumn.setSortType(TableColumn.SortType.DESCENDING);
         });
 
@@ -77,11 +91,18 @@ public class LeaderboardWindow extends Application{
         toggleButton2.setDisable(true);
 
         TextField textField = new TextField();
-        textField.setPromptText("Board ID");
+        textField.setPromptText("Board ID: (1-" + Profile.getNoOfBoard() + ")");
+        
         textField.textProperty().addListener((observable,oldValue,newValue) -> {
             try {
                 if((Integer.parseInt(textField.getText()) >= 0) && (Integer.parseInt(textField.getText())) < Profile.getNoOfBoard()) {
-                    Profile.controllerBoardID = Integer.parseInt(textField.getText());
+                    setBoardIDInput(Integer.parseInt(textField.getText()));
+
+                    table.getItems().clear();
+                    table.setItems(getProfile(getBoardIDInput()));
+
+                    table.getSortOrder().clear();
+                    table.getSortOrder().add(winColumn);
 
                     if(toggleButton1.isSelected()) {
                         winColumn.setSortType(TableColumn.SortType.ASCENDING);
@@ -90,6 +111,7 @@ public class LeaderboardWindow extends Application{
                     }
 
                     textField.setStyle("-fx-text-fill: black;");
+
                     toggleButton1.setDisable(false);
                     toggleButton2.setDisable(false);
                 } else {
@@ -113,10 +135,22 @@ public class LeaderboardWindow extends Application{
         Scene scene = new Scene(vBox);
         primaryStage.setScene(scene);
         primaryStage.show();
+
     }
 
-    public ObservableList<Profile> getProfile() {
-        ObservableList<Profile> observableList = FXCollections.observableArrayList(Leaderboard.arrayListOfProfileInstances);
+    public ObservableList<Profile> getProfile(int boardIDInput) {
+        Profile.boardIDToShow = boardIDInput;   //setting the ugly global variable
+
+        ArrayList<Profile> filteredProfiles = new ArrayList<Profile> ();
+		filteredProfiles = (ArrayList<Profile>)Leaderboard.arrayListOfProfileInstances.clone();
+        
+        for(int i = 0; i < filteredProfiles.size(); i++) {
+            if(filteredProfiles.get(i).getNumGamesPlayed(boardIDInput) == 0) {
+                filteredProfiles.remove(i);
+            }
+        }
+        
+        ObservableList<Profile> observableList = FXCollections.observableArrayList(filteredProfiles);
         return observableList;
     }
 }
