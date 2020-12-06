@@ -33,7 +33,7 @@ public class FloorTile extends Tile implements Subscriber {
 	/**
 	 * 
 	 */
-	protected static final String HIGHLIGHT_IMG_FILEPATH = TILE_IMG_DIR_PATH + "Magnifying_glass.png";//TODO change to actual file name
+	protected static final String HIGHLIGHT_IMG_FILEPATH = TILE_IMG_DIR_PATH + "Circle_indicator.png";//TODO change to actual file name
 	
 	/**
 	 * ArrayList containing exit/entry points.

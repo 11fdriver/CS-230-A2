@@ -41,16 +41,84 @@ public class BoardWindow extends BorderPane {
 		this.setRight(drawnFloorTileCanvas);
 		this.setCenter(this.gameCanvas);
 		
-		//this.board.highlightValidMoves();
-		
-		
-		
 		Timeline timeline = new Timeline(new KeyFrame(Duration.millis(100), ae -> refreshBoard()));
 		timeline.setCycleCount(Animation.INDEFINITE);
 		timeline.play();
 		
-		//this.setOnClickEventMovePlayer();
+		this.createInventoryPane();
 		
+		startGame();
+		
+		refreshBoard();
+		
+		this.gameCanvas.setOnMouseClicked(e -> {
+			this.board.setLastClickLocation(e.getX(), e.getY());
+			synchronized (this.board) {
+				board.notify();
+			}
+			System.out.println("You clicked tile: " + this.board.getlastClickLocation());
+			refreshBoard();
+		});
+		
+		this.createHeader();
+		this.createFooter();
+	}
+	
+	private void refreshBoard() {
+		//System.out.println("Refreshed");
+		banner.setText(this.board.getCurrentStepMessage());
+		Player p = this.board.getCurrentPlayer();
+		if (p.getTileToInsert() != null) {
+			p.getTileToInsert().draw(drawnFloorTileCanvas.getGraphicsContext2D(), 0, 0);
+		} else {
+			drawnFloorTileCanvas.getGraphicsContext2D().clearRect(0, 0, Main.TILE_WIDTH, Main.TILE_WIDTH);
+		}
+		this.gc.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+		this.board.draw();
+	}
+	
+	private void startGame() {
+		Thread tr = new Thread(board);
+		tr.setDaemon(true);
+		tr.start();
+	}
+	
+	private void createHeader() {
+		FlowPane fpBanner = new FlowPane();
+		fpBanner.setAlignment(javafx.geometry.Pos.CENTER);
+		fpBanner.getChildren().add(banner);
+		this.setTop(fpBanner);
+	}
+	
+	private void createFooter() {
+		FlowPane fp = new FlowPane();
+		fp.setAlignment(javafx.geometry.Pos.CENTER);
+		Button endTurnButton = new Button("End turn");
+		Button saveAndExitButton = new Button("Save & Exit");
+		fp.getChildren().addAll(saveAndExitButton,endTurnButton);
+		//fp.setPadding(new Insets(Main.TILE_WIDTH));
+		this.setBottom(fp);
+		
+		endTurnButton.setOnMouseClicked(e -> {
+			if (this.board.isWaitingForExitOrContinue()) {
+				this.board.setContinueGame(true);
+				synchronized (this.board) {
+					board.notify();
+				}
+				System.out.println("Player wanted to continue O_O");
+				refreshBoard();
+			}
+		});
+		
+		saveAndExitButton.setOnMouseClicked(e -> {
+			if (this.board.isWaitingForExitOrContinue()) {
+				System.out.println("oh... bye then...");
+				System.exit(0);
+			}
+		});
+	}
+	
+	private void createInventoryPane() {
 		VBox sidebar = new VBox();
 		this.setLeft(sidebar);
 		
@@ -127,80 +195,5 @@ public class BoardWindow extends BorderPane {
 				System.out.println("Skipped playing action tile");
 			}
 		});
-		
-		Thread tr = new Thread(board);
-		tr.setDaemon(true);
-		tr.start();
-		
-		refreshBoard();
-		
-		this.gameCanvas.setOnMouseClicked(e -> {
-			this.board.setLastClickLocation(e.getX(), e.getY());
-			synchronized (this.board) {
-				board.notify();
-			}
-			System.out.println("You clicked tile: " + this.board.getlastClickLocation());
-			refreshBoard();
-		});
-		
-		FlowPane fp = new FlowPane();
-		fp.setAlignment(javafx.geometry.Pos.CENTER);
-		Button endTurnButton = new Button("End turn");
-		Button saveAndExitButton = new Button("Save & Exit");
-		fp.getChildren().addAll(saveAndExitButton,endTurnButton);
-		//fp.setPadding(new Insets(Main.TILE_WIDTH));
-		this.setBottom(fp);
-		
-		endTurnButton.setOnMouseClicked(e -> {
-			if (this.board.isWaitingForExitOrContinue()) {
-				this.board.setContinueGame(true);
-				synchronized (this.board) {
-					board.notify();
-				}
-				System.out.println("Player wanted to continue O_O");
-				refreshBoard();
-			}
-		});
-		
-		saveAndExitButton.setOnMouseClicked(e -> {
-			if (this.board.isWaitingForExitOrContinue()) {
-				System.out.println("oh... bye then...");
-				System.exit(0);
-			}
-		});
-		
-		FlowPane fpBanner = new FlowPane();
-		fpBanner.setAlignment(javafx.geometry.Pos.CENTER);
-		fpBanner.getChildren().add(banner);
-		this.setTop(fpBanner);
 	}
-	
-	private void refreshBoard() {
-		//System.out.println("Refreshed");
-		banner.setText(this.board.getCurrentStepMessage());
-		Player p = this.board.getCurrentPlayer();
-		if (p.getTileToInsert() != null) {
-			p.getTileToInsert().draw(drawnFloorTileCanvas.getGraphicsContext2D(), 0, 0);
-		} else {
-			drawnFloorTileCanvas.getGraphicsContext2D().clearRect(0, 0, Main.TILE_WIDTH, Main.TILE_WIDTH);
-		}
-		this.gc.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-		this.board.draw();
-	}
-	
-	/**
-	 * Just for testing rn
-	 */
-//	private void drawInventory() {
-//		ArrayList<Direction> directions = new ArrayList<Direction>();
-//		directions.add(Direction.SOUTH);
-//		directions.add(Direction.WEST);
-//		Direction orientation = Direction.EAST;
-//		
-//		FloorTile t = new Straight(TILE_WIDTH, "straight_tile_with_alligners.png", directions, orientation, null, null, null, 0);
-//		
-//		for (int i = 0; i < this.board.getLength(); i++) {
-//			t.draw(inventoryCanvas.getGraphicsContext2D(), 0, i*TILE_WIDTH);
-//		}
-//	}
 }
