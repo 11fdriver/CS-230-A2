@@ -14,12 +14,10 @@ import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
 public class BoardWindow extends BorderPane {
-	private final int TILE_WIDTH;
 	private final int CANVAS_WIDTH;
 	private final int CANVAS_HEIGHT;
 	private Board board;
 	private Canvas gameCanvas;
-	private Canvas inventoryCanvas;
 	private GraphicsContext gc;
 	private Button backTrackActionButton = new Button("Backtrack Action");
 	private Button fireActionButton = new Button("Fire Action");
@@ -27,13 +25,11 @@ public class BoardWindow extends BorderPane {
 	private Button doubleMoveActionButton = new Button("Double Move Action");
 	private Button skipButton = new Button("Skip");
 	
-	public BoardWindow(int TILE_WIDTH, Board board) {
-		this.TILE_WIDTH = TILE_WIDTH;
+	public BoardWindow(Board board) {
 		this.board = board;
-		CANVAS_WIDTH = this.board.getWidth() * TILE_WIDTH;
-		CANVAS_HEIGHT = this.board.getLength() * TILE_WIDTH;
+		CANVAS_WIDTH = this.board.getWidth() * Main.TILE_WIDTH;
+		CANVAS_HEIGHT = this.board.getLength() * Main.TILE_WIDTH;
 		this.gameCanvas = new Canvas(CANVAS_WIDTH, CANVAS_HEIGHT);
-		this.inventoryCanvas = new Canvas(TILE_WIDTH, CANVAS_HEIGHT);
 		this.gc = this.gameCanvas.getGraphicsContext2D();
 		this.board.setGraphicsContext(this.gc);
 		
