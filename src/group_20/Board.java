@@ -853,6 +853,25 @@ public class Board extends Task<Void>{
 		}
 	}
 	
+	public String getCurrentStepMessage() {
+		String msg = "Player " + (this.currentPlayer+1) + "'s turn: ";
+		switch (this.getCurrentPlayer().getCurrentStageOfTurn()) {
+		case 1:
+			//msg += "Drawing a tile from the silk bag";
+			msg += "Please select a location to insert the floor tile.";
+			break;
+		case 2:
+			msg += "Please select an action tile to use, or skip playing an action tile.";
+			break;
+		case 3:
+			msg += "Please select a tile to move to.";
+			break;
+		default:
+			msg += "Please end your turn, or save and exit the game.";
+		}
+		return msg;
+	}
+	
 	@Override
 	/**
 	 * Called when thread is started
@@ -863,10 +882,13 @@ public class Board extends Task<Void>{
 		System.out.println("Starting Game");
 		while (!this.gameOver()) {
 			this.getCurrentPlayer().takeTurn();
+			if (this.gameOver()) {
+				break;
+			}
+			this.checkForExitGame();
 			System.out.println("Advancing player");
 			this.advancePlayerTurn();
 			System.out.println("Drawing board");
-			this.checkForExitGame();
 			//this.draw();
 			System.out.println("Next Player's Turn");
 			System.out.println("\nPlayer " + (this.currentPlayer+1) + "'s turn");

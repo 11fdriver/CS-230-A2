@@ -12,6 +12,7 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 public class BoardWindow extends BorderPane {
@@ -19,21 +20,25 @@ public class BoardWindow extends BorderPane {
 	private final int CANVAS_HEIGHT;
 	private Board board;
 	private Canvas gameCanvas;
+	private Canvas drawnFloorTileCanvas;
 	private GraphicsContext gc;
 	private Button backTrackActionButton = new Button("Backtrack Action");
 	private Button fireActionButton = new Button("Fire Action");
 	private Button iceActionButton = new Button("Ice Action");
 	private Button doubleMoveActionButton = new Button("Double Move Action");
 	private Button skipButton = new Button("Skip");
+	private Text banner = new Text("");
 	
 	public BoardWindow(Board board) {
 		this.board = board;
 		CANVAS_WIDTH = this.board.getWidth() * Main.TILE_WIDTH;
 		CANVAS_HEIGHT = this.board.getLength() * Main.TILE_WIDTH;
 		this.gameCanvas = new Canvas(CANVAS_WIDTH, CANVAS_HEIGHT);
+		drawnFloorTileCanvas = new Canvas(Main.TILE_WIDTH, Main.TILE_WIDTH);
 		this.gc = this.gameCanvas.getGraphicsContext2D();
 		this.board.setGraphicsContext(this.gc);
 		
+		this.setRight(drawnFloorTileCanvas);
 		this.setCenter(this.gameCanvas);
 		
 		//this.board.highlightValidMoves();
@@ -163,20 +168,24 @@ public class BoardWindow extends BorderPane {
 				System.exit(0);
 			}
 		});
+		
+		FlowPane fpBanner = new FlowPane();
+		fpBanner.setAlignment(javafx.geometry.Pos.CENTER);
+		fpBanner.getChildren().add(banner);
+		this.setTop(fpBanner);
 	}
 	
 	private void refreshBoard() {
 		//System.out.println("Refreshed");
-//		Inventory inv = this.board.getCurrentPlayer().getInventory();
-//		if (!inv.contains(new FireAction())) {
-//			this.fireActionButton.setDisable(true);
-//		}
+		banner.setText(this.board.getCurrentStepMessage());
+		Player p = this.board.getCurrentPlayer();
+		if (p.getTileToInsert() != null) {
+			p.getTileToInsert().draw(drawnFloorTileCanvas.getGraphicsContext2D(), 0, 0);
+		} else {
+			drawnFloorTileCanvas.getGraphicsContext2D().clearRect(0, 0, Main.TILE_WIDTH, Main.TILE_WIDTH);
+		}
 		this.gc.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 		this.board.draw();
-	}
-	
-	private void refreshInventoryPane() {
-		
 	}
 	
 	/**

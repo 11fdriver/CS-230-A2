@@ -151,6 +151,7 @@ public class Player {
 		this.numMoves = 1;
 		System.out.println("Drawing a tile");
 		this.stepOne();
+		this.currentStageOfTurn = 2;
 		//System.out.println("Doing action on tile");
 		this.stepTwo();
 		this.currentStageOfTurn = 3;
@@ -159,6 +160,7 @@ public class Player {
 			System.out.println("Making a move");
 			this.stepThree();
 		}
+		this.currentStageOfTurn = 4;
 	}
 	
 	/**
