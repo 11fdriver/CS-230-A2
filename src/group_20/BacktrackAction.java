@@ -1,12 +1,7 @@
 package group_20;
+import javafx.scene.canvas.GraphicsContext;
 
 public class BacktrackAction extends Action {
-
-	@Override
-	public void draw(Location loc) {
-		// TODO Auto-generated method stub
-
-	}
 
 	@Override
 	public String saveFormat() {
@@ -19,5 +14,14 @@ public class BacktrackAction extends Action {
 		// TODO Auto-generated method stub
 		
 	}
+	
+	public String toString() {
+		return "This is a backtrack action tile";
+	}
 
+	@Override
+	public void draw(GraphicsContext gc, int x, int y) {
+		// TODO Auto-generated method stub
+		
+	}
 }

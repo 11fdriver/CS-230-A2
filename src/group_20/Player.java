@@ -1,15 +1,19 @@
-import java.awt.Graphics;
-import java.awt.image.BufferedImage;
-import java.io.File;
+package group_20;
+
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
-import javax.imageio.ImageIO;
-
+import javafx.event.EventHandler;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
 
 public class Player {
+	private final int TILE_WIDTH;
+	
 	/**
 	 * location of player
 	 */
@@ -18,7 +22,7 @@ public class Player {
 	/**
 	 * Inventory of player
 	 */
-	private ArrayList<ActionTile> inventory;
+	private Inventory inventory;
 	
 	/**
 	 * Keeps track of the number of moves a player can make
@@ -47,6 +51,42 @@ public class Player {
 	private Boolean hasBeenBacktracked;
 	
 	/**
+	 * The current floor tile that the player has drawn on their turn
+	 */
+	private FloorTile tileToInsert;
+	
+	/**
+	 * Sprite for player
+	 */
+	private Image sprite;
+	
+	/**
+	 * (Used by board to check state of player).
+	 * Keeps track of turn state -> Stage 1, Stage 2, Stage 3.
+	 * Stage 1: Drawing a tile & (possibly) inserting tile.
+	 * Stage 2: Playing action tile.
+	 * Stage 3: Moving.
+	 */
+	private int currentStageOfTurn;
+	
+	/**
+	 * The current action tile the player has chosen to play
+	 */
+	private ActionTile chosenActionTile = null;
+	
+	/**
+	 * Stores if the player it waiting for input from the GUI
+	 */
+	private boolean isWaiting = false;
+	
+	/**
+	 * The profile linked to this object for storing stats
+	 */
+	private Profile profile;
+	
+	private Image highlighter;
+	
+	/**
 	 * Full Constructor to be called when loading a player object
 	 * @param board
 	 * @param silkbag
@@ -54,13 +94,16 @@ public class Player {
 	 * @param inventory
 	 * @param previousLocations
 	 */
-	public Player(Board board, SilkBag silkbag, Location location, ArrayList<ActionTile> inventory, LocationList previousLocations, boolean hasBeenBacktracked) {
+	public Player(Board board, SilkBag silkbag, int TILE_WIDTH, String spriteFilename, Location location, ArrayList<ActionTile> inventory, LocationList previousLocations, boolean hasBeenBacktracked) {
 		this.board = board;
 		this.silkBag = silkbag;
+		this.TILE_WIDTH = TILE_WIDTH;
 		this.location = location;
-		this.inventory = inventory;
+		this.inventory = new Inventory(inventory);
 		this.previousLocations = previousLocations;
 		this.hasBeenBacktracked = hasBeenBacktracked;
+		this.numMoves = 1;
+		this.loadSprite(spriteFilename);
 	}
 	
 	/**
@@ -69,20 +112,30 @@ public class Player {
 	 * @param silkBag
 	 * @param startingLocation
 	 */
-	public Player(Board board, SilkBag silkBag, Location startingLocation) {
+	public Player(Board board, SilkBag silkBag, int TILE_WIDTH, String spriteFilename, Location startingLocation) {
 		this.board = board;
 		this.silkBag = silkBag;
+		this.TILE_WIDTH = TILE_WIDTH;
 		this.location = startingLocation;
-		this.inventory = new ArrayList<ActionTile>();
+		this.inventory = new Inventory();
 		this.previousLocations = new LocationList();
 		this.hasBeenBacktracked = false;
+		this.numMoves = 1;
+		this.loadSprite(spriteFilename);
 	}
 	
 	public void takeTurn() {
-		this.drawTile();
-		//this.stepTwo();
+		this.currentStageOfTurn = 1;
+		this.numMoves = 1;
+		System.out.println("Drawing a tile");
+		this.stepOne();
+
+		//System.out.println("Doing action on tile");
+		this.stepTwo();
+		this.currentStageOfTurn = 3;
 		while (this.numMoves > 0) {
 			this.decNumMoves(1);
+			System.out.println("Making a move");
 			this.stepThree();
 		}
 	}
@@ -93,12 +146,7 @@ public class Player {
 	 * 	- Floor Tile = Insert onto board (Also get input from user as to where to insert)
 	 */
 	public void stepOne() {
-		FloorTile drawnTile = this.drawTile();
-		//If tile is null then it was an ActionTile and was added to inventory
-		if (drawnTile != null) {
-			Location l = new Location(0,0); //As location to insert new tile -> temp value for now
-			this.board.insertTile(drawnTile, l);
-		}
+		this.drawTile();
 	}
 	
 	/**
@@ -109,8 +157,15 @@ public class Player {
 		//Skip step 2 if inventory is empty
 		if (!this.inventory.isEmpty()) {
 			//Allow the user to select a tile
-			ActionTile chosenTile = new ActionTile();//TODO: Change to user input
-			chosenTile.play(this.board, this);
+			this.selectTileFromInventory();
+			if (!(chosenActionTile.getAction() == null)) {
+				System.out.println("'Playing' " + chosenActionTile.toString());
+			} else {
+				System.out.println("Oh I guess you wanted to skip your turn.. fine by me");
+			}
+			//chosenActionTile.play(this, this.board);
+		} else {
+			System.out.println("My inventory is empty -> Can't play an action tile :(");
 		}
 	}
 
@@ -119,20 +174,44 @@ public class Player {
 	 * - Handles user input for selecting a direction to move in
 	 * - Allows 2 moves if doubleMove is true
 	 */
-	public void stepThree() {
+	public synchronized void stepThree() {
 		//Skip method if player can't make any valid moves
 		if (this.canMove()) {
-			Direction d = Direction.EAST;//TODO: change to user input
-		
-			//Loop until input is valid
-			while (!canMove(d)) {
-				d = Direction.EAST;//New direction from user input, for now constant
+			Location clickLocation = this.board.getLocationAtClick();
+			
+			while (!this.canMove(clickLocation)) {
+				clickLocation = this.board.getLocationAtClick();;
 			}
 			
-			//Allow player to move
-			this.addPreviousLocation(this.getLocation());
-			this.getLocation().update(d);
-			this.board.setPlayer(this, this.getLocation());
+			Direction d = this.getDirectionFromPlayer(clickLocation);
+			this.move(d);
+		}
+	}
+	
+	public boolean isInRange(Location l) {
+		return this.getDirectionFromPlayer(l) != null;
+	}
+	
+	public Direction getDirectionFromPlayer(Location l) {
+		Direction directionToMove = null;
+		if (l.getY() == this.getLocation().getY()+1 && l.getX() == this.getLocation().getX()) {
+			directionToMove = Direction.SOUTH;
+		} else if (l.getY() == this.getLocation().getY()-1 && l.getX() == this.getLocation().getX()) {
+			directionToMove = Direction.NORTH;
+		} else if (l.getX() == this.getLocation().getX()+1 && l.getY() == this.getLocation().getY()) {
+			directionToMove = Direction.EAST;
+		} else if (l.getX() == this.getLocation().getX()-1 && l.getY() == this.getLocation().getY()) {
+			directionToMove = Direction.WEST;
+		}
+		return directionToMove;
+	}
+	
+	public boolean canMove(Location l) {
+		if (this.isInRange(l) &&
+				this.canMove(this.getDirectionFromPlayer(l))) {
+			return true;
+		} else {
+			return false;
 		}
 	}
 	
@@ -163,28 +242,66 @@ public class Player {
 	 * Responsible for drawing a tile from the silk bag
 	 * @return ActionTile if action tile was drawn or null if FloorTile was drawn
 	 */
-	public FloorTile drawTile() {
+	public void drawTile() {
 		Tile drawnTile = silkBag.drawTile();
+		//System.out.println(drawnTile.toString());
 		
 		//If is ActionTile
-		if (drawnTile.getClass() == ActionTile.class) {
+		if (ActionTile.class.isAssignableFrom(drawnTile.getClass())) {
 			System.out.println("I drew an action tile");
 			this.addToInventory((ActionTile) drawnTile);
 			
 		//If is FloorTile
-		} else if (drawnTile.getClass() == FloorTile.class) {
+		} else if (FloorTile.class.isAssignableFrom(drawnTile.getClass())) {
 			System.out.println("I drew a floor tile");
-			return (FloorTile) drawnTile;
+			this.tileToInsert = (FloorTile) drawnTile;
+			this.insertTile();
 			
 		//If is Tile
-		} else if (drawnTile.getClass() == Tile.class) {
+		} else if (Tile.class.isAssignableFrom(drawnTile.getClass())) {
 			System.out.println("I draw a generic Tile? Why would you give me that?");
 			
 		//Anything else
 		} else {
 			System.out.println("What the heck did I just draw?????");
 		}
-		return null;
+	}
+	
+	public synchronized void insertTile() {
+		System.out.println("Inserting the tile");
+		Location insertLocation = this.board.getLocationAtClick();
+		
+		while (!this.board.canInsertAt(insertLocation)) {
+			insertLocation = this.board.getLocationAtClick();
+		}
+		
+		this.insertTile(insertLocation);
+	}
+	
+	/**
+	 * Inserts the tile drawn at a given location
+	 * @param l Location to insert tile
+	 */
+	public void insertTile(Location l) {
+		this.board.insertTile(this.tileToInsert,l);
+		this.tileToInsert = null;
+		System.out.println("Tile inserted!");
+	}
+	
+	/**
+	 * True if player has a value for tileToInsert ie drew a floor tile
+	 * @return
+	 */
+	public boolean drewFloorTile() {
+		return this.tileToInsert != null;
+	}
+	
+	/**
+	 * Returns the current tile the player has chosen to insert onto board
+	 * @return Tile player is waiting to insert
+	 */
+	public FloorTile getTileToInsert() {
+		return this.tileToInsert;
 	}
 	
 	/**
@@ -192,14 +309,13 @@ public class Player {
 	 * @param d Direction to move
 	 */
 	public void move(Direction d) {
-		Location newLocation = new Location(this.location.getX(), this.location.getY());
-		newLocation.update(d);
-		
-		//Only update location if new position is in bounds of Board
-		if (this.board.isInBounds(newLocation)) {
-			this.location = newLocation;
+		if (this.board.canMove(this.location, d)) {
+			this.addPreviousLocation(this.getLocation());
+			this.removeFromCurrentTile();
+			this.location.update(d);
+			this.addToCurrentTile();
 		}
-		//this.location.update(d);
+		System.out.println("Player Moved!");
 	}
 	
 	/**
@@ -207,7 +323,10 @@ public class Player {
 	 * @param location New location
 	 */
 	public void setLocation(Location location) {
+		this.addPreviousLocation(this.getLocation());
+		this.removeFromCurrentTile();
 		this.location = location;
+		this.addToCurrentTile();
 	}
 	
 	/**
@@ -215,14 +334,14 @@ public class Player {
 	 * @return current location
 	 */
 	public Location getLocation() {
-		return this.location;
+		return this.location.copy();
 	}
 	
 	/**
 	 * Getter for player's inventory of ActionTile's
 	 * @return
 	 */
-	public ArrayList<ActionTile> getInventory() {
+	public Inventory getInventory() {
 		return this.inventory;
 	}
 	
@@ -230,7 +349,7 @@ public class Player {
 	 * Setter for inventory
 	 * @param inventory New inventory
 	 */
-	public void setInventory(ArrayList<ActionTile> inventory) {
+	public void setInventory(Inventory inventory) {
 		this.inventory = inventory;
 	}
 	
@@ -240,6 +359,10 @@ public class Player {
 	 */
 	public void addToInventory(ActionTile t) {
 		this.inventory.add(t);
+	}
+	
+	public void removeFromInventory(ActionTile t) {
+		this.inventory.remove(t);
 	}
 	
 	/**
@@ -283,6 +406,22 @@ public class Player {
 	}
 	
 	/**
+	 * Setter for profile
+	 * @param profile New reference for profile
+	 */
+	public void setProfile(Profile profile) {
+		this.profile = profile;
+	}
+	
+	/**
+	 * Getter for profile
+	 * @return Player's profile
+	 */
+	public Profile getProfile() {
+		return this.profile;
+	}
+	
+	/**
 	 * Setter for numMoves
 	 * @param numMoves New value for numMoves
 	 */
@@ -314,16 +453,133 @@ public class Player {
 		this.numMoves -= decAmount;
 	}
 	
-	BufferedImage img;
-	public void draw(Graphics g) throws IOException {
-		img = ImageIO.read(new File("C:\\Users\\Owner\\Pictures\\Player.png"));
-		g.drawImage(img, 0, 0, null);
+	/**
+	 * Removes the pointer to this player from the tile on the board at the location of this player
+	 */
+	public void removeFromCurrentTile() {
+		FloorTile currentlyOn = this.board.getTileAt(this.location);
+		if (currentlyOn != null) {
+			currentlyOn.setPlayer(null);
+		}
 	}
 	
+	/**
+	 * Adds a pointer to this player to the tile at this player's location on the board
+	 */
+	public void addToCurrentTile() {
+		FloorTile currentlyOn = this.board.getTileAt(this.location);
+		currentlyOn.setPlayer(this);
+	}
+	
+	/**
+	 * Draws the player on a given graphics context
+	 * @param gc Graphics Context to draw onto
+	 */
+	public void draw(GraphicsContext gc) {
+		int x = this.getLocation().getX()*TILE_WIDTH + (TILE_WIDTH/4);
+		int y = this.getLocation().getY()*TILE_WIDTH;
+		gc.drawImage(sprite, x, y);
+	}
+	
+	/**
+	 * Sets the player to a random location on the board
+	 * @param boardWidth Width of board
+	 * @param boardLength Length of board
+	 */
 	public void randomizeLocation(int boardWidth, int boardLength) {
 		Random r = new Random();
 		int x = r.nextInt(boardWidth - 1);
 		int y = r.nextInt(boardLength - 1);
 		this.setLocation(new Location(x,y));
+	}
+	
+	/**
+	 * Converts the player object to a readable string
+	 * @return Player object as a readable string
+	 */
+	public String toString() {
+		return "Location: " + this.location.toString() + "\n"
+				+ "Previous Locations: " + this.previousLocations.toString() + "\n"
+				+ "Inventory: " + this.inventory.toString();
+	}
+	
+	/**
+	 * Loads player's sprite from given file location
+	 * @param filename File name of sprite
+	 */
+	public void loadSprite(String filename) {
+		Image image = null;
+		try {
+			image = new Image(new FileInputStream(filename),(this.TILE_WIDTH/3)*2, (this.TILE_WIDTH/3)*2,true,true);
+		} catch (IOException e) {
+			System.out.println("Unable to find sprite file: " + filename);
+		}
+		this.sprite = image;
+	}
+	
+	/**
+	 * Getter for currentStageOfTurn
+	 * @return Current stage of player's turn
+	 */
+	public int getCurrentStageOfTurn() {
+		return this.currentStageOfTurn;
+	}
+	
+	/**
+	 * Highlights player on the given graphics context
+	 * @param gc Graphics context to draw highlight on
+	 */
+	public void highlight(GraphicsContext gc) {
+		Image image = null;
+		try {
+			image = new Image(new FileInputStream("Magnifying_glass.png"), (this.TILE_WIDTH)*1.3, (this.TILE_WIDTH)*1.3, true,true);
+		} catch (IOException e) {
+			System.out.println("Unable to find highlighter file");
+		}
+		this.highlighter = image;
+		double x = this.getLocation().getX()*TILE_WIDTH - (TILE_WIDTH/3.5);
+		double y = this.getLocation().getY()*TILE_WIDTH - (TILE_WIDTH/8);
+		gc.drawImage(highlighter, x, y);
+	}
+	
+	/**
+	 * Sets the chosen action tile for player to use
+	 * @param t Action tile for player to use
+	 */
+	public void setChosenActionTile(ActionTile t) {
+		this.chosenActionTile = t;
+		System.out.println("Removing action tile");
+		this.inventory.remove(t);
+		System.out.println("Removed action tile");
+	}
+	
+	/**
+	 * Checks of the player is waiting for input from GUI
+	 * @return True if player is waiting for input from GUI
+	 */
+	public boolean isWaiting() {
+		return this.isWaiting;
+	}
+	
+	/**
+	 * Sets the player object to wait for input from the GUI
+	 * - Sets the value of chosenActionTile to corresponding input from GUI
+	 */
+	public void selectTileFromInventory() {
+		synchronized (this) {
+			this.setChosenActionTile(null);
+			while (this.chosenActionTile == null) {
+				this.isWaiting = true;
+				System.out.println("Select An Action Tile");
+				try {
+					this.wait();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			System.out.println("Action Tile Selected");
+			this.isWaiting = false;
+		}
 	}
 }

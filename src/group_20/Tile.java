@@ -1,4 +1,5 @@
+package group_20;
 
-public class Tile {
+public abstract class Tile implements Drawable, Saveable {
 
 }
