@@ -33,7 +33,7 @@ public class FloorTile extends Tile implements Subscriber {
 	/**
 	 * 
 	 */
-	protected static final String HIGHLIGHT_IMG_FILEPATH = TILE_IMG_DIR_PATH + "highlight_img_name.png";//TODO change to actual file name
+	protected static final String HIGHLIGHT_IMG_FILEPATH = TILE_IMG_DIR_PATH + "Magnifying_glass.png";//TODO change to actual file name
 	
 	/**
 	 * ArrayList containing exit/entry points.
@@ -91,7 +91,6 @@ public class FloorTile extends Tile implements Subscriber {
 	 * @param lifetime		Turns left until {@code state} expires
 	 */
 	public FloorTile(ArrayList<Direction> directions, Location location, Player player, FloorAction state, int lifetime, boolean fixed) {
-		//this.loadSprite(spriteFileLocation); //Sets this.sprite
 		this.DIRECTIONS = directions;
 		this.calculateRotation();
 		this.location = location;
@@ -102,7 +101,7 @@ public class FloorTile extends Tile implements Subscriber {
 			this.stateLifetime = lifetime;
 		}
 		this.fixed = fixed;
-		//this.loadHighlightSprite();
+		this.loadHighlightSprite();
 	}
 	
 	private void calculateRotation() {
@@ -361,8 +360,9 @@ public class FloorTile extends Tile implements Subscriber {
 		try {
 			image = new Image(new FileInputStream(HIGHLIGHT_IMG_FILEPATH),Main.TILE_WIDTH, Main.TILE_WIDTH,true,true);
 		} catch (IOException e) {
+			System.out.println("Unable to load highlight sprite");
 			//TODO add code
 		}
-		this.highlightSprite = (image);
+		this.highlightSprite = image;
   	}
 }

@@ -31,7 +31,7 @@ public class Player {
 	/**
 	 * 
 	 */
-	private static final String HIGHLIGHT_IMG_FILEPATH = TILE_IMG_DIR_PATH + "highlight_img_name.png";//TODO change to actual file name
+	private static final String HIGHLIGHT_IMG_FILEPATH = TILE_IMG_DIR_PATH + "Magnifying_glass.png";//TODO change to actual file name
 	
 	/**
 	 * location of player
@@ -73,6 +73,11 @@ public class Player {
 	 * Sprite for player
 	 */
 	private Image sprite;
+	
+	/**
+	 * Sprite used to highlight player on board
+	 */
+	private Image highlightSprite;
 	
 	/**
 	 * (Used by board to check state of player).
@@ -121,6 +126,7 @@ public class Player {
 		this.profile = profile;
 		this.numMoves = 1;
 		this.loadSprite();
+		this.loadHighlightSprite();
 	}
 	
 	/**
@@ -139,6 +145,7 @@ public class Player {
 		this.profile = profile;
 		this.numMoves = 1;
 		this.loadSprite();
+		this.loadHighlightSprite();
 	}
 	
 	public void takeTurn() {
@@ -259,7 +266,8 @@ public class Player {
 	 * @return ActionTile if action tile was drawn or null if FloorTile was drawn
 	 */
 	public void drawTile() {
-		Tile drawnTile = SilkBag.removeTile();
+		//Tile drawnTile = SilkBag.removeTile(); //TODO put this line in when merging with Finn
+		Tile drawnTile = SilkBag.drawTile();
 		//System.out.println(drawnTile.toString());
 		
 		//If is ActionTile
@@ -560,6 +568,17 @@ public class Player {
 		this.sprite = image;
 	}
 	
+	public void loadHighlightSprite() {
+  		Image image = null;
+		try {
+			image = new Image(new FileInputStream(HIGHLIGHT_IMG_FILEPATH),Main.TILE_WIDTH, Main.TILE_WIDTH,true,true);
+		} catch (IOException e) {
+			System.out.println("Unable to load highlight sprite");
+			//TODO add code
+		}
+		this.highlightSprite = image;
+  	}
+	
 	/**
 	 * Getter for currentStageOfTurn
 	 * @return Current stage of player's turn
@@ -573,11 +592,13 @@ public class Player {
 	 * @param gc Graphics context to draw highlight on
 	 */
 	public void highlight(GraphicsContext gc) {
-		gc.setStroke(Color.MAGENTA);
+//		gc.setStroke(Color.MAGENTA);
 		int x = this.getLocation().getX()*Main.TILE_WIDTH;
 		int y = this.getLocation().getY()*Main.TILE_WIDTH;
-		gc.strokeOval(x, y, (Main.TILE_WIDTH), (Main.TILE_WIDTH));
-		gc.setStroke(Color.BLACK);
+//		gc.strokeOval(x, y, (Main.TILE_WIDTH), (Main.TILE_WIDTH));
+//		gc.setStroke(Color.BLACK);
+		FloorTile tileStandingOn = this.board.getTileAt(this.getLocation());
+		tileStandingOn.highlight(gc, x, y, this.highlightSprite);
 	}
 	
 	/**

@@ -33,7 +33,7 @@ public class Main extends Application {
 	
 	public static void main(String[] args) {
 		//System.out.println(Screen.getScreens().get(1).getBounds().getWidth() + "x" + Screen.getScreens().get(1).getBounds().getHeight());
-		System.out.println(currentBoard.saveFormat());
+		//System.out.println(currentBoard.saveFormat());
 		launch(args);
 	}
 
@@ -44,8 +44,8 @@ public class Main extends Application {
 		//Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
 		
 		
-		Scene scene = new Scene(new CreateGameWindow(), WINDOW_WIDTH, WINDOW_HEIGHT);
-		//Scene scene = new Scene(new BoardWindow(this.TILE_WIDTH, this.currentBoard), WINDOW_WIDTH, WINDOW_HEIGHT);
+		//Scene scene = new Scene(new CreateGameWindow(), WINDOW_WIDTH, WINDOW_HEIGHT);
+		Scene scene = new Scene(new BoardWindow(TILE_WIDTH, currentBoard), WINDOW_WIDTH, WINDOW_HEIGHT);
 		primaryStage.setScene(scene);
 		primaryStage.show();
 		
