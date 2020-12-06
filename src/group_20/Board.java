@@ -833,7 +833,11 @@ public class Board extends Task<Void>{
 	 * Should update the leaderboard on who won and lost
 	 */
 	public void updateScores() {
-		
+		Player currentPlayer = this.getCurrentPlayer();
+		Profile p = currentPlayer.getProfile();
+		if (p != null) {
+			p.updateProfile(this.boardID, true);
+		}
 	}
 	
 	public String saveFormat() {

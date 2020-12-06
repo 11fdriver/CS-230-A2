@@ -5,17 +5,16 @@ import java.util.Random;
 
 public class SilkBag {
 	int numberOfTiles;
-	private int TILE_WIDTH;
 	
-	public SilkBag(int TILE_WIDTH) {
-		this.TILE_WIDTH = TILE_WIDTH;
-	}
+//	public SilkBag(int TILE_WIDTH) {
+//		this.TILE_WIDTH = TILE_WIDTH;
+//	}
 	
 	/**
 	 * returns floor tiles AND action tiles
 	 * @return
 	 */
-	public Tile drawTile() {
+	public static Tile drawTile() {
 		Random r = new Random();
 		int rnd = r.nextInt(9);
 		
@@ -29,7 +28,7 @@ public class SilkBag {
 		case 4:
 			return new ActionTile(new BacktrackAction());
 		default:
-			return this.drawFloorTile();
+			return drawFloorTile();
 		}
 		
 		//return this.drawFloorTile();
@@ -40,7 +39,7 @@ public class SilkBag {
 	 * Used by board class to get random floor tiles (Specifically floor tiles -> not action tiles)
 	 * @return random FloorTile object from silk bag
 	 */
-	public FloorTile drawFloorTile() {
+	public static FloorTile drawFloorTile() {
 		Random r = new Random();
 		int tileID = r.nextInt(5);//ie x < 5
 		int orientationID = r.nextInt(5);//ie x < 5
@@ -85,7 +84,7 @@ public class SilkBag {
 				directions.add(Direction.SOUTH);
 				break;
 			}
-			return new Straight(TILE_WIDTH, "straight_tile_with_alligners.png", directions, orientation, null, null, null, 0, false);
+			return new FloorTile(directions, null, null, null, 0, false);
 		case 2:
 			switch (orientation) {
 			case NORTH:
@@ -105,7 +104,7 @@ public class SilkBag {
 				directions.add(Direction.EAST);
 				break;
 			}
-			return new Corner(TILE_WIDTH, "Corner_Tile_with_alligners.png", directions, orientation, null, null, null, 0, false);
+			return new FloorTile(directions, null, null, null, 0, false);
 		case 3:
 			switch (orientation) {
 			case NORTH:
@@ -129,13 +128,13 @@ public class SilkBag {
 				directions.add(Direction.WEST);
 				break;
 			}
-			return new TShaped(TILE_WIDTH, "T_Tile_With_alligners.png", directions, orientation, null, null, null, 0, false);
+			return new FloorTile(directions, null, null, null, 0, false);
 		case 4:
 			directions.add(Direction.NORTH);
 			directions.add(Direction.EAST);
 			directions.add(Direction.SOUTH);
 			directions.add(Direction.WEST);
-			return new Goal(TILE_WIDTH, "X_tile_with_alligners.png", directions, orientation, null, null, null, 0, false);
+			return new FloorTile(directions, null, null, null, 0, false);
 		default:
 			switch (orientation) {
 			case NORTH:
@@ -155,32 +154,32 @@ public class SilkBag {
 				directions.add(Direction.SOUTH);
 				break;
 			}
-			return new Straight(TILE_WIDTH, "straight_tile_with_alligners.png", directions, orientation, null, null, null, 0, false);
+			return new FloorTile(directions, null, null, null, 0, false);
 		}
 	}
 	
 	public static void main(String[] args) {
-		ArrayList<Direction> directions = new ArrayList<Direction>();
-		directions.add(Direction.SOUTH);
-		directions.add(Direction.WEST);
-		Direction orientation = Direction.EAST;
-		
-		FloorTile t = new Straight(120, "straight_tile_with_alligners.png", directions, orientation, null, null, null, 0, false);
-		System.out.println(t.getOrientation());
-		switch (t.getOrientation()) {
-		case NORTH:
-			System.out.println("Facing NORTH");
-			break;
-		case EAST:
-			System.out.println("Facing EAST");
-			break;
-		case SOUTH:
-			System.out.println("Facing SOUTH");
-			break;
-		case WEST:
-			System.out.println("Facing WEST");
-			break;
-		}
+//		ArrayList<Direction> directions = new ArrayList<Direction>();
+//		directions.add(Direction.SOUTH);
+//		directions.add(Direction.WEST);
+//		Direction orientation = Direction.EAST;
+//		
+//		FloorTile t = new Straight(120, "straight_tile_with_alligners.png", directions, orientation, null, null, null, 0, false);
+//		System.out.println(t.getRotation());
+//		switch (t.getOrientation()) {
+//		case NORTH:
+//			System.out.println("Facing NORTH");
+//			break;
+//		case EAST:
+//			System.out.println("Facing EAST");
+//			break;
+//		case SOUTH:
+//			System.out.println("Facing SOUTH");
+//			break;
+//		case WEST:
+//			System.out.println("Facing WEST");
+//			break;
+//		}
 	}
 	//===========================================================================================================//
 }

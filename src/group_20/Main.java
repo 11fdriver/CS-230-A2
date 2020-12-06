@@ -29,11 +29,11 @@ public class Main extends Application {
 	private static final int WINDOW_HEIGHT = CANVAS_HEIGHT + 100;
 	private static final int WINDOW_WIDTH = CANVAS_WIDTH + 300;
 	public static Canvas canvas = new Canvas(CANVAS_WIDTH, CANVAS_HEIGHT);
-	static Board currentBoard = new Board(canvas.getGraphicsContext2D(),BOARD_WIDTH,BOARD_LENGTH);
+	//static Board currentBoard = new Board(canvas.getGraphicsContext2D(),BOARD_WIDTH,BOARD_LENGTH);
 	
 	public static void main(String[] args) {
-		System.out.println(Screen.getScreens().get(1).getBounds().getWidth() + "x" + Screen.getScreens().get(1).getBounds().getHeight());
-		System.out.println(currentBoard.saveFormat());
+		//System.out.println(Screen.getScreens().get(1).getBounds().getWidth() + "x" + Screen.getScreens().get(1).getBounds().getHeight());
+		//System.out.println(currentBoard.saveFormat());
 		launch(args);
 	}
 
@@ -44,8 +44,8 @@ public class Main extends Application {
 		//Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
 		
 		
-		//Scene scene = new Scene(new CreateGameWindow(), WINDOW_WIDTH, WINDOW_HEIGHT);
-		Scene scene = new Scene(new BoardWindow(this.TILE_WIDTH, this.currentBoard), WINDOW_WIDTH, WINDOW_HEIGHT);
+		Scene scene = new Scene(new CreateGameWindow(), WINDOW_WIDTH, WINDOW_HEIGHT);
+		//Scene scene = new Scene(new BoardWindow(this.TILE_WIDTH, this.currentBoard), WINDOW_WIDTH, WINDOW_HEIGHT);
 		primaryStage.setScene(scene);
 		primaryStage.show();
 		
