@@ -2,201 +2,128 @@ package group_20;
 
 import java.util.*;
 
-/**
- * Profile stores user-specific data. 
- */
-public class Profile implements Saveable {
-	/**
-	 * Stores the next available Profile ID.
-	 */
-	private static int nextID;
-	
-	/**
-	 * A list of all profiles created.
-	 */
-	private static ArrayList<Profile> profiles;
-	
-	/**
-	 * Unique Profile ID.
-	 */
-	private final int ID;
-	
-	/**
-	 * Player's name.
-	 */
+public class Profile {
+	private static int noOfBoard;
+	private static int nextProfileID = 1;	//profileID starts at 1, for profileID "empty" check
+	private int profileID;
 	private String name;
+	private int[] numGamesPlayed;
+	private int[] numWins;
+	private int[] numLosses;
+	private String[] lastGameDateTime;	//NOT implemented
 	
-	/**
-	 * Amount of games Profile has won.
-	 */
-	private int wins;
-	
-	/**
-	 * Amount of games Profile has lost.
-	 */
-	private int losses;
-	
-	/**
-	 * Board IDs for games player has played.
-	 */
-	private ArrayList<Integer> playedBoards;
+	public static void main(String[] args) {
+		//test code removed
+	}
 
-	/**
-	 * Amount of games Profile has played overall.
-	 */
-	private int played;
-	
-	/**
-	 * Constructor for <b>new</b> Profiles.
-	 * @param name Name of user
-	 */
 	public Profile(String name) {
-		this.ID = nextID++;
-		this.name = name;
-		this.playedBoards = new ArrayList<Integer>();
-		profiles.add(this);
+		setProfileID();
+		setName(name);
+		numGamesPlayed = new int[noOfBoard];
+		numWins = new int[noOfBoard];
+		numLosses = new int[noOfBoard];
+
+		Leaderboard.arrayListOfProfileInstances.add(this);	//for TESTING Leaderboard class
 	}
-	
-	/**
-	 * Constructor for <b>loading</b> Profiles.
-	 * @param id		Unique Profile id
-	 * @param name		Name
-	 * @param wins		Amount of wins.
-	 * @param losses	Amount of losses.
-	 * @param played	Amount of games participated in.
-	 * @param playedBoards ArrayList of boardIDs that a Profile has played on.
-	 */
-	public Profile(int id, String name, int wins, int losses, int played, ArrayList<Integer> playedBoards) {
-		// Don't trust users to keep profile IDs unique.
-		for (Profile p : profiles) {
-			if (p.ID == id) {
-				id = nextID++;
-			}
-		}
+
+	public Profile(String name, int[] numGamesPlayed, int[] numWins, int[] numLosses) {
+		setProfileID();
+		setName(name);
+		setNumGamesPlayed(numGamesPlayed);
+		setNumWins(numWins);
+		setNumLosses(numLosses);
+
+		Leaderboard.arrayListOfProfileInstances.add(this);	//for TESTING Leaderboard class
+	}
+
+	public void updateProfile(int boardID, boolean winLoss) {
+		numGamesPlayed[boardID] ++;
 		
-		// Guarantee new Profile IDs don't collide.
-		// This means IDs drift upwards as they are removed,
-		// but that's okay, they won't exceed int-limit for longtime.
-		if (id > nextID) {
-			nextID = id + 1;
+		if (winLoss) {
+			numWins[boardID] ++;
+		} else {
+			numLosses[boardID] ++;
 		}
-		
-		this.ID = id;
-		this.name = name;
-		this.wins = wins;
-		this.losses = losses;
-		this.played = played;
-		this.playedBoards = playedBoards;
-		profiles.add(this);
+	}
+
+	public String toString() {
+		return String.valueOf(profileID) + ", " + name + ", " + Arrays.toString(numGamesPlayed) + ", " + Arrays.toString(numWins) + ", " + Arrays.toString(numLosses);
 	}
 	
-	/**
-	 * Get list of all Profiles created.
-	 * @return ArrayList of all Profiles
-	 */
-	public static ArrayList<Profile> getAll() {
-		return profiles;
+	//Getters
+
+	public int getProfileID() {
+		return profileID;
 	}
 	
-	public static ArrayList<Profile> getLeaderboard(int boardID) {
-		ArrayList<Profile> leaderboard = new ArrayList<Profile>();
-		leaderboard.addAll(profiles);
-		leaderboard.removeIf(p -> !p.hasPlayed(boardID));
-		leaderboard.sort((p1, p2) -> new Integer(p1.getWins()).compareTo(p2.getWins()));
-		return leaderboard;
-	}
-	
-	/**
-	 * @return Unique identifier for Profile.
-	 */
-	public int getID() {
-		return ID;
-	}
-	
-	/**
-	 * @param name New name for Profile.
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
-	
-	/**
-	 * @return Name of Profile
-	 */
 	public String getName() {
 		return name;
 	}
 	
-	/**
-	 * @return Amount of games won.
-	 */
-	public int getWins() {
-		return wins;
+	/*public int[] getNumGamesPlayed() {
+		return numGamesPlayed;
+	}*/
+
+	public int getNumGamesPlayed(int boardID) {
+		return numGamesPlayed[boardID];
 	}
 	
-	/**
-	 * Increase amount of games won.
-	 * This should be used at the end of a game.
-	 */
-	public void incWins() {
-		wins++;
+	/*public int[] getNumWins() {
+		return numWins;
+	}*/
+
+	public int getNumWins(int boardID) {
+		return numWins[boardID];
+	}
+
+	/*public int[] getNumLosses() {
+		return numLosses;
+	}*/
+	
+	public int getNumLosses(int boardID) {
+		return numLosses[boardID];
+	}
+
+	public static int getNoOfBoard() {
+		return noOfBoard;
 	}
 	
-	/**
-	 * @return Amount of games lost.
-	 */
-	public int getLosses() {
-		return losses;
+	//Setters
+
+	public static void setNoOfBoard(int noOfBoard) {
+		Profile.noOfBoard = noOfBoard;
 	}
-	
-	/**
-	 * Increase amount of games lost.
-	 * This should be used at the end of a game.
-	 */
-	public void incLosses() {
-		losses++;
-	}
-	
-	/**
-	 * @return Amount of games played.
-	 */
-	public int getPlayed() {
-		return played;
-	}
-	
-	/**
-	 * Increase amount of games played, 
-	 * adding new boardID if board is not played before.
-	 * @param boardID
-	 */
-	public void playOnBoard(int boardID) {
-		if (!hasPlayed(boardID)) {
-			playedBoards.add(boardID);
+
+	public void setProfileID() {
+		if (profileID == 0) {
+			profileID = nextProfileID;
+			nextProfileID++;
 		}
-		played++;
 	}
-	
-	/**
-	 * Whether a Profile has played on a certain Board
-	 * @param boardID ID of Board template
-	 * @return True if Profile has played on Board
-	 */
-	public boolean hasPlayed(int boardID) {
-		return playedBoards.contains(boardID);
-	}
-	
-	@Override
-	public String saveFormat() {
-		String str = String.format("{Profile, %03d, %s, %d, %d, %d, %s, %s, [",
-				ID,name,wins,losses,played);
-		for (int bID : playedBoards) {
-			str += bID + ", ";
+
+	public void setProfileID(int profileID) {
+		//duplication check NOT implemented
+		if (profileID == 0) {
+			this.profileID = profileID;
+			if (profileID > nextProfileID) {
+				nextProfileID++;
+			}
 		}
-		if (str.endsWith(", ")) { // Profile may have played no boards.
-			str = str.substring(0, str.length() - 2);
-		}
-		str += "], Profile}";
-		return str;
 	}
 	
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	public void setNumGamesPlayed(int[] numGamesPlayed) {
+		this.numGamesPlayed = numGamesPlayed;
+	}
+
+	public void setNumWins(int[] numWins) {
+		this.numWins = numWins;
+	}
+
+	public void setNumLosses(int[] numLosses) {
+		this.numLosses = numLosses;
+	}
 }

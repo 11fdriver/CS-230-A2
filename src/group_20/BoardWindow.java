@@ -31,23 +31,134 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
+/**
+ * <p><b>Filename:</b> BoardWindow</p>
+ * <p><b>Description:</b> Loads the GUI for a particular game session.</p>
+ * <p><b>Creation date:</b> 05/12/2020</p>
+ * @since 07/12/2020
+ * @author Inderpreet Sandhu - 852298
+ * <p><b>Copyright:</b> no copyright</p>
+ */
 public class BoardWindow extends BorderPane {
 	/**
-	 * 
+	 * File separator for determining file paths of various images and audio
 	 */
 	private static final String SEP = File.separator;
 	
 	/**
-	 * 
+	 * File path for all of the game assets
 	 */
 	private static final String CONFIG_DIR_PATH = ".lairofdagon" + SEP;
 	
 	/**
-	 * 
+	 * File path for all of the game image assets
 	 */
 	private static final String IMG_DIR_PATH = CONFIG_DIR_PATH + "img" + SEP;
 	
+	/**
+	 * File path for all of the game audio assets
+	 */
 	private static final String TITLE_MUSIC_DIR_PATH = CONFIG_DIR_PATH + "audio" + SEP;
+	
+	/**
+	 * Button representing the backtrack action
+	 */
+	private Button backTrackActionButton = new Button();
+	
+	/**
+	 * Button representing the fire action
+	 */
+	private Button fireActionButton = new Button();
+	
+	/**
+	 * Button representing the ice action
+	 */
+	private Button iceActionButton = new Button();
+	
+	/**
+	 * Button representing the double move action
+	 */
+	private Button doubleMoveActionButton = new Button();
+	
+	/**
+	 * Button representing the skip action where no action tile is played
+	 */
+	private Button skipButton = new Button();
+	
+	/**
+	 * Text representing the amount of backtrack action tiles a player has in their inventory
+	 */
+	private Text backtrackActionAmount = new Text();
+	
+	/**
+	 * Text representing the amount of fire action tiles a player has in their inventory
+	 */
+	private Text fireActionAmount = new Text();
+	
+	/**
+	 * Text representing the amount of ice action tiles a player has in their inventory
+	 */
+	private Text iceActionAmount = new Text();
+	
+	/**
+	 * Text representing the amount of double move action tiles a player has in their inventory
+	 */
+	private Text doubleMoveActionAmount = new Text();
+	
+	/**
+	 * Holds details about a players action tile inventory
+	 */
+	private VBox playerInventoryPane = new VBox();
+	
+	/**
+	 * Holds details about the backtrack action tiles in a players inventory
+	 */
+	private VBox backtrackPane = new VBox();
+	
+	/**
+	 * Holds details about the fire action tiles in a players inventory
+	 */
+	private VBox firePane = new VBox();
+	
+	/**
+	 * Holds details about the ice action tiles in a players inventory
+	 */
+	private VBox icePane = new VBox();
+	
+	/**
+	 * Holds details about the double move action tiles in a players inventory
+	 */
+	private VBox doublemovePane = new VBox();
+	
+	/**
+	 * Holds details about the skip action
+	 */
+	private VBox skipPane = new VBox();
+	
+	/**
+	 * Stores the amount of backtrack action tiles a player has in their inventory
+	 */
+	private int backtrackInventoryAmount = 0;
+	
+	/**
+	 * Stores the amount of fire action tiles a player has in their inventory
+	 */
+	private int fireInventoryAmount = 0;
+	
+	/**
+	 * Stores the amount of ice action tiles a player has in their inventory
+	 */
+	private int iceInventoryAmount = 0;
+	
+	/**
+	 * Stores the amount of double move action tiles a player has in their inventory
+	 */
+	private int doubleMoveInventoryAmount = 0;
+	
+	/**
+	 * Displays information on which players turn it currently is and guidance on what they should do next
+	 */
+	private Text banner = new Text("");
 	
 	private final int CANVAS_WIDTH;
 	private final int CANVAS_HEIGHT;
@@ -56,35 +167,12 @@ public class BoardWindow extends BorderPane {
 	private Canvas gameCanvas;
 	private Canvas drawnFloorTileCanvas;
 	private GraphicsContext gc;
-	//==
-	private Button backTrackActionButton = new Button();
-	private Button fireActionButton = new Button();
-	private Button iceActionButton = new Button();
-	private Button doubleMoveActionButton = new Button();
-	private Button skipButton = new Button();
-	private Text backtrackActionAmount = new Text();
-	private Text fireActionAmount = new Text();
-	private Text iceActionAmount = new Text();
-	private Text doubleMoveActionAmount = new Text();
-	private VBox playerInventoryPane = new VBox();
-	private VBox backtrackPane = new VBox();
-	private VBox firePane = new VBox();
-	private VBox icePane = new VBox();
-	private VBox doublemovePane = new VBox();
-	private VBox skipPane = new VBox();
-	private int backtrackInventoryAmount = 0;
-	private int fireInventoryAmount = 0;
-	private int iceInventoryAmount = 0;
-	private int doubleMoveInventoryAmount = 0;
 	
-	//== YOSHAN
-//	private Button backTrackActionButton = new Button("Backtrack Action");
-//	private Button fireActionButton = new Button("Fire Action");
-//	private Button iceActionButton = new Button("Ice Action");
-//	private Button doubleMoveActionButton = new Button("Double Move Action");
-//	private Button skipButton = new Button("Skip");
-	private Text banner = new Text("");
-	
+	/**
+	 * Creates a window for a game session to be displayed on
+	 * 
+	 * @param board				The game board that will be displayed in the window				
+	 */
 	public BoardWindow(Board board) {
 		this.board = board;
 		CANVAS_WIDTH = this.board.getWidth() * Main.TILE_WIDTH;
@@ -117,6 +205,9 @@ public class BoardWindow extends BorderPane {
 		refreshBoard();
 	}
 	
+	/**
+	 * Refreshes the board state
+	 */
 	private void refreshBoard() {
 		//System.out.println("Refreshed");
 		banner.setText(this.board.getCurrentStepMessage());
@@ -131,6 +222,9 @@ public class BoardWindow extends BorderPane {
 		this.inventoryRefresh();
 	}
 	
+	/**
+	 * Refreshes a players inventory
+	 */
 	public void inventoryRefresh() {
 		Player p = this.board.getCurrentPlayer();
 		Inventory inv = p.getInventory();
@@ -172,12 +266,18 @@ public class BoardWindow extends BorderPane {
 		}
 	}
 	
+	/**
+	 * Starts the game session for the current board
+	 */
 	private void startGame() {
 		Thread tr = new Thread(board);
 		tr.setDaemon(true);
 		tr.start();
 	}
 	
+	/**
+	 * Creates the header for the game session window containing the banner and its associated information (player turns and instructions on how to proceed) 
+	 */
 	private void createHeader() {
 		FlowPane fpBanner = new FlowPane();
 		fpBanner.setAlignment(javafx.geometry.Pos.CENTER);
@@ -185,6 +285,9 @@ public class BoardWindow extends BorderPane {
 		this.setTop(fpBanner);
 	}
 	
+	/**
+	 * Creates the footer for the game session window containing buttons for ending a turn and saving and exiting the current game session
+	 */
 	private void createFooter() {
 		FlowPane fp = new FlowPane();
 		fp.setAlignment(javafx.geometry.Pos.CENTER);
@@ -219,6 +322,9 @@ public class BoardWindow extends BorderPane {
 		});
 	}
 	
+	/**
+	 * Creates the players action tile inventory pane and displays it on the game session screen
+	 */
 	private void createInventoryPane() {
 		FileInputStream backgroundImg;
 		try {
@@ -409,102 +515,43 @@ public class BoardWindow extends BorderPane {
 		playerInventoryPane.setSpacing(10);
 	}
 	
+	/**
+	 * Returns the amount of backtrack action tiles a player has in their inventory in text form
+	 * 
+	 * @return 				The amount of backtrack action tiles a player has in their inventory
+	 */
 	public Text returnBacktrack() {
 		inventoryRefresh();
 		return this.backtrackActionAmount;
 	}
 	
+	/**
+	 * Returns the amount of fire action tiles a player has in their inventory in text form
+	 * 
+	 * @return 				The amount of fire action tiles a player has in their inventory
+	 */
 	public Text returnFire() {
 		inventoryRefresh();
 		return this.fireActionAmount;
 	}
 	
+	/**
+	 * Returns the amount of ice action tiles a player has in their inventory in text form
+	 * 
+	 * @return 				The amount of ice action tiles a player has in their inventory
+	 */
 	public Text returnIce() {
 		inventoryRefresh();
 		return this.iceActionAmount;
 	}
 	
+	/**
+	 * Returns the amount of double move action tiles a player has in their inventory in text form
+	 * 
+	 * @return 				The amount of double move action tiles a player has in their inventory
+	 */
 	public Text returnDoubleMove() {
 		inventoryRefresh();
 		return this.doubleMoveActionAmount;
 	}
-	
-//	private void createInventoryPane() {
-//		VBox sidebar = new VBox();
-//		this.setLeft(sidebar);
-//		
-//		sidebar.setPadding(new Insets(40));
-//		sidebar.setSpacing(40);
-//		
-//		//Backtrack
-//		sidebar.getChildren().addAll(backTrackActionButton);
-//		
-//		backTrackActionButton.setOnAction(e -> {
-//			Player p = this.board.getCurrentPlayer();
-//			if (p.isWaiting()) {
-//				p.setChosenActionTile(new ActionTile(new BacktrackAction()));
-//				synchronized (p) {
-//					p.notify();
-//				}
-//				System.out.println("Backtrack action selected");
-//			}
-//		});
-//		
-//		//Fire action
-//		sidebar.getChildren().addAll(fireActionButton);
-//		
-//		fireActionButton.setOnAction(e -> {
-//			Player p = this.board.getCurrentPlayer();
-//			if (p.isWaiting()) {
-//				p.setChosenActionTile(new ActionTile(new FireAction()));
-//				synchronized (p) {
-//					p.notify();
-//				}
-//				System.out.println("Fire action selected");
-//			}
-//		});
-//		
-//		//Ice action
-//		sidebar.getChildren().addAll(iceActionButton);
-//		
-//		iceActionButton.setOnAction(e -> {
-//			Player p = this.board.getCurrentPlayer();
-//			if (p.isWaiting()) {
-//				p.setChosenActionTile(new ActionTile(new IceAction()));
-//				synchronized (p) {
-//					p.notify();
-//				}
-//				System.out.println("Ice action selected");
-//			}
-//		});
-//		
-//		//Double move
-//		sidebar.getChildren().addAll(doubleMoveActionButton);
-//		
-//		doubleMoveActionButton.setOnAction(e -> {
-//			Player p = this.board.getCurrentPlayer();
-//			if (p.isWaiting()) {
-//				p.setChosenActionTile(new ActionTile(new DoubleMoveAction()));
-//				synchronized (p) {
-//					p.notify();
-//				}
-//				System.out.println("Double move action selected");
-//			}
-//		});
-//		
-//		//Skip button
-//		sidebar.getChildren().addAll(skipButton);
-//		
-//		skipButton.setOnAction(e -> {
-//			Player p = this.board.getCurrentPlayer();
-//			if (p.isWaiting()) {
-//				System.out.println("Is the tile null? " + ((new ActionTile(null)) == null));
-//				p.setChosenActionTile(new ActionTile(null));
-//				synchronized (p) {
-//					p.notify();
-//				}
-//				System.out.println("Skipped playing action tile");
-//			}
-//		});
-//	}
 }
