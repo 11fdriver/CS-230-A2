@@ -1,5 +1,7 @@
 package group_20;
 
+import javafx.scene.canvas.GraphicsContext;
+
 public interface Drawable {
-	public void draw(Location loc);
+	public void draw(GraphicsContext gc, int x, int y);
 }
