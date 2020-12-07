@@ -75,7 +75,7 @@ public class IO {
 		
 		nextItem(); // Consume "Board}"
 		
-		return new Board(currentItem, boardID, width, height, b, (Player[]) players.toArray(), currentPlayer);
+		return new Board(fname, boardID, width, height, b, (Player[]) players.toArray(), currentPlayer);
 	}
 	
 	/**
@@ -300,11 +300,17 @@ public class IO {
 	 */
 	private static ArrayList<Direction> loadDirectionList() {
 		ArrayList<Direction> directions = new ArrayList<Direction>();
-		String[] dStrings = in.next("]").replace("[", "").replace("]", "").split(",");
-		for (String str : dStrings) {
-			directions.add(stringToDirection(str.trim()));
+		if (!nextItem().startsWith("[")) {
+			
 		}
-		directions.trimToSize();
+		currentItem = currentItem.replace("[", "").trim();
+		while (!currentItem.endsWith("]")) {
+			System.out.println(currentItem);
+			directions.add(stringToDirection(currentItem));
+			nextItem();
+		}
+		directions.add(stringToDirection(currentItem.replace("]", "").trim()));
+		
 		return directions;
 	}
 	
@@ -328,6 +334,10 @@ public class IO {
 		in.close();
 	}
 	
+	public static void loadProfiles() throws FileNotFoundException {
+		loadProfiles(new File(PROFILE_FILE_PATH));
+	}
+	
 	/**
 	 * Recreate a saved game from it's save-file, by loading Profiles, filling the SilkBag, and creating the Board.
 	 * @param fname Name of file within saved-game directory, default: {@code ".labyrinth/saved/"}.
@@ -336,17 +346,19 @@ public class IO {
 	 * @throws FileParseException
 	 */
 	public static Board loadSavedGame(String fname) throws FileNotFoundException, FileParseException {
-		loadProfiles(new File(PROFILE_FILE_PATH));
 		return loadSavedGameBoard(new File(SAVED_DIR_PATH + fname));
 	}
 	
 	/**
 	 * Create a new game from a template-file.
 	 * @param f template-file to read, within templates directory (default: {@code ".lairofdagon/templates/"}
+	 * @param profiles 
+	 * @param numPlayers 
+	 * @param saveFileName 
 	 * @return A new Board
 	 * @throws FileNotFoundException
 	 */
-	private static Board loadNewGameBoard(File f) throws FileNotFoundException {
+	private static Board loadNewGameBoard(File f, String saveFileName, int numPlayers, Profile[] profiles) throws FileNotFoundException {
 		in = new Scanner(f);
 		in.useDelimiter(",");
 
@@ -358,7 +370,7 @@ public class IO {
 		
 		Board b = null;
 		if ("{Board".equals(nextItem())) {
-			b = loadNewBoard(f.getName());
+			b = loadNewBoard(saveFileName, numPlayers, profiles);
 		} else {
 			// TODO: exception here
 		}
@@ -369,9 +381,11 @@ public class IO {
 	
 	/**
 	 * Construct a new Board by reading in values.
+	 * @param profiles 
+	 * @param numPlayers 
 	 * @return New {@link Board}
 	 */
-	private static Board loadNewBoard(String fname) {
+	private static Board loadNewBoard(String fname, int numPlayers, Profile[] profiles) {
 		int boardID = Integer.parseInt(nextItem());
 		int width = Integer.parseInt(nextItem());
 		int height = Integer.parseInt(nextItem());
@@ -393,10 +407,10 @@ public class IO {
 				// TODO: exception here
 			}
 		}
-		
+		System.out.println("'" + currentItem + "'");
 		ArrayList<Player> players = new ArrayList<Player>();
-		while ("{Players".equals(currentItem)) {
-			players.add(loadNewPlayer());
+		while ("{Player".equals(currentItem)) {
+			players.add(loadNewPlayer(profiles));
 			nextItem();
 		}
 		
@@ -412,7 +426,7 @@ public class IO {
 			}
 		}
 		
-		return new Board(fname, boardID, width, height, b, (Player[]) players.toArray(), height);
+		return new Board(fname, boardID, width, height, b, players.toArray(new Player[4]), height);
 	}
 	
 	/**
@@ -429,21 +443,13 @@ public class IO {
 		return new FloorTile(directions, location, null, null, 0, true);
 	}
 		
-	private static Player loadNewPlayer() {
+	private static Player loadNewPlayer(Profile[] profiles) {
 		int playerNum = Integer.parseInt(nextItem());
 		Location startLocation = loadLocation();
 		
-		Profile profile = null;
-		if (!"null".equals(nextItem())) {
-			int pID = Integer.parseInt(currentItem);
-			for (Profile p : Profile.getAll()) {
-				profile = (p.getID() == pID) ? p : null;
-			}		
-		}
-
 		nextItem();
 		
-		return new Player(playerNum, startLocation, profile);
+		return new Player(playerNum, startLocation, profiles[playerNum]);
 	}
 	
 	/**
@@ -452,7 +458,7 @@ public class IO {
 	 */
 	private static Goal loadNewGoal() {
 		Location location = loadLocation();
-		
+		nextItem();
 		return new Goal(location);
 	}
 	
@@ -464,9 +470,8 @@ public class IO {
 	 * @throws FileNotFoundException
 	 * @throws FileParseException
 	 */
-	public static Board loadNewGame(String fname) throws FileNotFoundException, FileParseException {
-		loadProfiles(new File(PROFILE_FILE_PATH));
-		return loadNewGameBoard(new File(TEMPLATES_DIR_PATH + fname));
+	public static Board loadNewGame(String fname, String saveFileName, int numPlayers, Profile[] profiles) throws FileNotFoundException, FileParseException {
+		return loadNewGameBoard(new File(TEMPLATES_DIR_PATH + fname), saveFileName, numPlayers, profiles);
 	}
 	
 	/**
@@ -499,8 +504,11 @@ public class IO {
 	}
 	
 	public static void main(String args[]) {
+		// Scanner scan = new Scanner("[NORTH, SOUTH, EAST, WEST]");nn
+		
 		try {
-			loadNewGame("new1");
+			Profile[] profiles = {null, null, null, null};
+			loadNewGame("new1", "save1", 4, profiles);
 		} catch (FileNotFoundException | FileParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
