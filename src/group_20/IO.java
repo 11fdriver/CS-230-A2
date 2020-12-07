@@ -31,23 +31,22 @@ public class IO {
 	 */
 	private static Scanner in;
 	
-	private static String currItem;
+	private static String currentItem;
 	
 	/**
 	 * @return Next comma-delimited item
 	 */
 	private static String nextItem() {
-		currItem = in.next().trim();
-		return currItem;
+		currentItem = in.next().trim();
+		return currentItem;
 	}
 	
 	/**
 	 * Construct a new {@link Board} by reading in values.
 	 * @return New Board
 	 * @throws FileParseException
-	 * TODO: Currently returns FloorTile[][]!
 	 */
-	private static FloorTile[][] loadSavedBoard() {
+	private static Board loadSavedBoard() {
 		int boardID = Integer.parseInt(nextItem());
 		int width = Integer.parseInt(nextItem());
 		int height = Integer.parseInt(nextItem());
@@ -67,9 +66,16 @@ public class IO {
 			}
 		}
 		
+		ArrayList<Player> players = new ArrayList<Player>();
+		while ("{Player".equals(nextItem())) {
+			players.add(loadSavedPlayer());
+		}
+		
+		int currentPlayer = Integer.parseInt(nextItem());
+		
 		nextItem(); // Consume "Board}"
 		
-		return b;
+		return new Board(boardID, width, height, b, (Player[]) players.toArray(), currentPlayer);
 	}
 	
 	/**
@@ -81,11 +87,11 @@ public class IO {
 		while (!"SilkBag}".equals(str)) {
 			switch (str) {
 			case "{FloorTile":
-				SilkBag.addTile(loadSavedFloorTile()); // TODO: Merged with SilkBag fixes
+				SilkBag.addTile(loadSavedFloorTile());
 				break;
 			case "{ActionTile":
 				loadSavedActionTile();
-				SilkBag.addTile(loadSavedActionTile()); // TODO: Merge with SilkBag fixes
+				SilkBag.addTile(loadSavedActionTile());
 				break;
 			default:
 			}
@@ -99,40 +105,31 @@ public class IO {
 	 * @throws FileParseException
 	 */
 	private static FloorTile loadSavedFloorTile() {
-		Location location = null;
-		Player player = null;
-		FloorAction action = null;
-		int lifetime = 0;
-		
 		// List of Directions
 		ArrayList<Direction> directions = loadDirectionList();
+
+		Location location = null;
 		
-		// Create player
-		switch (nextItem()) {
-		case "null": 
-			break;
-		case "{Player": 
-			player = loadSavedPlayer();
-			break;
-		default: 
-		}
+		Player player = null;
 		
+		FloorAction action = null;
 		// Construct Action
 		switch (nextItem()) {
 		case "null":
 			break;
 		default:
-			action = (FloorAction) stringToAction(currItem);
+			action = (FloorAction) stringToAction(currentItem);
 		}
 		
 		// Remaining lifetime of action
-		lifetime = Integer.parseInt(nextItem());
+		int lifetime = Integer.parseInt(nextItem());
+		
+		boolean isFixed = Boolean.parseBoolean(nextItem());
 		
 		// Consume "FloorTile}"
 		nextItem();
 		
-		// TODO: Maybe remove Location from FloorTile constructor.
-		return new FloorTile(directions, location, player, action, lifetime);
+		return new FloorTile(directions, location, player, action, lifetime, isFixed);
 	}
 	
 	/**
@@ -140,7 +137,7 @@ public class IO {
 	 * @return
 	 */
 	private static Goal loadSavedGoal() {
-		return new Goal();
+		return new Goal(null);
 	}
 	
 	/**
@@ -170,20 +167,26 @@ public class IO {
 	}
 	
 	/**
+	 * Construct a new {@link Location} by reading in values.
+	 * @return New Location
+	 */
+	private static Location loadLocation() {
+		return new Location(
+				Integer.parseInt(nextItem().replace("(", "").trim()),
+				Integer.parseInt(nextItem().replace(")", "").trim())
+				);
+	}
+	
+	/**
 	 * Construct a new {@link Player} by reading in values.
 	 * @return New Player
 	 */
 	private static Player loadSavedPlayer() {
-		// player loading: board, pnum, loc, invent, loclist, backtracked, profile
-		// FIXME: This is a good reason why Board should be static,
-		// it's difficult to pass a reference to a board I haven't finished parsing 
-		Board board = null;
-		
 		int playerNum = Integer.parseInt(nextItem());
 		
-		Location location = null; // Set by FloorTile/Board loader
+		Location location = loadLocation();
 		
-		Inventory inventory = new Inventory(); // TODO: Inventory saveFormat() = [Fire, Ice, etc]
+		Inventory inventory = new Inventory();
 		String[] iStrings = in.next("]").replace("[", "").replace("]", "").split(",");
 		for (String str : iStrings) {
 			inventory.add(new ActionTile(stringToAction(str.trim())));
@@ -193,19 +196,21 @@ public class IO {
 		String[] lStrings = in.next("]").replace("[", "").replace("]", "").split(",");
 		for (int i = 0; lStrings.length > i;) {
 			locations.add(new Location(
-					Integer.parseInt(lStrings[i++].trim()), 
-					Integer.parseInt(lStrings[i++].trim())));
+					Integer.parseInt(lStrings[i++].replace("(", "").trim()), 
+					Integer.parseInt(lStrings[i++].replace(")", "").trim())));
 		}
 		
 		boolean backtracked = Boolean.parseBoolean(nextItem());
-		
-		int pID = Integer.parseInt(nextItem());
-		Profile profile;
-		for (Profile p : Profile.getAll()) {
-			profile = (p.getID() == pID) ? p : null;
+
+		Profile profile = null;
+		if (!"null".equals(nextItem())) {
+			int pID = Integer.parseInt(currentItem);
+			for (Profile p : Profile.getAll()) {
+				profile = (p.getID() == pID) ? p : null;
+			}		
 		}
 		
-		return new Player(board, playerNum, location, inventory, backtracked, profile);
+		return new Player(playerNum, location, inventory, locations, backtracked, profile);
 	}
 	
 	/**
@@ -249,11 +254,11 @@ public class IO {
 	 * @throws FileNotFoundException
 	 * @throws FileParseException
 	 */
-	private static FloorTile[][] loadSavedGameBoard(File f) throws FileNotFoundException {
+	private static Board loadSavedGameBoard(File f) throws FileNotFoundException {
 		in = new Scanner(f);
 		in.useDelimiter(",");
 		
-		FloorTile[][] b = null;
+		Board b = null;
 		if ("{Board".equals(nextItem())) {
 			b = loadSavedBoard();
 		} else {
@@ -329,9 +334,8 @@ public class IO {
 	 * @return Loaded {@link Board} to start playing via.
 	 * @throws FileNotFoundException
 	 * @throws FileParseException
-	 * TODO: returns FloorTile[][]!
 	 */
-	public static FloorTile[][] loadSavedGame(String fname) throws FileNotFoundException, FileParseException {
+	public static Board loadSavedGame(String fname) throws FileNotFoundException, FileParseException {
 		loadProfiles(new File(PROFILE_FILE_PATH));
 		return loadSavedGameBoard(new File(SAVED_DIR_PATH + fname));
 	}
@@ -342,43 +346,21 @@ public class IO {
 	 * @return A new Board
 	 * @throws FileNotFoundException
 	 */
-	private static FloorTile[][] loadNewGameBoard(File f) throws FileNotFoundException {
+	private static Board loadNewGameBoard(File f) throws FileNotFoundException {
 		in = new Scanner(f);
 		in.useDelimiter(",");
-		
-		FloorTile[][] b = null;
-		if ("{Board".equals(nextItem())) {
-			b = loadNewBoard();
-		} else {
-			// TODO: exception here
-		}
-		
+
 		if ("{SilkBag".equals(nextItem())) {
 			fillSilkBag();
 		} else {
 			// TODO: exception here
 		}
 		
-		// This is going to have to be moved, it relies
-		// on b being FloorTile[][], but it will be Board
-		// Which doesn't provide such direct access.
-		//
-		// I propose that SilkBag declarations should come first.
-		// It only means that the if statements should be swapped.
-		for (int x = 0; b.length > x; x++) {
-			for (int y = 0; b[0].length > y; y++) {
-				if (null == b[x][y]) {
-					continue;
-				}
-				Tile t = null;
-				while (!(t instanceof FloorTile)) {
-					// Maybe randomly getting tiles isn't ideal, but it should work.
-					// Though this enters an infinite loop if not enough 
-					// FloorTiles in SilkBag to fill the Board.
-					t = SilkBag.removeTile();
-				}
-				b[x][y] = (FloorTile) t;
-			}
+		Board b = null;
+		if ("{Board".equals(nextItem())) {
+			b = loadNewBoard();
+		} else {
+			// TODO: exception here
 		}
 		
 		in.close();
@@ -389,23 +371,48 @@ public class IO {
 	 * Construct a new Board by reading in values.
 	 * @return New {@link Board}
 	 */
-	private static FloorTile[][] loadNewBoard() {
+	private static Board loadNewBoard() {
+		int boardID = Integer.parseInt(nextItem());
 		int width = Integer.parseInt(nextItem());
 		int height = Integer.parseInt(nextItem());
-		FloorTile[][] b = null;
-		while (!"Board}".equals(nextItem())) {
+		FloorTile[][] b = new FloorTile[width][height];
+		Location loc;
+		while (!"{Player".equals(nextItem())) {
 			switch (currentItem) {
 			case "{FloorTile":
-				loadNewFloorTile();
+				FloorTile t = loadNewFloorTile();
+				loc = t.getLocation();
+				b[loc.getX()][loc.getY()] = t;
 				break;
 			case "{Goal":
-				loadNewGoal();
+				Goal g = loadNewGoal();
+				loc = g.getLocation();
+				b[loc.getX()][loc.getY()] = g;
 				break;
 			default:
 				// TODO: exception here
 			}
 		}
-		return b;
+		
+		ArrayList<Player> players = new ArrayList<Player>();
+		while ("{Players".equals(currentItem)) {
+			players.add(loadNewPlayer());
+			nextItem();
+		}
+		
+		if ("Board}".equals(currentItem)) {
+			
+		}
+		
+		for (int x = 0; width > x; x++) {
+			for (int y = 0; height > y; y++) {
+				if (null == b[x][y]) {
+					b[x][y] = SilkBag.removeFloorTile();
+				}
+			}
+		}
+		
+		return new Board(boardID, width, height, b, (Player[]) players.toArray(), height);
 	}
 	
 	/**
@@ -413,23 +420,38 @@ public class IO {
 	 * @return FloorTile for a new game
 	 */
 	private static FloorTile loadNewFloorTile() {
-		Location location = new Location(Integer.parseInt(nextItem()), Integer.parseInt(nextItem()));
+		Location location = loadLocation();
 		
 		ArrayList<Direction> directions = loadDirectionList();
 		
-		boolean startPoint = "start".equals(nextItem());
-		
 		nextItem(); // Consume "FloorTile}"
 		
-		return new FloorTile(directions, location);
+		return new FloorTile(directions, location, null, null, 0, true);
 	}
 		
+	private static Player loadNewPlayer() {
+		int playerNum = Integer.parseInt(nextItem());
+		Location startLocation = loadLocation();
+		
+		Profile profile = null;
+		if (!"null".equals(nextItem())) {
+			int pID = Integer.parseInt(currentItem);
+			for (Profile p : Profile.getAll()) {
+				profile = (p.getID() == pID) ? p : null;
+			}		
+		}
+
+		nextItem();
+		
+		return new Player(playerNum, startLocation, profile);
+	}
+	
 	/**
 	 * Constructs a {@link Goal} from values read from a template file.
 	 * @return Goal for a new game.
 	 */
 	private static Goal loadNewGoal() {
-		Location location = new Location(Integer.parseInt(nextItem()), Integer.parseInt(nextItem()));
+		Location location = loadLocation();
 		
 		return new Goal(location);
 	}
@@ -442,7 +464,7 @@ public class IO {
 	 * @throws FileNotFoundException
 	 * @throws FileParseException
 	 */
-	public static FloorTile[][] loadNewGame(String fname) throws FileNotFoundException, FileParseException {
+	public static Board loadNewGame(String fname) throws FileNotFoundException, FileParseException {
 		loadProfiles(new File(PROFILE_FILE_PATH));
 		return loadNewGameBoard(new File(TEMPLATES_DIR_PATH + fname));
 	}
@@ -461,14 +483,17 @@ public class IO {
 		FileWriter writer = new FileWriter(f, true);
 		writer.write(b.saveFormat());
 		writer.append(",\n");
-		writer.append(SilkBag.saveFormat());
+		writer.append(new SilkBag().saveFormat());
 		writer.close();
 		
 		f = new File(PROFILE_FILE_PATH);
 		f.createNewFile();
 		writer = new FileWriter(f, true);
 		writer.write(""); // Empty file
-		Profile.getAll().forEach(p -> writer.write(p.saveFormat() + ",\n"));
+		for (Profile p : Profile.getAll()) {
+			writer.append(p.saveFormat() + ",\n");
+		}
+		writer.close();
 		
 		return created;
 	}
