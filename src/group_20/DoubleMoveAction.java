@@ -1,4 +1,5 @@
 package group_20;
+
 import javafx.scene.canvas.GraphicsContext;
 
 public class DoubleMoveAction extends Action {

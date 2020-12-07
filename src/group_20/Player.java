@@ -1,5 +1,6 @@
 package group_20;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,7 +13,25 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 
 public class Player {
-	private final int TILE_WIDTH;
+	/**
+	 * 
+	 */
+	private static final String SEP = File.separator;
+	
+	/**
+	 * 
+	 */
+	private static final String CONFIG_DIR_PATH = ".lairofdagon" + SEP;
+	
+	/**
+	 * 
+	 */
+	private static final String TILE_IMG_DIR_PATH = CONFIG_DIR_PATH + "img" + SEP;
+	
+	/**
+	 * 
+	 */
+	private static final String HIGHLIGHT_IMG_FILEPATH = TILE_IMG_DIR_PATH + "Magnifying_glass.png";//TODO change to actual file name
 	
 	/**
 	 * location of player
@@ -35,11 +54,6 @@ public class Player {
 	private Board board;
 	
 	/**
-	 * Reference to the current silk bag
-	 */
-	private SilkBag silkBag;
-	
-	/**
 	 * List of up to last 3 previous locations
 	 */
 	private LocationList previousLocations;
@@ -59,6 +73,11 @@ public class Player {
 	 * Sprite for player
 	 */
 	private Image sprite;
+	
+	/**
+	 * Sprite used to highlight player on board
+	 */
+	private Image highlightSprite;
 	
 	/**
 	 * (Used by board to check state of player).
@@ -84,7 +103,10 @@ public class Player {
 	 */
 	private Profile profile;
 	
-	private Image highlighter;
+	/**
+	 * Player identifier from 1 to 4 (inclusive)
+	 */
+	private int playerNumber;
 	
 	/**
 	 * Full Constructor to be called when loading a player object
@@ -94,16 +116,16 @@ public class Player {
 	 * @param inventory
 	 * @param previousLocations
 	 */
-	public Player(Board board, SilkBag silkbag, int TILE_WIDTH, String spriteFilename, Location location, ArrayList<ActionTile> inventory, LocationList previousLocations, boolean hasBeenBacktracked) {
-		this.board = board;
-		this.silkBag = silkbag;
-		this.TILE_WIDTH = TILE_WIDTH;
+	public Player(int playerNumber, Location location, Inventory inventory, LocationList previousLocations, boolean hasBeenBacktracked, Profile profile) {
+		this.playerNumber = playerNumber;
 		this.location = location;
-		this.inventory = new Inventory(inventory);
+		this.inventory = inventory;
 		this.previousLocations = previousLocations;
 		this.hasBeenBacktracked = hasBeenBacktracked;
+		this.profile = profile;
 		this.numMoves = 1;
-		this.loadSprite(spriteFilename);
+		this.loadSprite();
+		this.loadHighlightSprite();
 	}
 	
 	/**
@@ -112,24 +134,29 @@ public class Player {
 	 * @param silkBag
 	 * @param startingLocation
 	 */
-	public Player(Board board, SilkBag silkBag, int TILE_WIDTH, String spriteFilename, Location startingLocation) {
-		this.board = board;
-		this.silkBag = silkBag;
-		this.TILE_WIDTH = TILE_WIDTH;
+	public Player(int playerNumber, Location startingLocation, Profile profile) {
+		this.playerNumber = playerNumber;
 		this.location = startingLocation;
 		this.inventory = new Inventory();
 		this.previousLocations = new LocationList();
 		this.hasBeenBacktracked = false;
+		this.profile = profile;
 		this.numMoves = 1;
-		this.loadSprite(spriteFilename);
+		this.loadSprite();
+		this.loadHighlightSprite();
 	}
 	
+	public Player(Board board2, int playerNum, Location location2, Inventory inventory2, boolean backtracked,
+			Profile profile2) {
+		// TODO Auto-generated constructor stub
+	}
+
 	public void takeTurn() {
 		this.currentStageOfTurn = 1;
 		this.numMoves = 1;
 		System.out.println("Drawing a tile");
 		this.stepOne();
-
+		this.currentStageOfTurn = 2;
 		//System.out.println("Doing action on tile");
 		this.stepTwo();
 		this.currentStageOfTurn = 3;
@@ -138,6 +165,7 @@ public class Player {
 			System.out.println("Making a move");
 			this.stepThree();
 		}
+		this.currentStageOfTurn = 4;
 	}
 	
 	/**
@@ -243,7 +271,8 @@ public class Player {
 	 * @return ActionTile if action tile was drawn or null if FloorTile was drawn
 	 */
 	public void drawTile() {
-		Tile drawnTile = silkBag.drawTile();
+		//Tile drawnTile = SilkBag.removeTile(); //TODO put this line in when merging with Finn
+		Tile drawnTile = SilkBag.drawTile();
 		//System.out.println(drawnTile.toString());
 		
 		//If is ActionTile
@@ -316,6 +345,29 @@ public class Player {
 			this.addToCurrentTile();
 		}
 		System.out.println("Player Moved!");
+	}
+	 /**
+	  * Setter for board
+	  * @param board New board reference
+	  */
+	public void setBoard(Board board) {
+		this.board = board;
+	}
+	
+	/**
+	 * Getter for board
+	 * @return Player's board pointer
+	 */
+	public Board getBoard() {
+		return this.board;
+	}
+	
+	/**
+	 * Getter for player number
+	 * @return Player number
+	 */
+	public int getPlayerNumber() {
+		return this.playerNumber;
 	}
 	
 	/**
@@ -476,8 +528,8 @@ public class Player {
 	 * @param gc Graphics Context to draw onto
 	 */
 	public void draw(GraphicsContext gc) {
-		int x = this.getLocation().getX()*TILE_WIDTH + (TILE_WIDTH/4);
-		int y = this.getLocation().getY()*TILE_WIDTH;
+		int x = this.getLocation().getX()*Main.TILE_WIDTH + (Main.TILE_WIDTH/4);
+		int y = this.getLocation().getY()*Main.TILE_WIDTH;
 		gc.drawImage(sprite, x, y);
 	}
 	
@@ -507,15 +559,45 @@ public class Player {
 	 * Loads player's sprite from given file location
 	 * @param filename File name of sprite
 	 */
-	public void loadSprite(String filename) {
+	public void loadSprite() {
 		Image image = null;
+		String filename = TILE_IMG_DIR_PATH;
+		switch (this.playerNumber) {
+		case 1:
+			filename += "Howard-no-background.png";
+			break;
+		case 2:
+			filename += "Dagon-no-background.png";
+			break;
+		case 3:
+			filename += "Nightgaunt-no-background.png";
+			break;
+		case 4:
+			filename += "Shelley-no-background.png";
+			break;
+		default:
+			filename += "Howard-no-background.png";
+			break;
+		}
+		
 		try {
-			image = new Image(new FileInputStream(filename),(this.TILE_WIDTH/3)*2, (this.TILE_WIDTH/3)*2,true,true);
+			image = new Image(new FileInputStream(filename),(Main.TILE_WIDTH/3)*2, (Main.TILE_WIDTH/3)*2,true,true);
 		} catch (IOException e) {
 			System.out.println("Unable to find sprite file: " + filename);
 		}
 		this.sprite = image;
 	}
+	
+	public void loadHighlightSprite() {
+  		Image image = null;
+		try {
+			image = new Image(new FileInputStream(HIGHLIGHT_IMG_FILEPATH),Main.TILE_WIDTH, Main.TILE_WIDTH,true,true);
+		} catch (IOException e) {
+			System.out.println("Unable to load highlight sprite");
+			//TODO add code
+		}
+		this.highlightSprite = image;
+  	}
 	
 	/**
 	 * Getter for currentStageOfTurn
@@ -530,16 +612,13 @@ public class Player {
 	 * @param gc Graphics context to draw highlight on
 	 */
 	public void highlight(GraphicsContext gc) {
-		Image image = null;
-		try {
-			image = new Image(new FileInputStream("Magnifying_glass.png"), (this.TILE_WIDTH)*1.3, (this.TILE_WIDTH)*1.3, true,true);
-		} catch (IOException e) {
-			System.out.println("Unable to find highlighter file");
-		}
-		this.highlighter = image;
-		double x = this.getLocation().getX()*TILE_WIDTH - (TILE_WIDTH/3.5);
-		double y = this.getLocation().getY()*TILE_WIDTH - (TILE_WIDTH/8);
-		gc.drawImage(highlighter, x, y);
+//		gc.setStroke(Color.MAGENTA);
+		int x = this.getLocation().getX()*Main.TILE_WIDTH;
+		int y = this.getLocation().getY()*Main.TILE_WIDTH;
+//		gc.strokeOval(x, y, (Main.TILE_WIDTH), (Main.TILE_WIDTH));
+//		gc.setStroke(Color.BLACK);
+		FloorTile tileStandingOn = this.board.getTileAt(this.getLocation());
+		tileStandingOn.highlight(gc, x, y, this.highlightSprite);
 	}
 	
 	/**
@@ -581,5 +660,40 @@ public class Player {
 			System.out.println("Action Tile Selected");
 			this.isWaiting = false;
 		}
+	}
+	
+	 /**
+	  * Converts player objects to string in correct format for saving
+	  * @return Player as formatted string
+	  */
+	public String saveFormat() {
+		//(Board board, int playerNumber, Location location, Inventory inventory, LocationList previousLocations, boolean hasBeenBacktracked, Profile profile)
+		String str = "{Player," +
+				this.playerNumber + "," +
+				this.location.toString() + "," +
+				this.inventory.saveFormat() + "," +
+				this.previousLocations.toString() + "," +
+				this.hasBeenBacktracked + ",";
+		if (this.profile == null) {
+			str += "null,";
+		} else {
+			str += this.profile.getProfileID() + ",";
+		}
+		str += "Player}";
+		return str;
+	}
+	
+	public static void main(String[] args) {
+		Inventory inv = new Inventory();
+		LocationList locList = new LocationList();
+		Player p = new Player(1,new Location(1,7), inv, locList, false, null);
+		System.out.println(p.saveFormat());
+		inv.add(new ActionTile(new FireAction()));
+		inv.add(new ActionTile(new FireAction()));
+		inv.add(new ActionTile(new IceAction()));
+		locList.add(new Location(1,7));
+		locList.add(new Location(1,3));
+		locList.add(new Location(2,7));
+		System.out.println(p.saveFormat());
 	}
 }

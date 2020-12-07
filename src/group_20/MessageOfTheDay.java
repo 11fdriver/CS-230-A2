@@ -1,4 +1,3 @@
-
 package group_20;
 
 import java.io.BufferedReader;
@@ -7,29 +6,6 @@ import java.io.InputStreamReader;
 import java.net.URL;
 
 public class MessageOfTheDay {
-	
-	public static String getMessage() throws IOException {
-		String puzzle = "";
-		try {
-			puzzle = getPuzzle();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		String key = decrypt(puzzle);
-		
-		String MOTD = "";
-		try {
-			MOTD = getMOTD(key);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return MOTD;
-	}
-	
-	
 	public static void main(String[] args) {
 		String puzzle = "";
 		try {
@@ -52,6 +28,19 @@ public class MessageOfTheDay {
 		System.out.println(MOTD);
 		//System.out.println(shiftChar('A',-3));
 		//System.out.println(decrypt("CAB"));
+	}
+	
+	public static String getMessage() throws IOException {
+		String puzzle = "";
+		puzzle = getPuzzle();
+		//System.out.println(puzzle);
+		
+		String key = decrypt(puzzle);
+		
+		String MOTD = "";
+		MOTD = getMOTD(key);
+		//System.out.println(MOTD);
+		return MOTD;
 	}
 	
 	public static String getPuzzle() throws IOException {
@@ -123,19 +112,19 @@ public class MessageOfTheDay {
 	}
 	
 	public static char shiftChar(char c, int shiftAmount) {
-        int ascii = (int) c;
-        if (ascii > 64 && ascii < 91) {
-            ascii += shiftAmount;
-        }
-        
-        while (ascii < 65) {
-            ascii += 26;
-        }
-        
-        while (ascii > 90) {
-            ascii -= 26;
-        }
-        
-        return (char) ascii;
-    }
+		int ascii = (int) c;
+		if (ascii > 64 && ascii < 91) {
+			ascii += shiftAmount;
+		}
+		
+		while (ascii < 65) {
+			ascii += 26;
+		}
+		
+		while (ascii > 90) {
+			ascii -= 26;
+		}
+		
+		return (char) ascii;
+	}
 }

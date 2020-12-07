@@ -1,9 +1,12 @@
 package group_20;
 
+import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -13,14 +16,29 @@ import java.util.ArrayList;
  */
 public class FloorTile extends Tile implements Subscriber {
 	/**
-	 * Width of tiles -> Used in sprite scaling when loading sprite
+	 * 
 	 */
-	private final int TILE_WIDTH;
+	protected static final String SEP = File.separator;
+	
+	/**
+	 * 
+	 */
+	protected static final String CONFIG_DIR_PATH = ".lairofdagon" + SEP;
+	
+	/**
+	 * 
+	 */
+	protected static final String TILE_IMG_DIR_PATH = CONFIG_DIR_PATH + "img" + SEP;
+	
+	/**
+	 * 
+	 */
+	protected static final String HIGHLIGHT_IMG_FILEPATH = TILE_IMG_DIR_PATH + "Circle_indicator.png";//TODO change to actual file name
 	
 	/**
 	 * ArrayList containing exit/entry points.
 	 */
-	private final ArrayList<Direction> DIRECTIONS;
+	protected final ArrayList<Direction> DIRECTIONS;
 	
 	/**
 	 * Location of tile.
@@ -45,7 +63,7 @@ public class FloorTile extends Tile implements Subscriber {
 	/**
 	 * Orientation of tile clockwise from 12 o'clock
 	 */
-	private Direction orientation;
+	private int rotation;
 	
 	/**
 	 * Stores image of tile for drawing
@@ -53,11 +71,14 @@ public class FloorTile extends Tile implements Subscriber {
 	private Image sprite;
 	
 	/**
-	 * Stores if the tile is fixed
+	 * Stores if the tile is fixed -> True if tile is fixed
 	 */
-	private boolean isFixed;
+	private boolean fixed;
 	
-	//private Image highlightSprite;
+	/**
+	 * Stores image of sprite for highlighting tiles
+	 */
+	private Image highlightSprite;
 	
 	/**
 	 * Construct new FloorTile.
@@ -69,11 +90,9 @@ public class FloorTile extends Tile implements Subscriber {
 	 * @param state			The current state of the tile, see {@link FloorAction}
 	 * @param lifetime		Turns left until {@code state} expires
 	 */
-	public FloorTile(int TILE_WIDTH, String spriteFileLocation, ArrayList<Direction> directions, Direction orientation, Location location, Player player, FloorAction state, int lifetime, boolean isFixed) {
-		this.TILE_WIDTH = TILE_WIDTH;
-		this.loadSprite(spriteFileLocation); //Sets this.sprite
+	public FloorTile(ArrayList<Direction> directions, Location location, Player player, FloorAction state, int lifetime, boolean fixed) {
 		this.DIRECTIONS = directions;
-		this.orientation = orientation;
+		this.calculateRotation();
 		this.location = location;
 		this.player = player;
 		if (null == player || (null != state && state.acceptsPlayer())) {
@@ -81,8 +100,67 @@ public class FloorTile extends Tile implements Subscriber {
 			TurnNotifier.addSubscriber(this);
 			this.stateLifetime = lifetime;
 		}
-		this.isFixed = isFixed;
-		//this.loadHighlightSprite();
+		this.fixed = fixed;
+		this.loadHighlightSprite();
+	}
+	
+	private void calculateRotation() {
+		boolean n = DIRECTIONS.contains(Direction.NORTH);
+		boolean e = DIRECTIONS.contains(Direction.EAST);
+		boolean s = DIRECTIONS.contains(Direction.SOUTH);
+		boolean w = DIRECTIONS.contains(Direction.WEST);
+		switch (DIRECTIONS.size()) {
+		case 2:
+			if (n && e) {
+				// Draw Corner from North to East
+				this.loadSprite(TILE_IMG_DIR_PATH + "Corner_Tile_with_alligners.png");
+				this.rotation = 270;
+			} else if (n && s) {
+				// Draw Straight from North to South
+				this.loadSprite(TILE_IMG_DIR_PATH + "straight_tile_with_alligners.png");
+				this.rotation = 0;
+			} else if (n && w) {
+				// Draw Corner from North to West
+				this.loadSprite(TILE_IMG_DIR_PATH + "Corner_Tile_with_alligners.png");
+				this.rotation = 180;
+			} else if (e && s) {
+				// Draw Corner from East to South
+				this.loadSprite(TILE_IMG_DIR_PATH + "Corner_Tile_with_alligners.png");
+				this.rotation = 0;
+			} else if (e && w) {
+				// Draw Straight from East to West
+				this.loadSprite(TILE_IMG_DIR_PATH + "straight_tile_with_alligners.png");
+				this.rotation = 270;
+			} else if (s && w) {
+				// Draw Corner from South to West
+				this.loadSprite(TILE_IMG_DIR_PATH + "Corner_Tile_with_alligners.png");
+				this.rotation = 90;
+			}
+			break;
+		case 3:
+			if (n && e && s) {
+				// Draw T-Shaped with North, East, South
+				this.loadSprite(TILE_IMG_DIR_PATH + "T_Tile_With_alligners.png");
+				this.rotation = 270;
+			} else if (e && s && w) {
+				// Draw T-Shaped with East, South, West
+				this.loadSprite(TILE_IMG_DIR_PATH + "T_Tile_With_alligners.png");
+				this.rotation = 0;
+			} else if (s && w && n) {
+				// Draw T-Shaped with South, West, North
+				this.loadSprite(TILE_IMG_DIR_PATH + "T_Tile_With_alligners.png");
+				this.rotation = 90;
+			} else if (w && n && e) {
+				// Draw T-Shaped with West, North, East
+				this.loadSprite(TILE_IMG_DIR_PATH + "T_Tile_With_alligners.png");
+				this.rotation = 180;
+			}
+			break;
+		case 4:
+			 // Draw goal;
+			this.loadSprite(TILE_IMG_DIR_PATH + "X_tile_with_alligners.png");
+			this.rotation = 0;
+		}
 	}
 	
 	/**
@@ -131,30 +209,6 @@ public class FloorTile extends Tile implements Subscriber {
 	}
 	
 	/**
-	 * Getter for TILE_WIDTH
-	 * @return TILE_WIDTH
-	 */
-	public int getTileWidth() {
-		return this.TILE_WIDTH;
-	}
-	
-	 /**
-	  * Setter for orientation
-	  * @param orientation New value
-	  */
-	public void setOrientation(Direction orientation) {
-		this.orientation = orientation;
-	}
-	
-	/**
-	 * Getter for orientation
-	 * @return Orientation of this tile
-	 */
-	public Direction getOrientation() {
-		return this.orientation;
-	}
-	
-	/**
 	 * @return FloorTile's location.
 	 */
 	public Location getLocation() {
@@ -173,7 +227,7 @@ public class FloorTile extends Tile implements Subscriber {
 	 * @return True if tile is fixed
 	 */
 	public boolean isFixed() {
-		return this.isFixed;
+		return this.fixed;
 	}
 	
 	/**
@@ -227,47 +281,15 @@ public class FloorTile extends Tile implements Subscriber {
 			TurnNotifier.delSubscriber(this);
 		}
 	}
-
-//	@Override
-//	public void draw(Location loc) {
-//		boolean n = DIRECTIONS.contains(Direction.NORTH);
-//		boolean e = DIRECTIONS.contains(Direction.EAST);
-//		boolean s = DIRECTIONS.contains(Direction.SOUTH);
-//		boolean w = DIRECTIONS.contains(Direction.WEST);
-//		switch (DIRECTIONS.size()) {
-//		case 2:
-//			if (n && e) {
-//				// Draw Corner from North to East
-//			} else if (n && s) {
-//				// Draw Straight from East to West
-//			} else if (n && w) {
-//				// Draw Corner from North to West
-//			} else if (e && s) {
-//				// Draw Corner from East to South
-//			} else if (e && w) {
-//				// Draw Straight from East to West
-//			} else if (s && w) {
-//				// Draw Corner from South to West
-//			}
-//
-//		case 3:
-//			if (n && e && s) {
-//				// Draw T-Shaped with North, East, South
-//			} else if (e && s && w) {
-//				// Draw T-Shaped with East, South, West
-//			} else if (s && w && n) {
-//				// Draw T-Shaped with South, West, North
-//			} else if (w && n && e) {
-//				// Draw T-Shaped with West, North, East
-//			}
-//		case 4:
-//			; // Draw goal;
-//		}
-//	}
 	
 	@Override
 	public void draw(GraphicsContext gc, int x, int y) {
-		//TODO probably set this method to abstract -> There shouldn't really be code here
+		ImageView iv = new ImageView(this.getSprite());
+		iv.setRotate(this.rotation);
+		SnapshotParameters params = new SnapshotParameters();
+		params.setFill(Color.TRANSPARENT);
+		Image rotatedImage = iv.snapshot(params, null);
+		gc.drawImage(rotatedImage, x, y);
 	}
 	
 	/**
@@ -277,7 +299,7 @@ public class FloorTile extends Tile implements Subscriber {
 	public void loadSprite(String fileLocation) {
 		Image image = null;
 		try {
-			image = new Image(new FileInputStream(fileLocation),this.TILE_WIDTH, this.TILE_WIDTH,true,true);
+			image = new Image(new FileInputStream(fileLocation),Main.TILE_WIDTH, Main.TILE_WIDTH,true,true);
 		} catch (IOException e) {
 			//TODO add code
 		}
@@ -292,9 +314,21 @@ public class FloorTile extends Tile implements Subscriber {
 			str += d.toString();
 			str += ",";
 		}
-		str += // player.saveFormat() + ";" + // TODO: Player needs to implement Saveable
-			state.saveFormat() + ";" +
-			String.valueOf(stateLifetime) + "}";
+		//str += // player.saveFormat() + ";" + // TODO: Player needs to implement Saveable
+			//state.saveFormat() + ";" +
+		if (this.hasPlayer()) {
+			str += this.player.getPlayerNumber() + ",";
+		} else {
+			str += "null,";
+		}
+		
+		if (this.state != null) {
+			str += state.saveFormat() + ",";
+		} else {
+			str += "null,";
+		}
+		
+		str += String.valueOf(stateLifetime) + "}";
 		return str ;
 	}
 	
@@ -304,11 +338,15 @@ public class FloorTile extends Tile implements Subscriber {
 	 * @param y Y coordinate to draw
 	 * @param gc GraphicsContext to draw onto
 	 */
-	public void highlight(GraphicsContext gc, int x, int y) {
-		gc.setStroke(Color.ANTIQUEWHITE); //Can change colour if you want
-		gc.strokeOval(x, y, this.TILE_WIDTH, this.TILE_WIDTH);
-		gc.setStroke(Color.BLACK); //Just resets to black for now
-		//gc.drawImage(this.highlightSprite, x, y);
+	public void highlight(GraphicsContext gc, int x, int y, Image img) {
+//		gc.setStroke(Color.ANTIQUEWHITE); //Can change colour if you want
+//		gc.strokeOval(x, y, Main.TILE_WIDTH, Main.TILE_WIDTH);
+//		gc.setStroke(Color.BLACK); //Just resets to black for now
+		if (img == null) {
+			gc.drawImage(this.highlightSprite, x, y);
+		} else {
+			gc.drawImage(img, x, y);
+		}
 	}
   
   @Override
@@ -317,13 +355,14 @@ public class FloorTile extends Tile implements Subscriber {
     return "";
 	}
   
-//  	public void loadHighlightSprite() {
-//  		Image image = null;
-//		try {
-//			image = new Image(new FileInputStream("Ice-Transition-animation.gif"),this.TILE_WIDTH, this.TILE_WIDTH,true,true);
-//		} catch (IOException e) {
-//			//TODO add code
-//		}
-//		this.highlightSprite = (image);
-//  	}
+  	public void loadHighlightSprite() {
+  		Image image = null;
+		try {
+			image = new Image(new FileInputStream(HIGHLIGHT_IMG_FILEPATH),Main.TILE_WIDTH, Main.TILE_WIDTH,true,true);
+		} catch (IOException e) {
+			System.out.println("Unable to load highlight sprite");
+			//TODO add code
+		}
+		this.highlightSprite = image;
+  	}
 }

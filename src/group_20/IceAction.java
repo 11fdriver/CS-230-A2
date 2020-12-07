@@ -1,4 +1,5 @@
 package group_20;
+
 import javafx.scene.canvas.GraphicsContext;
 
 public class IceAction extends FloorAction {
@@ -11,7 +12,7 @@ public class IceAction extends FloorAction {
 	 * Whether Action allows tile-shifting.
 	 */
 	private final boolean CAN_SHIFT = true;
-	
+
 	@Override
 	public String saveFormat() {
 		return "IceAction";

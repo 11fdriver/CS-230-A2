@@ -2,20 +2,12 @@ package group_20;
 
 import java.util.ArrayList;
 import java.util.Random;
-
 import javafx.concurrent.Task;
-import javafx.event.EventHandler;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.input.MouseEvent;
 
 //TODO make sure can't push fixed tiles
 //TODO currently tiles don't really keep track of players: There's a lot of null pointers and pointers which aren't valid any more. Fix this.
 public class Board extends Task<Void>{
-	/**
-	 * Width of tiles -> Used for image scaling
-	 */
-	private final int TILE_WIDTH;
 	
 	/**
 	 * Reference to the board template used
@@ -38,13 +30,6 @@ public class Board extends Task<Void>{
 	private FloorTile[][] gameBoard;
 	
 	/**
-	 * Silk bag of the board
-	 */
-	private SilkBag silkBag;
-	
-	//private Player player1;
-	
-	/**
 	 * The Board's goal tile
 	 */
 	private Goal goalTile;
@@ -60,11 +45,6 @@ public class Board extends Task<Void>{
 	private int currentPlayer;
 	
 	/**
-	 * Canvas of board
-	 */
-	private Canvas canvas;
-	
-	/**
 	 * Graphic context of board
 	 */
 	private GraphicsContext gc;
@@ -74,25 +54,33 @@ public class Board extends Task<Void>{
 	 */
 	private Location lastClickLocation;
 	
+	/**
+	 * State of game if waiting for user to either continue or exit
+	 */
+	private boolean waitingForExitOrContinue;
+	
+	/**
+	 * Stores if GUI has given relevant input to change state of waitingForExitOrContinue
+	 */
+	private boolean continueGame;
+	
 //	private Double xClick; //Think redundant??
 //	private Double yClick; //Think redundant??
 	
 	//For testing
-	public Board(Canvas canvas, int TILE_WIDTH, int width, int length) {
-		this.canvas = canvas;
-		this.gc = canvas.getGraphicsContext2D();
-		this.TILE_WIDTH = TILE_WIDTH;
+	public Board(GraphicsContext gc, int width, int length) {
+		this.gc = gc;
 		this.boardID = 1;
 		this.length = length;
 		this.width = width;
-		this.silkBag = new SilkBag(this.TILE_WIDTH);
 		this.gameBoard = new FloorTile[width][length];		
 		//player1 = new Player(this, this.silkBag, new Location(0,0));
-		Player[] newPlayers = {new Player(this, this.silkBag,this.TILE_WIDTH,"Howard-Animated.gif", new Location(0,1)),
-				new Player(this, this.silkBag,this.TILE_WIDTH,"Dagon-animated.gif",new Location(1,1)),
-				new Player(this, this.silkBag,this.TILE_WIDTH,"Nightgaunt-animated.gif",new Location(2,1)),
-				new Player(this, this.silkBag,this.TILE_WIDTH,"Shelley-animated.gif",new Location(3,1))};
+		Player[] newPlayers = {new Player(1, new Location(0,1),null),
+				new Player(2,new Location(1,1),null),
+				new Player(3,new Location(2,1),null),
+				new Player(4,new Location(3,1),null)};
 		this.players = newPlayers;
+		this.assignPlayersToBoard();
 		this.currentPlayer = 0;
 		this.goalTile = (Goal) this.generateGoalTile();
 		this.populate();//TODO change from temp full population with random tiles
@@ -100,51 +88,46 @@ public class Board extends Task<Void>{
 	}
 	
 	//For testing too
-	public Board(int width, int length, int TILE_WIDTH) {
+	public Board(int width, int length) {
 		this.gc = null;
-		this.TILE_WIDTH = TILE_WIDTH;
 		this.boardID = 1;
 		this.length = length;
 		this.width = width;
-		this.silkBag = new SilkBag(this.TILE_WIDTH);
 		this.gameBoard = new FloorTile[width][length];		
 		//player1 = new Player(this, this.silkBag, new Location(0,0));
-		Player[] newPlayers = {new Player(this, this.silkBag,this.TILE_WIDTH,"Howard-no-background.png", new Location(0,0)),
-				new Player(this, this.silkBag,this.TILE_WIDTH,"Dagon-no-background.png",new Location(0,0)),
-				new Player(this, this.silkBag,this.TILE_WIDTH,"Nightgaunt-no-background.png",new Location(0,0)),
-				new Player(this, this.silkBag,this.TILE_WIDTH,"Shelley-no-background.png",new Location(0,0))};
+		Player[] newPlayers = {new Player(1, new Location(0,1),null),
+				new Player(2,new Location(1,1),null),
+				new Player(3,new Location(2,1),null),
+				new Player(4,new Location(3,1),null)};
 		this.players = newPlayers;
+		this.assignPlayersToBoard();
 		this.currentPlayer = 0;
 		this.goalTile = (Goal) this.generateGoalTile();
 		this.populate();//TODO change from temp full population with random tiles
 		this.randomizeAllPlayerLocations();//For testing
 	}
 	
-	public Board(Canvas canvas, int TILE_WIDTH,int boardID, int width, int length, SilkBag silkBag, FloorTile[][] gameBoard) {
-		this.canvas = canvas;
-		this.gc = canvas.getGraphicsContext2D();
-		this.TILE_WIDTH = TILE_WIDTH;
+	public Board(int boardID, int width, int length, FloorTile[][] gameBoard, Player[] players, int startingPlayer) {
 		this.boardID = boardID;
 		this.length = length;
 		this.width = width;
-		this.silkBag = silkBag;
 		this.gameBoard = gameBoard;
-		//this.gameBoard = new FloorTile[width][length];		
-		//player1 = new Player(this, this.silkBag, new Location(0,0));
-		Player[] newPlayers = {new Player(this, this.silkBag,this.TILE_WIDTH,"Howard-no-background.png", new Location(0,0)),
-				new Player(this, this.silkBag,this.TILE_WIDTH,"Dagon-no-background.png",new Location(0,0)),
-				new Player(this, this.silkBag,this.TILE_WIDTH,"Nightgaunt-no-background.png",new Location(0,0)),
-				new Player(this, this.silkBag,this.TILE_WIDTH,"Shelley-no-background.png",new Location(0,0))};
-		this.players = newPlayers;
-		this.currentPlayer = 0;
+//		Player[] newPlayers = {new Player(this, 1, new Location(0,1),null),
+//				new Player(this,2,new Location(1,1),null),
+//				new Player(this, 3,new Location(2,1),null),
+//				new Player(this, 4,new Location(3,1),null)};
+		this.players = players;
+		this.assignPlayersToBoard();
+		this.currentPlayer = startingPlayer;
 		this.goalTile = (Goal) this.generateGoalTile();
 		this.populate();//TODO change from temp full population with random tiles
 		this.randomizeAllPlayerLocations();//For testing
 	}
 	
-	//redundant as of this version
-	private void placeKnownTiles(FloorTile[] knownFloorTile, Location[] floorTileLocation) {
-		
+	public void assignPlayersToBoard() {
+		for (Player p: this.players) {
+			p.setBoard(this);
+		}
 	}
 	
 	//Just for testing
@@ -154,7 +137,7 @@ public class Board extends Task<Void>{
 		directions.add(Direction.EAST);
 		directions.add(Direction.SOUTH);
 		directions.add(Direction.WEST);
-		return new Goal(TILE_WIDTH, "Goal_Tile_Animated.gif", directions, Direction.NORTH, null, null, null, 0, true);
+		return new Goal(directions,null, null, null, 0, true);
 	}
 	
 	//Just for testing
@@ -173,7 +156,7 @@ public class Board extends Task<Void>{
 		for (int i = 0; i < this.width; i++) {
 			for (int j = 0; j < length; j++) {
 				if (this.gameBoard[i][j] == null) {
-					this.gameBoard[i][j] = silkBag.drawFloorTile();
+					this.gameBoard[i][j] = SilkBag.drawFloorTile();
 					this.gameBoard[i][j].setLocation(new Location(i,j));
 				}
 			}
@@ -181,8 +164,9 @@ public class Board extends Task<Void>{
 		Random r = new Random();
 		int x = r.nextInt(this.width);
 		int y = r.nextInt(this.length);
-		System.out.println("Inserting tile at: " + x + "," + y);
+		//System.out.println("Inserting tile at: " + x + "," + y);
 		this.gameBoard[x][y] = this.goalTile;
+		this.goalTile.setLocation(new Location(x,y));
 		this.assignPlayersToTiles();
 	}
 	
@@ -199,6 +183,7 @@ public class Board extends Task<Void>{
 	}
 	
 	//TODO currently ejected tiles are not returned to the silk bag
+	//TODO make sure tile locations are updated
 	/**
 	 * Inserts a given tile at a given location if the location is valid
 	 * @param t Tile to insert onto board
@@ -608,7 +593,7 @@ public class Board extends Task<Void>{
 		for (int i = 0; i < this.width; i++) {
 			for (int j = 0; j < this.length; j++) {
 				FloorTile currentTile = this.gameBoard[i][j];
-				currentTile.draw(this.gc,i*TILE_WIDTH, j*TILE_WIDTH);
+				currentTile.draw(this.gc,i*Main.TILE_WIDTH, j*Main.TILE_WIDTH);
 			}
 		}
 		
@@ -732,25 +717,25 @@ public class Board extends Task<Void>{
 		if (this.canMove(playerLocation, Direction.NORTH)) {
 			Location lNorth = playerLocation.check(Direction.NORTH);
 			FloorTile tNorth = this.getTileAt(lNorth);
-			tNorth.highlight(this.gc, lNorth.getX()*this.TILE_WIDTH, lNorth.getY()*this.TILE_WIDTH);
+			tNorth.highlight(this.gc, lNorth.getX()*Main.TILE_WIDTH, lNorth.getY()*Main.TILE_WIDTH,null);
 			//System.out.println("Valid move at: " + lNorth.toString());
 		}
 		if (this.canMove(playerLocation, Direction.EAST)) {
 			Location lEast = playerLocation.check(Direction.EAST);
 			FloorTile tEast = this.getTileAt(lEast);
-			tEast.highlight(this.gc, lEast.getX()*this.TILE_WIDTH, lEast.getY()*this.TILE_WIDTH);
+			tEast.highlight(this.gc, lEast.getX()*Main.TILE_WIDTH, lEast.getY()*Main.TILE_WIDTH,null);
 			//System.out.println("Valid move at: " + lEast.toString());
 		}
 		if (this.canMove(playerLocation, Direction.SOUTH)) {
 			Location lSouth = playerLocation.check(Direction.SOUTH);
 			FloorTile tSouth = this.getTileAt(lSouth);
-			tSouth.highlight(this.gc, lSouth.getX()*this.TILE_WIDTH, lSouth.getY()*this.TILE_WIDTH);
+			tSouth.highlight(this.gc, lSouth.getX()*Main.TILE_WIDTH, lSouth.getY()*Main.TILE_WIDTH,null);
 			//System.out.println("Valid move at: " + lSouth.toString());
 		}
 		if (this.canMove(playerLocation, Direction.WEST)) {
 			Location lWest = playerLocation.check(Direction.WEST);
 			FloorTile tWest = this.getTileAt(lWest);
-			tWest.highlight(this.gc, lWest.getX()*this.TILE_WIDTH, lWest.getY()*this.TILE_WIDTH);
+			tWest.highlight(this.gc, lWest.getX()*Main.TILE_WIDTH, lWest.getY()*Main.TILE_WIDTH,null);
 			//System.out.println("Valid move at: " + lWest.toString());
 		}
 	}
@@ -763,7 +748,7 @@ public class Board extends Task<Void>{
 			for (int j = 0; j < this.length; j++) {
 				Location l = new Location(i,j);
 				if (this.canInsertAt(l)) {
-					this.gameBoard[i][j].highlight(this.gc, i*this.TILE_WIDTH, j*this.TILE_WIDTH);
+					this.gameBoard[i][j].highlight(this.gc, i*Main.TILE_WIDTH, j*Main.TILE_WIDTH,null);
 				}
 			}
 		}
@@ -776,8 +761,8 @@ public class Board extends Task<Void>{
 	 * @return Corresponding board index[x][y]
 	 */
 	public Location getCoordinateOfClick(Double xClick, Double yClick) {
-		int x = (int) Math.round(xClick)/this.TILE_WIDTH;
-		int y = (int) Math.round(yClick)/this.TILE_WIDTH;
+		int x = (int) Math.round(xClick)/Main.TILE_WIDTH;
+		int y = (int) Math.round(yClick)/Main.TILE_WIDTH;
 		return new Location(x,y);
 	}
 	
@@ -838,6 +823,51 @@ public class Board extends Task<Void>{
 		return this.lastClickLocation;
 	}
 	
+	public boolean isWaitingForExitOrContinue() {
+		return this.waitingForExitOrContinue;
+	}
+	
+	public void setContinueGame(boolean b) {
+		this.continueGame = true;
+	}
+	
+	public void checkForExitGame() {
+		synchronized (this) {
+			this.continueGame = false;
+			while (!this.continueGame) {
+				this.waitingForExitOrContinue = true;
+				try {
+					System.out.println("Would you like to Save&Exit or Continue Playing?");
+					this.wait();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			System.out.println("Continuing game!!!");
+			this.waitingForExitOrContinue = false;
+		}
+	}
+	
+	public String getCurrentStepMessage() {
+		String msg = "Player " + (this.currentPlayer+1) + "'s turn: ";
+		switch (this.getCurrentPlayer().getCurrentStageOfTurn()) {
+		case 1:
+			//msg += "Drawing a tile from the silk bag";
+			msg += "Please select a location to insert the floor tile.";
+			break;
+		case 2:
+			msg += "Please select an action tile to use, or skip playing an action tile.";
+			break;
+		case 3:
+			msg += "Please select a tile to move to.";
+			break;
+		default:
+			msg += "Please end your turn, or save and exit the game.";
+		}
+		return msg;
+	}
+	
 	@Override
 	/**
 	 * Called when thread is started
@@ -848,6 +878,10 @@ public class Board extends Task<Void>{
 		System.out.println("Starting Game");
 		while (!this.gameOver()) {
 			this.getCurrentPlayer().takeTurn();
+			if (this.gameOver()) {
+				break;
+			}
+			this.checkForExitGame();
 			System.out.println("Advancing player");
 			this.advancePlayerTurn();
 			System.out.println("Drawing board");
@@ -862,7 +896,29 @@ public class Board extends Task<Void>{
 	/**
 	 * Should update the leaderboard on who won and lost
 	 */
-	public void updateState() {
-		
+	public void updateScores() {
+		Player currentPlayer = this.getCurrentPlayer();
+		Profile p = currentPlayer.getProfile();
+		if (p != null) {
+			p.updateProfile(this.boardID, true);
+		}
+	}
+	
+	public String saveFormat() {
+		//(int boardID, int width, int length, FloorTile[][] gameBoard, Player[] players, int startingPlayer)
+		String str = "{Board," +
+				this.boardID + "," +
+				this.width + "," +
+				this.length + ",\n";
+		for (int i = 0; i < this.width; i++) {
+			for (int j = 0; j < this.length; j++) {
+				str += this.gameBoard[i][j].saveFormat() + ",\n";
+			}
+		}
+		for (int i = 0; i < this.players.length; i++) {
+			str += this.players[i].saveFormat() + ",\n";
+		}
+		str += this.currentPlayer + ",Board}";
+		return str;
 	}
 }

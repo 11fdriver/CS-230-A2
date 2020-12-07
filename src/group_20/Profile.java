@@ -1,4 +1,5 @@
 package group_20;
+
 import java.util.*;
 
 public class Profile {
@@ -21,15 +22,15 @@ public class Profile {
 	}
 	//----------------------------------------------------------------------------------------------------
 	
-//	public Profile(String name) {
-//		setProfileID();
-//		setName(name);
-//		gamesPlayed = new Integer[noOfBoard];
-//		wins = new Integer[noOfBoard];
-//		losses = new Integer[noOfBoard];
-//
-//		//arrayListOfProfileInstances.add(this);	
-//	}
+	public Profile(String name) {
+		setProfileID();
+		setName(name);
+		gamesPlayed = new Integer[noOfBoard];
+		wins = new Integer[noOfBoard];
+		losses = new Integer[noOfBoard];
+
+		arrayListOfProfileInstances.add(this);	
+	}
 
 	public Profile(String name,Integer[] gamesPlayed, Integer[] wins, Integer[] losses) {
 		setProfileID();
@@ -38,7 +39,7 @@ public class Profile {
 		setWins(wins);
 		setLosses(losses);
 
-		//arrayListOfProfileInstances.add(this);	//for TESTING Leaderboard class
+		arrayListOfProfileInstances.add(this);	//for TESTING Leaderboard class
 	}
 	
 	public void updateProfile(int boardID, boolean winLoss) {
@@ -134,5 +135,10 @@ public class Profile {
 
 	public void setLastGameDateTime(String[] lastGameDateTime) {
 		this.lastGameDateTime = lastGameDateTime;
+	}
+
+	public static Object getAll() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

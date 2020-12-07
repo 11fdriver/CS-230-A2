@@ -3,17 +3,24 @@ package group_20;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-
-import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.paint.Color;
 
 public class Goal extends FloorTile {
+	private static final String IMG_FILEPATH = TILE_IMG_DIR_PATH + "Goal_Tile_Animated-with-carpet-noise.gif";
 	
-	public Goal(int TILE_WIDTH, String spriteFileLocation, ArrayList<Direction> directions, Direction orientation, Location location, Player player, FloorAction state, int lifetime, boolean isFixed) {
-		super(TILE_WIDTH, spriteFileLocation, directions, orientation, location, player, state, lifetime, isFixed);
+	public Goal(Location location) {
+		super(new ArrayList<Direction>(), location, null, null, 0, true);
+		this.DIRECTIONS.add(Direction.NORTH);
+		this.DIRECTIONS.add(Direction.EAST);
+		this.DIRECTIONS.add(Direction.SOUTH);
+		this.DIRECTIONS.add(Direction.WEST);
+		this.loadSprite(IMG_FILEPATH);
+	}
+	
+	public Goal(ArrayList<Direction> directions, Location location, Player player, FloorAction state, int lifetime, boolean isFixed) {
+		super(directions, location, player, state, lifetime, isFixed);
+		this.loadSprite(IMG_FILEPATH);
 	}
 	
 	public String toString() {
@@ -24,5 +31,20 @@ public class Goal extends FloorTile {
 	
 	public void draw(GraphicsContext gc, int x, int y) {
 		gc.drawImage(this.getSprite(), x, y);
+	}
+	
+	/**
+	 * Sets value for this.sprite to image at file location
+	 * @param fileLocation File location of sprite image
+	 */
+	@Override
+	public void loadSprite(String fileLocation) {
+		Image image = null;
+		try {
+			image = new Image(new FileInputStream(fileLocation),Main.TILE_WIDTH, Main.TILE_WIDTH,true,true);
+		} catch (IOException e) {
+			//TODO add code
+		}
+		this.setSprite(image);
 	}
 }
