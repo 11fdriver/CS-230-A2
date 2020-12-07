@@ -190,7 +190,7 @@ public class FloorTile extends Tile implements Subscriber {
 	 * @return True if shifting is possible
 	 */
 	public boolean canShift() {
-		return (null == state || state.acceptsShift());
+		return (null == state || state.acceptsShift()) && !this.isFixed();
 	}
 	
 	/**

@@ -72,6 +72,7 @@ public class Board extends Task<Void>{
 		this.gameBoard = gameBoard;
 		this.players = players;
 		this.assignPlayersToBoard();
+		this.assignPlayersToTiles();
 		this.currentPlayer = startingPlayer;
 		this.goalTile = this.findGoalTile();
 	}
@@ -193,7 +194,7 @@ public class Board extends Task<Void>{
 		if (l.getX() == 0 || l.getX() == this.width-1) {
 			int y = l.getY();
 			for (int i = 0; i < this.width; i++) {
-				if (this.gameBoard[i][y].isFixed()) {
+				if (this.gameBoard[i][y].canShift()) {
 					return true;
 				}
 			}
@@ -201,7 +202,7 @@ public class Board extends Task<Void>{
 		} else if (l.getY() == 0 || l.getY() == this.length-1) {
 			int x = l.getX();
 			for (int i = 0; i < this.length; i++) {
-				if (this.gameBoard[x][i].isFixed()) {
+				if (this.gameBoard[x][i].canShift()) {
 					return true;
 				}
 			}
