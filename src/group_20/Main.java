@@ -78,7 +78,7 @@ public class Main extends Application {
 	//private static final Double WINDOW_WIDTH = Screen.getPrimary().getBounds().getWidth();
 	private static final int WINDOW_HEIGHT = 1000;
 	private static final int WINDOW_WIDTH = 1500;
-	public static final int TILE_WIDTH = 90;
+	public static final int TILE_WIDTH = 70;
 	private static MediaPlayer jukebox;
 	static Stage primaryStage;
 	
@@ -117,34 +117,34 @@ public class Main extends Application {
 		
 		Main.primaryStage = primaryStage;
 		primaryStage.setTitle("Labryinth");
-        
-		FileInputStream initialBackgroundImg = new FileInputStream(TITLE_SCREEN_IMG_FILEPATH);
-        Image initialMenuImage = new Image(initialBackgroundImg); 
-        ImageView initialMenuImageView = new ImageView(initialMenuImage);
-        initialMenuImageView.setFitHeight(1000);
-        initialMenuImageView.setFitWidth(1000);
-        initialMenuImageView.setPreserveRatio(true); 
-        
-        FileInputStream initialMenuBackingImg = new FileInputStream(MAIN_MENU_IMG_FILEPATH);
-        Image initialMenuImg = new Image(initialMenuBackingImg); 
-        BackgroundImage initialMenuPicture = new BackgroundImage(initialMenuImg, BackgroundRepeat.ROUND, BackgroundRepeat.ROUND, null, null); 
-       
-        StackPane initialTitleScreen = new StackPane();
-        initialTitleScreen.setBackground(new Background(initialMenuPicture));
-        initialTitleScreen.getChildren().addAll(initialMenuImageView);
-        
-        String backgroundMusic =  TITLE_MUSIC_AUDIO_FILE_PATH;
-        Media backgroundTrack = new Media(new File(backgroundMusic).toURI().toString());
-        jukebox = new MediaPlayer(backgroundTrack);
-        //jukebox.play();
-        
-    	Scene initialMenuScene = new Scene(initialTitleScreen, 1500, 1000);
-        primaryStage.setScene(initialMenuScene);
-        primaryStage.show();
-        
-        initialMenuScene.setOnKeyPressed(e -> {
-			Main.setSceneToMainMenu();
-		});
+        setSceneToCreateGame();
+//		FileInputStream initialBackgroundImg = new FileInputStream(TITLE_SCREEN_IMG_FILEPATH);
+//        Image initialMenuImage = new Image(initialBackgroundImg); 
+//        ImageView initialMenuImageView = new ImageView(initialMenuImage);
+//        initialMenuImageView.setFitHeight(1000);
+//        initialMenuImageView.setFitWidth(1000);
+//        initialMenuImageView.setPreserveRatio(true); 
+//        
+//        FileInputStream initialMenuBackingImg = new FileInputStream(MAIN_MENU_IMG_FILEPATH);
+//        Image initialMenuImg = new Image(initialMenuBackingImg); 
+//        BackgroundImage initialMenuPicture = new BackgroundImage(initialMenuImg, BackgroundRepeat.ROUND, BackgroundRepeat.ROUND, null, null); 
+//       
+//        StackPane initialTitleScreen = new StackPane();
+//        initialTitleScreen.setBackground(new Background(initialMenuPicture));
+//        initialTitleScreen.getChildren().addAll(initialMenuImageView);
+//        
+//        String backgroundMusic =  TITLE_MUSIC_AUDIO_FILE_PATH;
+//        Media backgroundTrack = new Media(new File(backgroundMusic).toURI().toString());
+//        jukebox = new MediaPlayer(backgroundTrack);
+//        //jukebox.play();
+//        
+//    	Scene initialMenuScene = new Scene(initialTitleScreen, 1500, 1000);
+//        primaryStage.setScene(initialMenuScene);
+//        primaryStage.show();
+//        
+//        initialMenuScene.setOnKeyPressed(e -> {
+//			Main.setSceneToMainMenu();
+//		});
 	}
 	
 	public static void setSceneToMainMenu() {

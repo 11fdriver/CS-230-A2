@@ -109,6 +109,11 @@ public class Player {
 	private int playerNumber;
 	
 	/**
+	 * Amount of players created
+	 */
+	private static int numPlayers;
+	
+	/**
 	 * Full Constructor to be called when loading a player object
 	 * @param board
 	 * @param silkbag
@@ -126,6 +131,7 @@ public class Player {
 		this.numMoves = 1;
 		this.loadSprite();
 		this.loadHighlightSprite();
+		numPlayers++;
 	}
 	
 	/**
@@ -144,6 +150,7 @@ public class Player {
 		this.numMoves = 1;
 		this.loadSprite();
 		this.loadHighlightSprite();
+		numPlayers++;
 	}
 	
 	public void takeTurn() {
@@ -186,7 +193,7 @@ public class Player {
 			} else {
 				System.out.println("Oh I guess you wanted to skip your turn.. fine by me");
 			}
-			//chosenActionTile.play(this, this.board);
+			chosenActionTile.play(this, this.board);
 		} else {
 			System.out.println("My inventory is empty -> Can't play an action tile :(");
 		}
@@ -710,5 +717,9 @@ public class Player {
 		locList.add(new Location(1,3));
 		locList.add(new Location(2,7));
 		System.out.println(p.saveFormat());
+	}
+
+	public static int amount() {
+		return numPlayers;
 	}
 }
