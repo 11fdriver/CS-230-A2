@@ -41,5 +41,8 @@ public class FireAction extends FloorAction {
 	public boolean acceptsShift() {
 		return this.CAN_SHIFT;
 	}
-
+	
+	public String toString() {
+		return "This is a fire action tile";
+	}
 }

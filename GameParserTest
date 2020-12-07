@@ -1,0 +1,18 @@
+{Board, 2, 2, 
+	{FloorTile, [NORTH, SOUTH, EAST], null, Fire, 2, FloorTile},
+	{FloorTile, [NORTH, SOUTH, EAST], null, Fire, 2, FloorTile},
+	{FloorTile, [NORTH, SOUTH, EAST], null, Fire, 2, FloorTile},
+	{FloorTile, [NORTH, SOUTH, EAST], null, Fire, 2, FloorTile},
+Board},
+
+{SilkBag,
+	{FloorTile, [NORTH, SOUTH, EAST], null, Fire, 2, FloorTile},
+	{FloorTile, [NORTH, SOUTH, EAST], null, Fire, 2, FloorTile},
+	{FloorTile, [NORTH, SOUTH, EAST], null, Fire, 2, FloorTile},
+	{FloorTile, [NORTH, SOUTH, EAST], null, Fire, 2, FloorTile},
+	{FloorTile, [NORTH, SOUTH, EAST], null, Fire, 2, FloorTile},
+	{ActionTile, Fire, ActionTile},
+	{ActionTile, Ice, ActionTile},
+	{ActionTile, Backtrack, ActionTile},
+	{ActionTile, DoubleMove, ActionTile},
+SilkBag}

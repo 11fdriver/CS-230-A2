@@ -37,5 +37,8 @@ public class IceAction extends FloorAction {
 	public boolean acceptsShift() {
 		return this.CAN_SHIFT;
 	}
-
+	
+	public String toString() {
+		return "This is an ice action tile";
+	}
 }
