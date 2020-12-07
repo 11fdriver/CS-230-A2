@@ -305,10 +305,11 @@ public class IO {
 		}
 		currentItem = currentItem.replace("[", "").trim();
 		while (!currentItem.endsWith("]")) {
+			System.out.println(currentItem);
 			directions.add(stringToDirection(currentItem));
 			nextItem();
 		}
-		directions.add(stringToDirection(currentItem.replace("[", "").trim()));
+		directions.add(stringToDirection(currentItem.replace("]", "").trim()));
 		
 		return directions;
 	}
@@ -406,9 +407,9 @@ public class IO {
 				// TODO: exception here
 			}
 		}
-		
+		System.out.println("'" + currentItem + "'");
 		ArrayList<Player> players = new ArrayList<Player>();
-		while ("{Players".equals(currentItem)) {
+		while ("{Player".equals(currentItem)) {
 			players.add(loadNewPlayer(profiles));
 			nextItem();
 		}
@@ -425,7 +426,7 @@ public class IO {
 			}
 		}
 		
-		return new Board(fname, boardID, width, height, b, (Player[]) players.toArray(), height);
+		return new Board(fname, boardID, width, height, b, players.toArray(new Player[4]), height);
 	}
 	
 	/**
@@ -457,7 +458,7 @@ public class IO {
 	 */
 	private static Goal loadNewGoal() {
 		Location location = loadLocation();
-		
+		nextItem();
 		return new Goal(location);
 	}
 	
@@ -503,6 +504,8 @@ public class IO {
 	}
 	
 	public static void main(String args[]) {
+		// Scanner scan = new Scanner("[NORTH, SOUTH, EAST, WEST]");nn
+		
 		try {
 			Profile[] profiles = {null, null, null, null};
 			loadNewGame("new1", "save1", 4, profiles);
