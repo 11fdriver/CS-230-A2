@@ -83,19 +83,16 @@ public class IO {
 	 * @throws FileParseException
 	 */
 	private static void fillSilkBag() {
-		String str = nextItem();
-		while (!"SilkBag}".equals(str)) {
-			switch (str) {
+		while (!"SilkBag}".equals(nextItem())) {
+			switch (currentItem) {
 			case "{FloorTile":
 				SilkBag.addTile(loadSavedFloorTile());
 				break;
 			case "{ActionTile":
-				loadSavedActionTile();
 				SilkBag.addTile(loadSavedActionTile());
 				break;
 			default:
 			}
-			str = nextItem();
 		}
 	}
 
