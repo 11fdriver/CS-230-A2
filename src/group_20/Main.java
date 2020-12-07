@@ -74,92 +74,90 @@ public class Main extends Application {
 	//private static Canvas canvas = new Canvas(CANVAS_WIDTH, CANVAS_HEIGHT);
 	//private Board currentBoard = new Board(canvas.getGraphicsContext2D(),BOARD_WIDTH,BOARD_LENGTH);
 	
-//	private static final Double WINDOW_HEIGHT = Screen.getPrimary().getBounds().getHeight();
-//	private static final Double WINDOW_WIDTH = Screen.getPrimary().getBounds().getWidth();
-//	public static final int TILE_WIDTH = 90;
-//	private static MediaPlayer jukebox;
-//	static Stage primaryStage;
+	//private static final Double WINDOW_HEIGHT = Screen.getPrimary().getBounds().getHeight();
+	//private static final Double WINDOW_WIDTH = Screen.getPrimary().getBounds().getWidth();
+	private static final int WINDOW_HEIGHT = 1000;
+	private static final int WINDOW_WIDTH = 1500;
+	public static final int TILE_WIDTH = 90;
+	private static MediaPlayer jukebox;
+	static Stage primaryStage;
 	
 	//==Yoshan
-	private static final int SHAPE_SIZE = 20;
-	private static final int SHAPE_SIZE_UPPER_BOUND = 100;
-	public static final int TILE_WIDTH = 80;
-	private static final int BOARD_WIDTH = 9;
-	private static final int BOARD_LENGTH = 9;
-	private static final int CANVAS_HEIGHT = TILE_WIDTH * BOARD_LENGTH;
-	private static final int CANVAS_WIDTH = TILE_WIDTH * BOARD_WIDTH;
-	private static final int WINDOW_HEIGHT = CANVAS_HEIGHT + 100;
-	private static final int WINDOW_WIDTH = CANVAS_WIDTH + 300;
-	public static Canvas canvas = new Canvas(CANVAS_WIDTH, CANVAS_HEIGHT);
-	static Board currentBoard = new Board(canvas.getGraphicsContext2D(),BOARD_WIDTH,BOARD_LENGTH);
-	static Stage primaryStage;
+//	private static final int SHAPE_SIZE = 20;
+//	private static final int SHAPE_SIZE_UPPER_BOUND = 100;
+//	public static final int TILE_WIDTH = 80;
+//	private static final int BOARD_WIDTH = 9;
+//	private static final int BOARD_LENGTH = 9;
+//	private static final int CANVAS_HEIGHT = TILE_WIDTH * BOARD_LENGTH;
+//	private static final int CANVAS_WIDTH = TILE_WIDTH * BOARD_WIDTH;
+//	private static final int WINDOW_HEIGHT = CANVAS_HEIGHT + 100;
+//	private static final int WINDOW_WIDTH = CANVAS_WIDTH + 300;
+//	public static Canvas canvas = new Canvas(CANVAS_WIDTH, CANVAS_HEIGHT);
+//	static Board currentBoard = new Board(canvas.getGraphicsContext2D(),BOARD_WIDTH,BOARD_LENGTH);
+//	static Stage primaryStage;
 	//==
 	
 	public static void main(String[] args) {
 		//System.out.println(Screen.getScreens().get(1).getBounds().getWidth() + "x" + Screen.getScreens().get(1).getBounds().getHeight());
-		System.out.println(currentBoard.saveFormat());
+		//System.out.println(currentBoard.saveFormat());
 		launch(args);
 	}
 
 	@Override
 	public void start(Stage primaryStage) throws FileNotFoundException {
 		//==Yoshan
-		Main.primaryStage = primaryStage;
-		//Scene leaderboard = new Scene(new leaderboardWindow(),WINDOW_WIDTH, WINDOW_HEIGHT);
-		//Scene createGame = new Scene(new CreateGameWindow(), WINDOW_WIDTH, WINDOW_HEIGHT);
-		//Scene loadGame = new Scene(new LoadGameWindow(), WINDOW_WIDTH, WINDOW_HEIGHT);
-		Scene game = new Scene(new BoardWindow(currentBoard), WINDOW_WIDTH, WINDOW_HEIGHT);
-		primaryStage.setScene(game);
-		primaryStage.show();
+//		Main.primaryStage = primaryStage;
+//		//Scene leaderboard = new Scene(new leaderboardWindow(),WINDOW_WIDTH, WINDOW_HEIGHT);
+//		//Scene createGame = new Scene(new CreateGameWindow(), WINDOW_WIDTH, WINDOW_HEIGHT);
+//		Scene loadGame = new Scene(new LoadGameWindow(), WINDOW_WIDTH, WINDOW_HEIGHT);
+//		//Scene game = new Scene(new BoardWindow(currentBoard), WINDOW_WIDTH, WINDOW_HEIGHT);
+//		primaryStage.setScene(loadGame);
+//		primaryStage.show();
 		//==
 		
-//		Main.primaryStage = primaryStage;
-//		primaryStage.setTitle("Labryinth");
-//        
-//		FileInputStream initialBackgroundImg = new FileInputStream(TITLE_SCREEN_IMG_FILEPATH);
-//        Image initialMenuImage = new Image(initialBackgroundImg); 
-//        ImageView initialMenuImageView = new ImageView(initialMenuImage);
-//        initialMenuImageView.setFitHeight(1000);
-//        initialMenuImageView.setFitWidth(1000);
-//        initialMenuImageView.setPreserveRatio(true); 
-//        
-//        FileInputStream initialMenuBackingImg = new FileInputStream(MAIN_MENU_IMG_FILEPATH);
-//        Image initialMenuImg = new Image(initialMenuBackingImg); 
-//        BackgroundImage initialMenuPicture = new BackgroundImage(initialMenuImg, BackgroundRepeat.ROUND, BackgroundRepeat.ROUND, null, null); 
-//       
-//        StackPane initialTitleScreen = new StackPane();
-//        initialTitleScreen.setBackground(new Background(initialMenuPicture));
-//        initialTitleScreen.getChildren().addAll(initialMenuImageView);
-//        
-//        String backgroundMusic =  TITLE_MUSIC_AUDIO_FILE_PATH;
-//        Media backgroundTrack = new Media(new File(backgroundMusic).toURI().toString());
-//        jukebox = new MediaPlayer(backgroundTrack);
-//        jukebox.play();
-//        
-//    	Scene initialMenuScene = new Scene(initialTitleScreen, 1500, 1000);
-//        primaryStage.setScene(initialMenuScene);
-//        primaryStage.show();
-//        
-//        initialMenuScene.setOnKeyPressed(e -> {
-//			try {
-//				Main.setSceneToMainMenu();
-//			} catch (FileNotFoundException e1) {
-//				e1.printStackTrace();
-//			}
-//		});
+		Main.primaryStage = primaryStage;
+		primaryStage.setTitle("Labryinth");
+        
+		FileInputStream initialBackgroundImg = new FileInputStream(TITLE_SCREEN_IMG_FILEPATH);
+        Image initialMenuImage = new Image(initialBackgroundImg); 
+        ImageView initialMenuImageView = new ImageView(initialMenuImage);
+        initialMenuImageView.setFitHeight(1000);
+        initialMenuImageView.setFitWidth(1000);
+        initialMenuImageView.setPreserveRatio(true); 
+        
+        FileInputStream initialMenuBackingImg = new FileInputStream(MAIN_MENU_IMG_FILEPATH);
+        Image initialMenuImg = new Image(initialMenuBackingImg); 
+        BackgroundImage initialMenuPicture = new BackgroundImage(initialMenuImg, BackgroundRepeat.ROUND, BackgroundRepeat.ROUND, null, null); 
+       
+        StackPane initialTitleScreen = new StackPane();
+        initialTitleScreen.setBackground(new Background(initialMenuPicture));
+        initialTitleScreen.getChildren().addAll(initialMenuImageView);
+        
+        String backgroundMusic =  TITLE_MUSIC_AUDIO_FILE_PATH;
+        Media backgroundTrack = new Media(new File(backgroundMusic).toURI().toString());
+        jukebox = new MediaPlayer(backgroundTrack);
+        //jukebox.play();
+        
+    	Scene initialMenuScene = new Scene(initialTitleScreen, 1500, 1000);
+        primaryStage.setScene(initialMenuScene);
+        primaryStage.show();
+        
+        initialMenuScene.setOnKeyPressed(e -> {
+			Main.setSceneToMainMenu();
+		});
 	}
 	
-	public static void setSceneToMainMenu() throws FileNotFoundException {
-        Scene mainMenuScene = new Scene(new MainWindow(TILE_WIDTH), 1500, 1000);
+	public static void setSceneToMainMenu() {
+        Scene mainMenuScene = null;
+		try {
+			mainMenuScene = new Scene(new MainWindow(TILE_WIDTH), 1500, 1000);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         primaryStage.setScene(mainMenuScene);
         primaryStage.show();
     }
-	
-	public static void loadGameButtonFunctionality() {
-//		Scene gameSession = new Scene(new BoardWindow(TILE_WIDTH, currentBoard), WINDOW_WIDTH, WINDOW_HEIGHT);
-//    	primaryStage.setScene(gameSession);
-//    	primaryStage.show();
-	}
 	
 	public static void exitGameButtonFunctionality() {
 		System.exit(0);
@@ -173,6 +171,18 @@ public class Main extends Application {
 	
 	public static void setSceneToLoadGame() {
 		Scene scene = new Scene(new LoadGameWindow(), WINDOW_WIDTH, WINDOW_HEIGHT);
+		primaryStage.setScene(scene);
+		primaryStage.show();
+	}
+	
+	public static void setSceneToCreateGame() {
+		Scene scene = new Scene(new CreateGameWindow(), WINDOW_WIDTH, WINDOW_HEIGHT);
+		primaryStage.setScene(scene);
+		primaryStage.show();
+	}
+	
+	public static void setSceneToBoardWindow(Board board) {
+		Scene scene = new Scene(new BoardWindow(board), WINDOW_WIDTH, WINDOW_HEIGHT);
 		primaryStage.setScene(scene);
 		primaryStage.show();
 	}

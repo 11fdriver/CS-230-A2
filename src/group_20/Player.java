@@ -266,8 +266,7 @@ public class Player {
 	 * @return ActionTile if action tile was drawn or null if FloorTile was drawn
 	 */
 	public void drawTile() {
-		//Tile drawnTile = SilkBag.removeTile(); //TODO put this line in when merging with Finn
-		Tile drawnTile = SilkBag.drawTile();
+		Tile drawnTile = SilkBag.removeTile(); //TODO put this line in when merging with Finn
 		//System.out.println(drawnTile.toString());
 		
 		//If is ActionTile
@@ -607,13 +606,8 @@ public class Player {
 	 * @param gc Graphics context to draw highlight on
 	 */
 	public void highlight(GraphicsContext gc) {
-//		gc.setStroke(Color.MAGENTA);
-		int x = this.getLocation().getX()*Main.TILE_WIDTH;
-		int y = this.getLocation().getY()*Main.TILE_WIDTH;
-//		gc.strokeOval(x, y, (Main.TILE_WIDTH), (Main.TILE_WIDTH));
-//		gc.setStroke(Color.BLACK);
 		FloorTile tileStandingOn = this.board.getTileAt(this.getLocation());
-		tileStandingOn.highlight(gc, x, y, this.highlightSprite);
+		tileStandingOn.highlight(gc, this.highlightSprite);
 	}
 	
 	/**
@@ -672,7 +666,7 @@ public class Player {
 		if (this.profile == null) {
 			str += "null,";
 		} else {
-			str += this.profile.getProfileID() + ",";
+			str += this.profile.getID() + ",";
 		}
 		str += "Player}";
 		return str;

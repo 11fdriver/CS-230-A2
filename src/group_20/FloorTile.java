@@ -190,7 +190,7 @@ public class FloorTile extends Tile implements Subscriber {
 	 * @return True if shifting is possible
 	 */
 	public boolean canShift() {
-		return (null == state || state.acceptsShift());
+		return (null == state || state.acceptsShift()) && !this.isFixed();
 	}
 	
 	/**
@@ -228,9 +228,10 @@ public class FloorTile extends Tile implements Subscriber {
 	 */
 	public Player getPlayer() {
 		return this.player;
+	}
 
   /**
-	 * Chcks if tile is fixed
+	 * Checks if tile is fixed
 	 * @return True if tile is fixed
 	 */
 	public boolean isFixed() {
@@ -251,14 +252,6 @@ public class FloorTile extends Tile implements Subscriber {
 	 */
 	public boolean acceptsPlayer() {
 		return (null == state || state.acceptsPlayer()) && null == player;
-	}
-	
-	/**
-	 * Getter for player
-	 * @return Tile's player
-	 */
-	public Player getPlayer() {
-		return this.player;
 	}
 	
 	/**
@@ -353,10 +346,9 @@ public class FloorTile extends Tile implements Subscriber {
 	 * @param y Y coordinate to draw
 	 * @param gc GraphicsContext to draw onto
 	 */
-	public void highlight(GraphicsContext gc, int x, int y, Image img) {
-//		gc.setStroke(Color.ANTIQUEWHITE); //Can change colour if you want
-//		gc.strokeOval(x, y, Main.TILE_WIDTH, Main.TILE_WIDTH);
-//		gc.setStroke(Color.BLACK); //Just resets to black for now
+	public void highlight(GraphicsContext gc, Image img) {
+		int x = this.location.getX()*Main.TILE_WIDTH;
+		int y = this.location.getY()*Main.TILE_WIDTH;
 		if (img == null) {
 			gc.drawImage(this.highlightSprite, x, y);
 		} else {

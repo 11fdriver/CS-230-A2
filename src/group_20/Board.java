@@ -65,110 +65,40 @@ public class Board extends Task<Void>{
 	 */
 	private boolean continueGame;
 	
-//	private Double xClick; //Think redundant??
-//	private Double yClick; //Think redundant??
+	/**
+	 * Used when saving board
+	 */
+	private String filename;
 	
-	//For testing
-	public Board(GraphicsContext gc, int width, int length) {
-		this.gc = gc;
-		this.boardID = 1;
-		this.length = length;
-		this.width = width;
-		this.gameBoard = new FloorTile[width][length];		
-		//player1 = new Player(this, this.silkBag, new Location(0,0));
-		Player[] newPlayers = {new Player(1, new Location(0,1),null),
-				new Player(2,new Location(1,1),null),
-				new Player(3,new Location(2,1),null),
-				new Player(4,new Location(3,1),null)};
-		this.players = newPlayers;
-		this.assignPlayersToBoard();
-		this.currentPlayer = 0;
-		this.goalTile = (Goal) this.generateGoalTile();
-		this.populate();//TODO change from temp full population with random tiles
-		this.randomizeAllPlayerLocations();//For testing
-	}
-	
-	//For testing too
-	public Board(int width, int length) {
-		this.gc = null;
-		this.boardID = 1;
-		this.length = length;
-		this.width = width;
-		this.gameBoard = new FloorTile[width][length];		
-		//player1 = new Player(this, this.silkBag, new Location(0,0));
-		Player[] newPlayers = {new Player(1, new Location(0,1),null),
-				new Player(2,new Location(1,1),null),
-				new Player(3,new Location(2,1),null),
-				new Player(4,new Location(3,1),null)};
-		this.players = newPlayers;
-		this.assignPlayersToBoard();
-		this.currentPlayer = 0;
-		this.goalTile = (Goal) this.generateGoalTile();
-		this.populate();//TODO change from temp full population with random tiles
-		this.randomizeAllPlayerLocations();//For testing
-	}
-	
-	public Board(int boardID, int width, int length, FloorTile[][] gameBoard, Player[] players, int startingPlayer) {
+	public Board(String filename, int boardID, int width, int length, FloorTile[][] gameBoard, Player[] players, int startingPlayer) {
+		this.filename = filename;
 		this.boardID = boardID;
 		this.length = length;
 		this.width = width;
 		this.gameBoard = gameBoard;
-//		Player[] newPlayers = {new Player(this, 1, new Location(0,1),null),
-//				new Player(this,2,new Location(1,1),null),
-//				new Player(this, 3,new Location(2,1),null),
-//				new Player(this, 4,new Location(3,1),null)};
 		this.players = players;
 		this.assignPlayersToBoard();
+		this.assignPlayersToTiles();
 		this.currentPlayer = startingPlayer;
-		this.goalTile = (Goal) this.generateGoalTile();
-		this.populate();//TODO change from temp full population with random tiles
-		this.randomizeAllPlayerLocations();//For testing
+		this.goalTile = this.findGoalTile();
+	}
+	
+	//TODO
+	private Goal findGoalTile() {
+		for (FloorTile[] col : this.gameBoard) {
+			for (FloorTile t : col) {
+				if (t instanceof Goal) {
+					return (Goal) t;
+				}
+			}
+		}
+		return null;
 	}
 	
 	public void assignPlayersToBoard() {
 		for (Player p: this.players) {
 			p.setBoard(this);
 		}
-	}
-	
-	//Just for testing
-	public FloorTile generateGoalTile() {
-		ArrayList<Direction> directions = new ArrayList<Direction>();
-		directions.add(Direction.NORTH);
-		directions.add(Direction.EAST);
-		directions.add(Direction.SOUTH);
-		directions.add(Direction.WEST);
-		return new Goal(directions,null, null, null, 0, true);
-	}
-	
-	//Just for testing
-	public void randomizeBoard() {
-		this.gameBoard = new FloorTile[this.width][this.length];
-		this.populate();
-	}
-	
-	/**
-	 * Randomly populates the board.
-	 * Probably just a method for testing
-	 */
-	private void populate() {
-		//Populates non fixed spaces with random tiles
-		//Somehow need to put the fixed tiles in first???
-		for (int i = 0; i < this.width; i++) {
-			for (int j = 0; j < length; j++) {
-				if (this.gameBoard[i][j] == null) {
-					this.gameBoard[i][j] = SilkBag.drawFloorTile();
-					this.gameBoard[i][j].setLocation(new Location(i,j));
-				}
-			}
-		}
-		Random r = new Random();
-		int x = r.nextInt(this.width);
-		int y = r.nextInt(this.length);
-		//System.out.println("Inserting tile at: " + x + "," + y);
-		this.gameBoard[x][y] = this.goalTile;
-		this.goalTile.setLocation(new Location(x,y));
-		this.assignPlayersToTiles();
 	}
 	
 	/**
@@ -183,7 +113,6 @@ public class Board extends Task<Void>{
 		}
 	}
 	
-	//TODO currently ejected tiles are not returned to the silk bag
 	//TODO make sure tile locations are updated
 	/**
 	 * Inserts a given tile at a given location if the location is valid
@@ -196,13 +125,14 @@ public class Board extends Task<Void>{
 				l.equals(this.width - 1, 0) || l.equals(this.width - 1, this.length - 1))) {
 			//this.gameBoard[l.getX()][l.getY()] = t;
 			
-			//FloorTile ejectedTile = null;
+			FloorTile ejectedTile = null;
 			Player ejectedPlayer = null;
 			if (l.getX() == 0) {
-				//ejectedTile = this.gameBoard[this.width-1][l.getY()];
+				ejectedTile = this.gameBoard[this.width-1][l.getY()];
 				ejectedPlayer = this.gameBoard[this.width-1][l.getY()].getPlayer();
 				for (int i = this.width-1; i > 0; i--) {
 					this.gameBoard[i][l.getY()] = this.gameBoard[i-1][l.getY()];
+					this.gameBoard[i][l.getY()].setLocation(new Location(i,l.getY()));
 					if (this.gameBoard[i-1][l.getY()].hasPlayer()) {
 						this.gameBoard[i-1][l.getY()].getPlayer().setLocation(new Location(i,l.getY()));
 					}
@@ -210,30 +140,23 @@ public class Board extends Task<Void>{
 				this.gameBoard[l.getX()][l.getY()] = t;
 				
 			} else if (l.getX() == this.width-1) {
+				ejectedTile = this.gameBoard[0][l.getY()];
 				ejectedPlayer = this.gameBoard[0][l.getY()].getPlayer();
 				for (int i = 0; i < this.length-1; i++) {
 					this.gameBoard[i][l.getY()] = this.gameBoard[i+1][l.getY()];
+					this.gameBoard[i][l.getY()].setLocation(new Location(i,l.getY()));
 					if (this.gameBoard[i+1][l.getY()].hasPlayer()) {
 						this.gameBoard[i+1][l.getY()].getPlayer().setLocation(new Location(i,l.getY()));
 					}
 				}
 				this.gameBoard[l.getX()][l.getY()] = t;
-				
-//				if (ejectedPlayer != null) {
-//					Player p = this.getTileAt(ejectedPlayer.getLocation()).getPlayer();
-//					if (p != null) {
-//						ejectedPlayer.setLocation(l);
-//						p.setLocation(p.getLocation());
-//					} else {
-//						ejectedPlayer.setLocation(l);
-//					}
-//				}
 
 			} else if (l.getY() == 0) {
-				//ejectedTile = this.gameBoard[l.getX()][this.width-1];
+				ejectedTile = this.gameBoard[l.getX()][this.width-1];
 				ejectedPlayer = this.gameBoard[l.getX()][this.width-1].getPlayer();
 				for (int i = this.width-1; i > 0; i--) {
 					this.gameBoard[l.getX()][i] = this.gameBoard[l.getX()][i-1];
+					this.gameBoard[l.getX()][i].setLocation(new Location(l.getX(),i));
 					if (this.gameBoard[l.getX()][i-1].hasPlayer()) {
 						this.gameBoard[l.getX()][i-1].getPlayer().setLocation(new Location(l.getX(),i));
 					}
@@ -241,10 +164,11 @@ public class Board extends Task<Void>{
 				this.gameBoard[l.getX()][l.getY()] = t;
 				
 			} else if (l.getY() == this.length-1) {
-				//ejectedTile = this.gameBoard[l.getX()][0];
+				ejectedTile = this.gameBoard[l.getX()][0];
 				ejectedPlayer = this.gameBoard[l.getX()][0].getPlayer();
 				for (int i = 0; i < this.width-1; i++) {
 					this.gameBoard[l.getX()][i] = this.gameBoard[l.getX()][i+1];
+					this.gameBoard[l.getX()][i].setLocation(new Location(l.getX(),i));
 					if (this.gameBoard[l.getX()][i+1].hasPlayer()) {
 						this.gameBoard[l.getX()][i+1].getPlayer().setLocation(new Location(l.getX(),i));
 					}
@@ -254,6 +178,10 @@ public class Board extends Task<Void>{
 			} else {
 				System.out.println("Invalid tile insertion location");
 			}
+			
+			//Adds ejected tile to silk bag
+			SilkBag.addTile(ejectedTile);
+			
 			if (ejectedPlayer != null) {
 				Player p = this.getTileAt(ejectedPlayer.getLocation()).getPlayer();
 				if (p != null) {
@@ -272,7 +200,7 @@ public class Board extends Task<Void>{
 		if (l.getX() == 0 || l.getX() == this.width-1) {
 			int y = l.getY();
 			for (int i = 0; i < this.width; i++) {
-				if (this.gameBoard[i][y].isFixed()) {
+				if (this.gameBoard[i][y].canShift()) {
 					return true;
 				}
 			}
@@ -280,7 +208,7 @@ public class Board extends Task<Void>{
 		} else if (l.getY() == 0 || l.getY() == this.length-1) {
 			int x = l.getX();
 			for (int i = 0; i < this.length; i++) {
-				if (this.gameBoard[x][i].isFixed()) {
+				if (this.gameBoard[x][i].canShift()) {
 					return true;
 				}
 			}
@@ -288,62 +216,6 @@ public class Board extends Task<Void>{
 		return false;
 	}
 	
-//	public void insertTile(FloorTile t, Location l) {
-//		//Checks you aren't inserting at corners of the board
-//		if (!(l.equals(0,0) || l.equals(0,this.length - 1) ||
-//				l.equals(this.width - 1, 0) || l.equals(this.width - 1, this.length - 1))) {
-//			//this.gameBoard[l.getX()][l.getY()] = t;
-//			
-//			FloorTile ejectedTile = null;
-//			Player ejectedPlayer = null;
-//			if (l.getX() == 0) {
-//				ejectedTile = this.gameBoard[this.width-1][l.getY()];
-//				
-//				
-//			} else if (l.getX() == this.width-1) {
-//				System.out.println("<><> Inserting at " + l.toString() + " <><>");
-//				ejectedPlayer = (this.gameBoard[0][l.getY()].getPlayer());
-//				this.gameBoard[0][l.getY()].setPlayer(null);
-//				for (int i = 0; i < this.length-1; i++) {
-//					Player playerOnNextTile = this.gameBoard[i+1][l.getY()].getPlayer();
-//					this.gameBoard[i][l.getY()] = this.gameBoard[i+1][l.getY()];
-//					this.gameBoard[i][l.getY()].setLocation(new Location(i,l.getY()));
-//					System.out.println(ejectedTile.hasPlayer());
-//					if (playerOnNextTile != null) {
-//						playerOnNextTile.setLocation(new Location(i,l.getY()));
-//					}
-//				}
-//				ejectedTile = this.gameBoard[0][l.getY()];
-//				this.gameBoard[l.getX()][l.getY()] = t;
-//				t.setLocation(new Location(l.getX(),l.getY()));
-//			} else if (l.getY() == 0) {
-//				
-//			} else if (l.getY() == this.length-1) {
-//				
-//			} else {
-//				System.out.println("Invalid tile insertion location");
-//			}
-//			
-//			if (ejectedPlayer != null) {
-//				if (ejectedTile.hasPlayer()) {
-//					System.out.println("\nEjected tile contains a player, doing pointer stuff\n");
-//					Player p = ejectedTile.getPlayer();
-//					ejectedPlayer.setLocation(t.getLocation());
-//					p.setLocation(ejectedTile.getLocation());
-//				} else {
-//					System.out.println("\nEjected tile has no player :)\n");
-//					ejectedPlayer.setLocation(t.getLocation());
-//				}
-//			}
-////			if (ejectedTile != null && ejectedTile.hasPlayer()) {
-////				t.setPlayer(ejectedTile.getPlayer());
-////				t.getPlayer().setLocation(l.copy());
-////			}
-//			System.out.println("Tile inserted at: " + l.toString());
-//		}
-//	}
-	
-	//TODO change to actually check for fixed tiles
 	public Boolean canInsertAt(Location l) {
 		//Is in bounds
 		if ((this.isInBounds(l)) && //And isn't a corner
@@ -538,9 +410,16 @@ public class Board extends Task<Void>{
 		return this.players;
 	}
 	
-	//Change order of players by giving a new list of players. Not sure this is needed?
-	public void changePlayerOrder(Player[] playerOrder) {
-		
+	public String getFilename() {
+		return this.filename;
+	}
+	
+	/**
+	 * Setter for filename
+	 * @param filename New filename
+	 */
+	public void setFilename(String filename) {
+		this.filename = filename;
 	}
 	
 	/**
@@ -549,12 +428,6 @@ public class Board extends Task<Void>{
 	 */
 	public boolean gameOver() {
 		return this.goalTile.hasPlayer();
-	}
-	
-	//Sets player of FloorTile at given location
-	//As in finds FloorTile at location and then sets the tile's player pointer
-	public void setPlayer(Player p, Location l) {
-		//Not sure if this is needed
 	}
 	
 	/**
@@ -634,81 +507,6 @@ public class Board extends Task<Void>{
 	}
 	
 	/**
-	 * Randomized all player locations
-	 */
-	public void randomizeAllPlayerLocations() {
-		for (Player p: this.players) {
-			p.randomizeLocation(this.width, this.length);
-		}
-	}
-	
-//	public void insertRandomTile() {
-//		FloorTile tileToInsert = this.silkBag.drawFloorTile();
-//		Location insertLocation = this.getRandomInsertLocation();
-//		this.insertTile(tileToInsert, insertLocation);
-//	}
-	
-//	public Location getRandomInsertLocation() {
-//		int x = 0;
-//		int y = 0;
-//		
-//		Random r = new Random();
-//		int bound = r.nextInt(5);
-//		
-//		switch (bound) {
-//		case 1:
-//			x = 0;
-//			y = r.nextInt(this.length-2)+1;
-//			break;
-//		case 2:
-//			y = this.length-1;
-//			x = r.nextInt(this.width-2)+1;
-//			break;
-//		case 3:
-//			y = 0;
-//			x = r.nextInt(this.width-2)+1;
-//			break;
-//		case 4:
-//			x = this.width-1;
-//			y = r.nextInt(this.length-2)+1;
-//			break;
-//		default:
-//			y = 1;
-//			x = 1;
-//		}
-//		
-//		return new Location(x,y);
-//	}
-	
-//	public void movePlayer(Double xMouseClick, Double yMouseClick) {
-//		Location clickLocation = this.getCoordinateOfClick(xMouseClick, yMouseClick);
-//		int playerX = this.getCurrentPlayer().getLocation().getX();
-//		int playerY = this.getCurrentPlayer().getLocation().getY();
-//		
-//		Direction directionToMove = null;
-//		if (clickLocation.getY() == playerY+1 && clickLocation.getX() == playerX) {
-//			directionToMove = Direction.SOUTH;
-//		} else if (clickLocation.getY() == playerY-1 && clickLocation.getX() == playerX) {
-//			directionToMove = Direction.NORTH;
-//		} else if (clickLocation.getX() == playerX+1 && clickLocation.getY() == playerY) {
-//			directionToMove = Direction.EAST;
-//		} else if (clickLocation.getX() == playerX-1 && clickLocation.getY() == playerY) {
-//			directionToMove = Direction.WEST;
-//		}
-//		
-//		if (directionToMove != null) {
-//			//System.out.println("Attempting to move");
-//			if (this.canMove(this.getCurrentPlayer().getLocation(), directionToMove)) {
-//				this.getCurrentPlayer().move(directionToMove);
-//			} else {
-//				System.out.println("Can't move to selected tile");
-//			}
-//		} else {
-//			System.out.println("Selected tile is too far away from current player");
-//		}
-//	}
-	
-	/**
 	 * Highlights on the canvas the valid moves that the current player can make
 	 */
 	public void highlightValidMoves() {
@@ -718,25 +516,25 @@ public class Board extends Task<Void>{
 		if (this.canMove(playerLocation, Direction.NORTH)) {
 			Location lNorth = playerLocation.check(Direction.NORTH);
 			FloorTile tNorth = this.getTileAt(lNorth);
-			tNorth.highlight(this.gc, lNorth.getX()*Main.TILE_WIDTH, lNorth.getY()*Main.TILE_WIDTH,null);
+			tNorth.highlight(this.gc, null);
 			//System.out.println("Valid move at: " + lNorth.toString());
 		}
 		if (this.canMove(playerLocation, Direction.EAST)) {
 			Location lEast = playerLocation.check(Direction.EAST);
 			FloorTile tEast = this.getTileAt(lEast);
-			tEast.highlight(this.gc, lEast.getX()*Main.TILE_WIDTH, lEast.getY()*Main.TILE_WIDTH,null);
+			tEast.highlight(this.gc, null);
 			//System.out.println("Valid move at: " + lEast.toString());
 		}
 		if (this.canMove(playerLocation, Direction.SOUTH)) {
 			Location lSouth = playerLocation.check(Direction.SOUTH);
 			FloorTile tSouth = this.getTileAt(lSouth);
-			tSouth.highlight(this.gc, lSouth.getX()*Main.TILE_WIDTH, lSouth.getY()*Main.TILE_WIDTH,null);
+			tSouth.highlight(this.gc, null);
 			//System.out.println("Valid move at: " + lSouth.toString());
 		}
 		if (this.canMove(playerLocation, Direction.WEST)) {
 			Location lWest = playerLocation.check(Direction.WEST);
 			FloorTile tWest = this.getTileAt(lWest);
-			tWest.highlight(this.gc, lWest.getX()*Main.TILE_WIDTH, lWest.getY()*Main.TILE_WIDTH,null);
+			tWest.highlight(this.gc, null);
 			//System.out.println("Valid move at: " + lWest.toString());
 		}
 	}
@@ -749,7 +547,7 @@ public class Board extends Task<Void>{
 			for (int j = 0; j < this.length; j++) {
 				Location l = new Location(i,j);
 				if (this.canInsertAt(l)) {
-					this.gameBoard[i][j].highlight(this.gc, i*Main.TILE_WIDTH, j*Main.TILE_WIDTH,null);
+					this.gameBoard[i][j].highlight(this.gc, null);
 				}
 			}
 		}
@@ -833,10 +631,7 @@ public class Board extends Task<Void>{
 			for (FloorTile t : row) {
 				if (f.apply(t)) {
 					Location loc = t.getLocation();
-					t.highlight( // TODO: Shouldn't need to provide any args to this
-							loc.getX() * TILE_WIDTH,
-							loc.getY() * TILE_WIDTH,
-							gc, TILE_WIDTH);
+					t.highlight(gc,null);
 				}
 			}
 		}
@@ -855,6 +650,7 @@ public class Board extends Task<Void>{
 		} while (!f.apply(t));
 		// draw(); // Reset the board visuals
 		return t;
+	}
 
 	public boolean isWaitingForExitOrContinue() {
 		return this.waitingForExitOrContinue;
@@ -933,7 +729,7 @@ public class Board extends Task<Void>{
 		Player currentPlayer = this.getCurrentPlayer();
 		Profile p = currentPlayer.getProfile();
 		if (p != null) {
-			p.updateProfile(this.boardID, true);
+			//p.updateProfile(this.boardID, true);
 		}
 	}
 	

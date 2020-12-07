@@ -65,7 +65,7 @@ public class MainWindow extends BorderPane {
 		String initialMenuPressSound = TITLE_MUSIC_DIR_PATH + "thunder.mp3";
     	Media initialMenuKeyPress = new Media(new File(initialMenuPressSound).toURI().toString());
     	keyPressFX = new MediaPlayer(initialMenuKeyPress);
-    	keyPressFX.play();
+    	//keyPressFX.play();
     	
     	FileInputStream titleScreenImg = new FileInputStream(IMG_DIR_PATH + "title_screen_animation_title_only.gif");
 		Image titleScreenImage = new Image(titleScreenImg); 
@@ -138,8 +138,12 @@ public class MainWindow extends BorderPane {
 			e1.printStackTrace();
 		}
         
+        createGameButton.setOnAction(e -> {
+        	Main.setSceneToCreateGame();
+        });
+        
         loadGameButton.setOnAction(e -> {
-        	Main.loadGameButtonFunctionality();
+        	Main.setSceneToLoadGame();
 		});
         exitGameButton.setOnAction(e -> {
         	Main.exitGameButtonFunctionality();

@@ -6,6 +6,7 @@ import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
@@ -23,13 +24,14 @@ public class CreateGameWindow extends BorderPane{
 	private String templateFileName;
 	private int numPlayers;
 	private String[] playerProfiles = new String[4];
+	private TextArea filenameTextbox;
 //	private String player1Profile;
 //	private String player2Profile;
 //	private String player3Profile;
 //	private String player4Profile;
 	
 	public CreateGameWindow() {
-		//Top of GUI
+				//Top of GUI
 				FlowPane fp = new FlowPane();
 				fp.setAlignment(javafx.geometry.Pos.CENTER);
 				Text templateText = new Text("Select a board template: ");
@@ -61,6 +63,7 @@ public class CreateGameWindow extends BorderPane{
 						//Create new BoardWindow from a Board object
 						System.out.println("Number of players: " + numPlayers);
 						System.out.println("Template selected: " + templatesDropdown.getValue());
+						System.out.println("Filename = " + filenameTextbox.getText() + ".txt");
 						if (playerProfiles[0] == null || playerProfiles[0].equals("Guest")) {
 							System.out.println("Player 1's Profile: null");
 						} else {
@@ -87,6 +90,11 @@ public class CreateGameWindow extends BorderPane{
 					} else {
 						System.out.println("Invalid selection");
 					}
+				});
+				
+				backButton.setOnMouseClicked(e -> {
+					System.out.println("Going to main menu");
+					Main.setSceneToMainMenu();
 				});
 				
 				VBox vb = new VBox();
@@ -162,7 +170,16 @@ public class CreateGameWindow extends BorderPane{
 					this.playerProfiles[3] = player4ProfileDropdown.getValue();
 				});
 				
-				vb.getChildren().addAll(rb1,rb2,rb3,fpPlayer1,fpPlayer2,fpPlayer3,fpPlayer4);
+				FlowPane fpFilename = new FlowPane();
+				fpFilename.setAlignment(javafx.geometry.Pos.CENTER);
+				Text filenameText = new Text("Please enter a file name: ");
+				filenameTextbox = new TextArea();
+				filenameTextbox.setMaxWidth(200);
+				filenameTextbox.setMaxHeight(10);
+				
+				fpFilename.getChildren().addAll(filenameText,filenameTextbox);
+				
+				vb.getChildren().addAll(fpFilename,rb1,rb2,rb3,fpPlayer1,fpPlayer2,fpPlayer3,fpPlayer4);
 				vb.setAlignment(javafx.geometry.Pos.CENTER);
 				this.setCenter(vb);
 				
@@ -249,6 +266,10 @@ public class CreateGameWindow extends BorderPane{
 			return false;
 		}
 		
+		if (filenameTextbox.getText() == null) {
+			System.out.println("No filename entered");
+			return false;
+		}
 		
 		for (int i = 0; i < this.numPlayers; i++) {
 			String compA = this.playerProfiles[i];
