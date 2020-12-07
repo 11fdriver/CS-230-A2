@@ -1,6 +1,7 @@
 package group_20;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
@@ -12,6 +13,21 @@ import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 
 public class LoadGameWindow extends BorderPane{
+	/**
+	 * 
+	 */
+	private static final String SEP = File.separator;
+	
+	/**
+	 * 
+	 */
+	private static final String CONFIG_DIR_PATH = ".lairofdagon" + SEP;
+	
+	/**
+	 * 
+	 */
+	private static final String TEMPLATES_DIR_PATH = CONFIG_DIR_PATH + "templates" + SEP;
+	
 	private final int BUTTON_MAX_WIDTH = 100;
 	private final int BUTTON_MAX_HEIGHT = 60;
 	private ComboBox<String> savedGamesDropDown = new ComboBox<String>();
@@ -45,10 +61,24 @@ public class LoadGameWindow extends BorderPane{
 			System.out.println("Going to main menu");
 			Main.setSceneToMainMenu();
 		});
+		
+		startGameButton.setOnMouseClicked(e -> {
+			if (savedGamesDropDown.getValue() != null) {
+				String filename = savedGamesDropDown.getValue();
+				System.out.println("Loading game");
+				try {
+					Board b = IO.loadSavedGame(filename);
+					Main.setSceneToBoardWindow(b);
+				} catch (FileNotFoundException | FileParseException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
 	}
 	
 	public void testFileNameReading() {
-		File folder = new File("savedGames/");
+		File folder = new File(TEMPLATES_DIR_PATH);
 		File[] listOfFiles = folder.listFiles();
 		
 		for (File f: listOfFiles) {
