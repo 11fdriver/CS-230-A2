@@ -498,4 +498,14 @@ public class IO {
 		return created;
 	}
 	
+	public static void main(String args[]) {
+		try {
+			loadNewGame("new1");
+		} catch (FileNotFoundException | FileParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("Loaded board");
+	}
+	
 }
