@@ -15,6 +15,11 @@ public class FireAction extends FloorAction {
 	 */
 	private final boolean CAN_SHIFT = true;
 	
+	/**
+	 * How many turns for each Player before FireAction expires.
+	 */
+	private final int LIFETIME_ROUNDS = 2;
+	
 	@Override
 	public void draw(Location loc) {
 		// TODO Auto-generated method stub
@@ -22,14 +27,17 @@ public class FireAction extends FloorAction {
 
 	@Override
 	public String saveFormat() {
-		return "FireAction";
+		return "Fire";
 	}
 
 	@Override
 	public void apply(Player p, Board b) {
-		// TODO: Here we need to
-		// - Get Player input for a center tile.
-		// - Pass surrounding tiles 'this'.
+		FloorTile chosen = b.getTileAtClick();
+		for (FloorTile tile : getTilesAround(chosen, b)) {
+			if (null != tile) {
+				tile.setState(this);
+			}
+		}
 	}
 
 	@Override
@@ -41,8 +49,9 @@ public class FireAction extends FloorAction {
 	public boolean acceptsShift() {
 		return this.CAN_SHIFT;
 	}
-	
-	public String toString() {
-		return "This is a fire action tile";
+
+	@Override
+	public int getLifetime() {
+		return LIFETIME_ROUNDS + Player.amount();
 	}
 }

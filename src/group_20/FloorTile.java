@@ -172,7 +172,7 @@ public class FloorTile extends Tile implements Subscriber {
 	 * @return True if a Player can move to this tile
 	 */
 	public boolean canEnterFrom(Direction d) {
-		return (null == state || state.acceptsPlayer()) && null == player && DIRECTIONS.contains(d);
+		return acceptsPlayer() && DIRECTIONS.contains(d);
 	}
 	
 	/**
@@ -223,11 +223,19 @@ public class FloorTile extends Tile implements Subscriber {
 	}
 	
 	/**
-	 * Checks if tile is fixed
+	 * @return Player currently occupying tile.
+	 * null if no player.
+	 */
+	public Player getPlayer() {
+		return this.player;
+
+  /**
+	 * Chcks if tile is fixed
 	 * @return True if tile is fixed
 	 */
 	public boolean isFixed() {
 		return this.fixed;
+
 	}
 	
 	/**
@@ -236,6 +244,13 @@ public class FloorTile extends Tile implements Subscriber {
 	 */
 	public void setPlayer(Player p) {
 		this.player = p;
+	}
+
+	/**
+	 * @return True if tile allows a Player to stand on it
+	 */
+	public boolean acceptsPlayer() {
+		return (null == state || state.acceptsPlayer()) && null == player;
 	}
 	
 	/**
@@ -354,7 +369,7 @@ public class FloorTile extends Tile implements Subscriber {
 		// TODO: Write toString()
     return "";
 	}
-  
+
   	public void loadHighlightSprite() {
   		Image image = null;
 		try {

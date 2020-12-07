@@ -691,4 +691,12 @@ public class Player {
 		locList.add(new Location(2,7));
 		System.out.println(p.saveFormat());
 	}
+	
+	/**
+	 * Increase amount of moves a Player can make during their next turn
+	 * @param n
+	 */
+	public void addMoves(int n) {
+		numMoves += n;
+	}
 }
