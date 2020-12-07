@@ -13,13 +13,45 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.TilePane;
 
+/**
+ * <p><b>Filename:</b> ProfileWindow</p>
+ * <p><b>Description:</b> Loads the GUI for the create/delete profile menu.</p>
+ * <p><b>Creation date:</b> 06/12/2020</p>
+ * @since 07/12/2020
+ * @author Inderpreet Sandhu - 852298
+ * <p><b>Copyright:</b> no copyright</p>
+ */
+
 public class ProfileWindow extends BorderPane {
+	
+	/**
+	 * List of player profiles to be displayed
+	 */
 	ArrayList<Profile> profiles = new ArrayList<Profile>();
+	
+	/**
+	 * Table containing all existing player profiles
+	 */
 	private TableView profileTable = new TableView();
+	
+	/**
+	 * Contains buttons for deleting/creating profiles
+	 */
 	private FlowPane profileOptions = new FlowPane();
+	
+	/**
+	 * Button used to create a new player profile
+	 */
 	private Button createProfileButton = new Button("Create Profile");
+	
+	/**
+	 * Button used to delete an existing player profile
+	 */
 	private Button deleteProfileButton = new Button("Delete Profile");
 	
+	/**
+	 * Creates a window for player profiles to be displayed on			
+	 */
 	public ProfileWindow() {
 		profiles.add(new Profile("Indy",null,null,null));
 		profiles.add(new Profile("Jeff",null,null,null));
