@@ -98,6 +98,14 @@ public class Profile implements Saveable {
 		return profiles;
 	}
 	
+	public static ArrayList<Profile> getLeaderboard(int boardID) {
+		ArrayList<Profile> leaderboard = new ArrayList<Profile>();
+		leaderboard.addAll(profiles);
+		leaderboard.removeIf(p -> !p.hasPlayed(boardID));
+		leaderboard.sort((p1, p2) -> new Integer(p1.getWins()).compareTo(p2.getWins()));
+		return leaderboard;
+	}
+	
 	/**
 	 * @return Unique identifier for Profile.
 	 */
@@ -162,10 +170,19 @@ public class Profile implements Saveable {
 	 * @param boardID
 	 */
 	public void playOnBoard(int boardID) {
-		if (!playedBoards.contains(boardID)) {
+		if (!hasPlayed(boardID)) {
 			playedBoards.add(boardID);
 		}
 		played++;
+	}
+	
+	/**
+	 * Whether a Profile has played on a certain Board
+	 * @param boardID ID of Board template
+	 * @return True if Profile has played on Board
+	 */
+	public boolean hasPlayed(int boardID) {
+		return playedBoards.contains(boardID);
 	}
 	
 	@Override
