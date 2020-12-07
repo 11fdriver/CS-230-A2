@@ -180,4 +180,10 @@ public class Main extends Application {
 		primaryStage.setScene(scene);
 		primaryStage.show();
 	}
+	
+	public static void setSceneToBoardWindow(Board board) {
+		Scene scene = new Scene(new BoardWindow(board), WINDOW_WIDTH, WINDOW_HEIGHT);
+		primaryStage.setScene(scene);
+		primaryStage.show();
+	}
 }
