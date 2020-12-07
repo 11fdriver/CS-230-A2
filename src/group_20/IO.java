@@ -75,7 +75,7 @@ public class IO {
 		
 		nextItem(); // Consume "Board}"
 		
-		return new Board(currentItem, boardID, width, height, b, (Player[]) players.toArray(), currentPlayer);
+		return new Board(fname, boardID, width, height, b, (Player[]) players.toArray(), currentPlayer);
 	}
 	
 	/**
