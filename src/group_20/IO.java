@@ -46,7 +46,7 @@ public class IO {
 	 * @return New Board
 	 * @throws FileParseException
 	 */
-	private static Board loadSavedBoard() {
+	private static Board loadSavedBoard(String fname) {
 		int boardID = Integer.parseInt(nextItem());
 		int width = Integer.parseInt(nextItem());
 		int height = Integer.parseInt(nextItem());
@@ -75,7 +75,7 @@ public class IO {
 		
 		nextItem(); // Consume "Board}"
 		
-		return new Board(boardID, width, height, b, (Player[]) players.toArray(), currentPlayer);
+		return new Board(currentItem, boardID, width, height, b, (Player[]) players.toArray(), currentPlayer);
 	}
 	
 	/**
@@ -260,7 +260,7 @@ public class IO {
 		
 		Board b = null;
 		if ("{Board".equals(nextItem())) {
-			b = loadSavedBoard();
+			b = loadSavedBoard(f.getName());
 		} else {
 			// TODO: exception here
 		}
@@ -358,7 +358,7 @@ public class IO {
 		
 		Board b = null;
 		if ("{Board".equals(nextItem())) {
-			b = loadNewBoard();
+			b = loadNewBoard(f.getName());
 		} else {
 			// TODO: exception here
 		}
@@ -371,7 +371,7 @@ public class IO {
 	 * Construct a new Board by reading in values.
 	 * @return New {@link Board}
 	 */
-	private static Board loadNewBoard() {
+	private static Board loadNewBoard(String fname) {
 		int boardID = Integer.parseInt(nextItem());
 		int width = Integer.parseInt(nextItem());
 		int height = Integer.parseInt(nextItem());
@@ -412,7 +412,7 @@ public class IO {
 			}
 		}
 		
-		return new Board(boardID, width, height, b, (Player[]) players.toArray(), height);
+		return new Board(fname, boardID, width, height, b, (Player[]) players.toArray(), height);
 	}
 	
 	/**
