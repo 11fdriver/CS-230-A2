@@ -109,6 +109,11 @@ public class Player {
 	private int playerNumber;
 	
 	/**
+	 * Amount of players created
+	 */
+	private static int numPlayers;
+	
+	/**
 	 * Full Constructor to be called when loading a player object
 	 * @param board
 	 * @param silkbag
@@ -126,6 +131,7 @@ public class Player {
 		this.numMoves = 1;
 		this.loadSprite();
 		this.loadHighlightSprite();
+		numPlayers++;
 	}
 	
 	/**
@@ -144,6 +150,7 @@ public class Player {
 		this.numMoves = 1;
 		this.loadSprite();
 		this.loadHighlightSprite();
+		numPlayers++;
 	}
 	
 	public void takeTurn() {
@@ -183,10 +190,10 @@ public class Player {
 			this.selectTileFromInventory();
 			if (!(chosenActionTile.getAction() == null)) {
 				System.out.println("'Playing' " + chosenActionTile.toString());
+				chosenActionTile.play(this, this.board);
 			} else {
 				System.out.println("Oh I guess you wanted to skip your turn.. fine by me");
 			}
-			//chosenActionTile.play(this, this.board);
 		} else {
 			System.out.println("My inventory is empty -> Can't play an action tile :(");
 		}
@@ -197,7 +204,7 @@ public class Player {
 	 * - Handles user input for selecting a direction to move in
 	 * - Allows 2 moves if doubleMove is true
 	 */
-	public synchronized void stepThree() {
+	public void stepThree() {
 		//Skip method if player can't make any valid moves
 		if (this.canMove()) {
 			Location clickLocation = this.board.getLocationAtClick();
@@ -211,10 +218,20 @@ public class Player {
 		}
 	}
 	
+	/**
+	 * Checks if a location is 1 move away from the player
+	 * @param l Location to check
+	 * @return True if location is 1 tile away from player
+	 */
 	public boolean isInRange(Location l) {
 		return this.getDirectionFromPlayer(l) != null;
 	}
 	
+	/**
+	 * Gets the direction of a location from the player's location
+	 * @param l Location to check
+	 * @return Direction of location from player
+	 */
 	public Direction getDirectionFromPlayer(Location l) {
 		Direction directionToMove = null;
 		if (l.getY() == this.getLocation().getY()+1 && l.getX() == this.getLocation().getX()) {
@@ -229,6 +246,11 @@ public class Player {
 		return directionToMove;
 	}
 	
+	/**
+	 * Checks if player can move to a location
+	 * @param l location to move to
+	 * @return True if player can move to the given location
+	 */
 	public boolean canMove(Location l) {
 		if (this.isInRange(l) &&
 				this.canMove(this.getDirectionFromPlayer(l))) {
@@ -290,7 +312,10 @@ public class Player {
 		}
 	}
 	
-	public synchronized void insertTile() {
+	/**
+	 * Allows the player to insert the current floor tile in their hand
+	 */
+	public void insertTile() {
 		System.out.println("Inserting the tile");
 		Location insertLocation = this.board.getLocationAtClick();
 		
@@ -407,6 +432,10 @@ public class Player {
 		this.inventory.add(t);
 	}
 	
+	/**
+	 * Removes an action tile from the player's inventory
+	 * @param t ActionTile to remove
+	 */
 	public void removeFromInventory(ActionTile t) {
 		this.inventory.remove(t);
 	}
@@ -484,11 +513,11 @@ public class Player {
 	}
 	
 	/**
-	 * Increases numMoves by a given amount
-	 * @param incAmount Amount to increase by
+	 * Increase amount of moves a Player can make during their next turn
+	 * @param n
 	 */
-	public void incNumMoves(int incAmount) {
-		this.numMoves += incAmount;
+	public void addMoves(int n) {
+		numMoves += n;
 	}
 	
 	/**
@@ -582,6 +611,9 @@ public class Player {
 		this.sprite = image;
 	}
 	
+	/**
+	 * Loads characters highlighting sprite
+	 */
 	public void loadHighlightSprite() {
   		Image image = null;
 		try {
@@ -672,6 +704,7 @@ public class Player {
 		return str;
 	}
 	
+	//Just for testing
 	public static void main(String[] args) {
 		Inventory inv = new Inventory();
 		LocationList locList = new LocationList();
@@ -685,12 +718,8 @@ public class Player {
 		locList.add(new Location(2,7));
 		System.out.println(p.saveFormat());
 	}
-	
-	/**
-	 * Increase amount of moves a Player can make during their next turn
-	 * @param n
-	 */
-	public void addMoves(int n) {
-		numMoves += n;
+
+	public static int amount() {
+		return numPlayers;
 	}
 }

@@ -1,6 +1,7 @@
 package group_20;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
@@ -14,6 +15,21 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
 public class CreateGameWindow extends BorderPane{
+	/**
+	 * 
+	 */
+	private static final String SEP = File.separator;
+	
+	/**
+	 * 
+	 */
+	private static final String CONFIG_DIR_PATH = ".lairofdagon" + SEP;
+	
+	/**
+	 * 
+	 */
+	private static final String TEMPLATES_DIR_PATH = CONFIG_DIR_PATH + "templates" + SEP;
+	
 	private final int BUTTON_MAX_WIDTH = 100;
 	private final int BUTTON_MAX_HEIGHT = 60;
 	private ComboBox<String> templatesDropdown = new ComboBox<String>();
@@ -63,7 +79,7 @@ public class CreateGameWindow extends BorderPane{
 						//Create new BoardWindow from a Board object
 						System.out.println("Number of players: " + numPlayers);
 						System.out.println("Template selected: " + templatesDropdown.getValue());
-						System.out.println("Filename = " + filenameTextbox.getText() + ".txt");
+						System.out.println("Filename = " + filenameTextbox.getText());
 						if (playerProfiles[0] == null || playerProfiles[0].equals("Guest")) {
 							System.out.println("Player 1's Profile: null");
 						} else {
@@ -87,6 +103,16 @@ public class CreateGameWindow extends BorderPane{
 						} else {
 							System.out.println("Player 4's Profile: " + playerProfiles[3]);
 						}
+						//IO.loadNewGame(numPlayers,templatesDropdown.getValue(),filenameTextbox.getText(), playerProfiles);
+						try {
+							Board b = IO.loadNewGame(templatesDropdown.getValue(), filenameTextbox.getText(), numPlayers, new Profile[4]);
+							//System.out.println(b.saveFormat());
+							Main.setSceneToBoardWindow(b);
+						} catch (FileNotFoundException | FileParseException e5) {
+							// TODO Auto-generated catch block
+							e5.printStackTrace();
+						}
+						//IO.loadNewGame(numPlayers,templatesDropdown.getValue(),filenameTextbox.getText(), new Profile[4]);
 					} else {
 						System.out.println("Invalid selection");
 					}
@@ -189,7 +215,7 @@ public class CreateGameWindow extends BorderPane{
 	}
 	
 	public void loadSavedGameNames() {
-		File folder = new File("templates/");
+		File folder = new File(TEMPLATES_DIR_PATH);
 		File[] listOfFiles = folder.listFiles();
 		
 		for (File f: listOfFiles) {
@@ -199,7 +225,7 @@ public class CreateGameWindow extends BorderPane{
 	}
 	
 	public void loadProfileNames() {
-		File folder = new File("profiles/");
+		File folder = new File("templates/");
 		File[] listOfFiles = folder.listFiles();
 		
 		for (File f: listOfFiles) {

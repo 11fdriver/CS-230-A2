@@ -15,22 +15,24 @@ public class BacktrackAction extends Action {
 
 	@Override
 	public void apply(Player p, Board b) {
+		System.out.println("Started apply");
 		Player opponent = b.getTileAtClickMatching(t -> {
+			System.out.println("I recieved a tile");
 			Player chosen = t.getPlayer();
-			return (null != p && chosen != p && !chosen.getHasBeenBacktracked());
+			return (null != chosen && chosen != p && !chosen.getHasBeenBacktracked());
 		}).getPlayer();
 		LocationList locs = opponent.getPreviousLocations();
-		if (b.getTileAt(locs.getFirst()).acceptsPlayer()) {
-			opponent.setLocation(locs.getFirst());
-		} else if (b.getTileAt(locs.getSecond()).acceptsPlayer()) {
-			opponent.setLocation(locs.getSecond());
-		} else if (b.getTileAt(locs.getThird()).acceptsPlayer()) {
-			opponent.setLocation(locs.getThird());
-		} else {
-			return;
+        FloorTile second = b.getTileAt(locs.getSecond());
+        FloorTile third = b.getTileAt(locs.getSecond());
+        if (null != second && second.acceptsPlayer()) {
+            opponent.setLocation(locs.getSecond());
+        } else if (null != third && third.acceptsPlayer()) {
+            opponent.setLocation(locs.getThird());
+        } else {
+            return;
 		}
-		// TODO: Change name to 'backtrackable' or 'hasBacktracked' maybe
 		opponent.setHasBeenBacktracked(true);
+		System.out.println("Finished apply");
 	}
 	
 	public String toString() {
