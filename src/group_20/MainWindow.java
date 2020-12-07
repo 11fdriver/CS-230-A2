@@ -195,12 +195,17 @@ public class MainWindow extends BorderPane {
         loadGameButton.setOnAction(e -> {
         	Main.setSceneToLoadGame();
         });
+        
         exitGameButton.setOnAction(e -> {
         	Main.exitGameButtonFunctionality();
         });
+        
         profilesButton.setOnAction(e -> {
         	Main.profileGameButtonFunctionality();
         });
-	
+        
+        leaderboardsButton.setOnAction(e -> {
+            Main.leaderboardGameButtonFunctionality();
+        });
 	}
 }

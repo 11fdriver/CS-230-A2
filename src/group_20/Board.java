@@ -6,8 +6,11 @@ import java.util.function.Function;
 import javafx.concurrent.Task;
 import javafx.scene.canvas.GraphicsContext;
 
-//TODO make sure can't push fixed tiles
-//TODO currently tiles don't really keep track of players: There's a lot of null pointers and pointers which aren't valid any more. Fix this.
+/**
+ * Class to model a physical game board. Stores references to all instance objects relevant to the running of a game.
+ * @author Yoshan Mumberson
+ *
+ */
 public class Board extends Task<Void>{
 	
 	/**
@@ -85,10 +88,19 @@ public class Board extends Task<Void>{
 	
 	//TODO
 	private Goal findGoalTile() {
-		for (FloorTile[] col : this.gameBoard) {
-			for (FloorTile t : col) {
-				if (t instanceof Goal) {
-					return (Goal) t;
+//		for (FloorTile[] col : this.gameBoard) {
+//			for (FloorTile t : col) {
+//				if (t instanceof Goal) {
+//					System.out.println();
+//					return (Goal) t;
+//				}
+//			}
+//		}
+		for (int i = 0; i < this.width; i++) {
+			for (int j = 0; j < this.length; j++) {
+				if (this.gameBoard[i][j] instanceof Goal) {
+					System.out.println("Goal tile found at " + i + "," + j);
+					return (Goal) this.gameBoard[i][j];
 				}
 			}
 		}
@@ -113,7 +125,6 @@ public class Board extends Task<Void>{
 		}
 	}
 	
-	//TODO make sure tile locations are updated
 	/**
 	 * Inserts a given tile at a given location if the location is valid
 	 * @param t Tile to insert onto board
@@ -660,7 +671,8 @@ public class Board extends Task<Void>{
 			System.out.println("Next Player's Turn");
 			System.out.println("\nPlayer " + (this.currentPlayer+1) + "'s turn");
 		}
-		System.out.println("GAME OVER!!!!");
+		Main.setSceneToGameOverWindow(this.currentPlayer+1);
+		//System.out.println("GAME OVER!!!!");
 		return null;
 	}
 	

@@ -12,6 +12,11 @@ import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 
+/**
+ * Class to model a player. In charge of taking a turn ie Playing tiles and moving.
+ * @author Yoshan Mumberson
+ *
+ */
 public class Player {
 	/**
 	 * 
@@ -190,7 +195,7 @@ public class Player {
 			this.selectTileFromInventory();
 			if (!(chosenActionTile.getAction() == null)) {
 				System.out.println("'Playing' " + chosenActionTile.toString());
-				chosenActionTile.play(this, this.board);
+				//chosenActionTile.play(this, this.board);
 			} else {
 				System.out.println("Oh I guess you wanted to skip your turn.. fine by me");
 			}
@@ -698,7 +703,7 @@ public class Player {
 		if (this.profile == null) {
 			str += "null,";
 		} else {
-			str += this.profile.getID() + ",";
+			str += this.profile.getProfileID() + ",";
 		}
 		str += "Player}";
 		return str;

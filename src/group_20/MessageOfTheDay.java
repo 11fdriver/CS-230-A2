@@ -5,6 +5,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 
+/**
+ * Gets the message of the day
+ * @author Yoshan Mumberson
+ *
+ */
 public class MessageOfTheDay {
 	public static void main(String[] args) {
 		String puzzle = "";
@@ -30,6 +35,10 @@ public class MessageOfTheDay {
 		//System.out.println(decrypt("CAB"));
 	}
 	
+	/**
+	 * @return Decrypted MOTD from the website
+	 * @throws IOException
+	 */
 	public static String getMessage() throws IOException {
 		String puzzle = "";
 		puzzle = getPuzzle();
@@ -43,18 +52,12 @@ public class MessageOfTheDay {
 		return MOTD;
 	}
 	
+	/**
+	 * Gets the puzzle from the website
+	 * @return encrypted puzzle ready to solve
+	 * @throws IOException
+	 */
 	public static String getPuzzle() throws IOException {
-//		URL url = new URL("http://cswebcat.swansea.ac.uk/puzzle");
-//		HttpURLConnection con = (HttpURLConnection) url.openConnection();
-//		con.setRequestMethod("GET");
-//		
-//		Map<String, String> parameters = new HashMap<>();
-//		parameters.put("param1", "val");
-//
-//		con.setDoOutput(true);
-//		
-//		System.out.println(con.getContent().toString());
-		
 		URL url = new URL("http://cswebcat.swansea.ac.uk/puzzle");
         BufferedReader in = new BufferedReader(
         new InputStreamReader(url.openStream()));
@@ -69,18 +72,13 @@ public class MessageOfTheDay {
 		return encryptedMOTD;
 	}
 	
+	/**
+	 * Fetches the message of the day
+	 * @param key As decrypted key
+	 * @return MOTD
+	 * @throws IOException
+	 */
 	public static String getMOTD(String key) throws IOException {
-//		URL url = new URL("http://cswebcat.swansea.ac.uk/message");
-//		HttpURLConnection con = (HttpURLConnection) url.openConnection();
-//		con.setRequestMethod("GET");
-//		
-//		con.setDoOutput(true);
-//		con.setRequestProperty(key, key);
-//		DataOutputStream out = new DataOutputStream(con.getOutputStream());
-//		out.writeBytes(key);
-//		out.flush();
-//		out.close();
-		
 		URL url = new URL("http://cswebcat.swansea.ac.uk/message?solution=" + key);
         BufferedReader in = new BufferedReader(
         new InputStreamReader(url.openStream()));
@@ -96,6 +94,11 @@ public class MessageOfTheDay {
 		
 	}
 	
+	/**
+	 * Decrypts a puzzle into a key
+	 * @param s Puzzle
+	 * @return Key
+	 */
 	public static String decrypt(String s) {
 		String decrypted = "";
 		int shiftDirection = -1;
@@ -111,6 +114,12 @@ public class MessageOfTheDay {
 		return decrypted;
 	}
 	
+	/**
+	 * Shifts characters alphabetically
+	 * @param c Character to shift
+	 * @param shiftAmount Amount to shift character by
+	 * @return Shifted character
+	 */
 	public static char shiftChar(char c, int shiftAmount) {
 		int ascii = (int) c;
 		if (ascii > 64 && ascii < 91) {

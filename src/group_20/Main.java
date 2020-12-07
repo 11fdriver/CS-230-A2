@@ -110,46 +110,36 @@ public class Main extends Application {
 
 	@Override
 	public void start(Stage primaryStage) throws FileNotFoundException {
-		//==Yoshan
-//		Main.primaryStage = primaryStage;
-//		//Scene leaderboard = new Scene(new leaderboardWindow(),WINDOW_WIDTH, WINDOW_HEIGHT);
-//		//Scene createGame = new Scene(new CreateGameWindow(), WINDOW_WIDTH, WINDOW_HEIGHT);
-//		Scene loadGame = new Scene(new LoadGameWindow(), WINDOW_WIDTH, WINDOW_HEIGHT);
-//		//Scene game = new Scene(new BoardWindow(currentBoard), WINDOW_WIDTH, WINDOW_HEIGHT);
-//		primaryStage.setScene(loadGame);
-//		primaryStage.show();
-		//==
-		
 		Main.primaryStage = primaryStage;
 		primaryStage.setTitle("Labryinth");
-        setSceneToCreateGame();
-//		FileInputStream initialBackgroundImg = new FileInputStream(TITLE_SCREEN_IMG_FILEPATH);
-//        Image initialMenuImage = new Image(initialBackgroundImg); 
-//        ImageView initialMenuImageView = new ImageView(initialMenuImage);
-//        initialMenuImageView.setFitHeight(1000);
-//        initialMenuImageView.setFitWidth(1000);
-//        initialMenuImageView.setPreserveRatio(true); 
-//        
-//        FileInputStream initialMenuBackingImg = new FileInputStream(MAIN_MENU_IMG_FILEPATH);
-//        Image initialMenuImg = new Image(initialMenuBackingImg); 
-//        BackgroundImage initialMenuPicture = new BackgroundImage(initialMenuImg, BackgroundRepeat.ROUND, BackgroundRepeat.ROUND, null, null); 
-//       
-//        StackPane initialTitleScreen = new StackPane();
-//        initialTitleScreen.setBackground(new Background(initialMenuPicture));
-//        initialTitleScreen.getChildren().addAll(initialMenuImageView);
-//        
-//        String backgroundMusic =  TITLE_MUSIC_AUDIO_FILE_PATH;
-//        Media backgroundTrack = new Media(new File(backgroundMusic).toURI().toString());
-//        jukebox = new MediaPlayer(backgroundTrack);
-//        //jukebox.play();
-//        
-//    	Scene initialMenuScene = new Scene(initialTitleScreen, 1500, 1000);
-//        primaryStage.setScene(initialMenuScene);
-//        primaryStage.show();
-//        
-//        initialMenuScene.setOnKeyPressed(e -> {
-//			Main.setSceneToMainMenu();
-//		});
+
+		FileInputStream initialBackgroundImg = new FileInputStream(TITLE_SCREEN_IMG_FILEPATH);
+        Image initialMenuImage = new Image(initialBackgroundImg); 
+        ImageView initialMenuImageView = new ImageView(initialMenuImage);
+        initialMenuImageView.setFitHeight(1000);
+        initialMenuImageView.setFitWidth(1000);
+        initialMenuImageView.setPreserveRatio(true); 
+        
+        FileInputStream initialMenuBackingImg = new FileInputStream(MAIN_MENU_IMG_FILEPATH);
+        Image initialMenuImg = new Image(initialMenuBackingImg); 
+        BackgroundImage initialMenuPicture = new BackgroundImage(initialMenuImg, BackgroundRepeat.ROUND, BackgroundRepeat.ROUND, null, null); 
+       
+        StackPane initialTitleScreen = new StackPane();
+        initialTitleScreen.setBackground(new Background(initialMenuPicture));
+        initialTitleScreen.getChildren().addAll(initialMenuImageView);
+        
+        String backgroundMusic =  TITLE_MUSIC_AUDIO_FILE_PATH;
+        Media backgroundTrack = new Media(new File(backgroundMusic).toURI().toString());
+        jukebox = new MediaPlayer(backgroundTrack);
+        //jukebox.play();
+        
+    	Scene initialMenuScene = new Scene(initialTitleScreen, 1500, 1000);
+        primaryStage.setScene(initialMenuScene);
+        primaryStage.show();
+        
+        initialMenuScene.setOnKeyPressed(e -> {
+			Main.setSceneToMainMenu();
+		});
 	}
 	
 	/**
@@ -192,15 +182,41 @@ public class Main extends Application {
 		primaryStage.show();
 	}
 	
+	/**
+	 * Sets current scene to create game scene
+	 */
 	public static void setSceneToCreateGame() {
 		Scene scene = new Scene(new CreateGameWindow(), WINDOW_WIDTH, WINDOW_HEIGHT);
 		primaryStage.setScene(scene);
 		primaryStage.show();
 	}
 	
+	/**
+	 * Sets current scene to game window
+	 * @param board As board to use as driver
+	 */
 	public static void setSceneToBoardWindow(Board board) {
 		Scene scene = new Scene(new BoardWindow(board), WINDOW_WIDTH, WINDOW_HEIGHT);
 		primaryStage.setScene(scene);
 		primaryStage.show();
 	}
+	
+	/**
+	 * Sets current scene to game over screen
+	 * @param winningPlayer Winning player to display
+	 */
+	public static void setSceneToGameOverWindow(int winningPlayer) {
+		Scene scene = new Scene(new GameOverWindow(winningPlayer), WINDOW_WIDTH, WINDOW_HEIGHT);
+		primaryStage.setScene(scene);
+		primaryStage.show();
+	}
+	
+	/**
+     * Implements a leaderboard button and its functionality for use on the game main menu.                        
+     */
+    public static void leaderboardGameButtonFunctionality() {
+        Scene leaderboardMenu = new Scene(new LeaderboardWindow(), WINDOW_WIDTH, WINDOW_HEIGHT);
+        primaryStage.setScene(leaderboardMenu);
+        primaryStage.show();
+    }
 }

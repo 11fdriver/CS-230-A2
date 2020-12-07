@@ -53,9 +53,22 @@ public class ProfileWindow extends BorderPane {
 	 * Creates a window for player profiles to be displayed on			
 	 */
 	public ProfileWindow() {
-		profiles.add(new Profile("Indy",null,null,null));
-		profiles.add(new Profile("Jeff",null,null,null));
-		profiles.add(new Profile("Ed",null,null,null));
+        int[][] profile0 = {{171,115,83}, {88,75,55} ,{83,40,28}};    //Alice
+        int[][] profile1 = {{92,81,144}, {79,34,100} ,{13,47,44}};    //Bob
+        int[][] profile2 = {{154,0,91}, {91,0,17} ,{62,0,74}};    //Chuck
+        int[][] profile3 = {{88,96,68}, {59,66,47} ,{29,30,21}};    //Craig
+        int[][] profile4 = {{155,115,101}, {55,37,79} ,{100,78,22}}; 
+        int[][] newProfile = {{0,0,0}, {0,0,0} ,{0,0,0}}; 
+
+        profiles.add(new Profile("Alice", profile0[0], profile0[1], profile0[2]));
+        profiles.add(new Profile("Bob", profile1[0], profile1[1], profile1[2]));
+        profiles.add(new Profile("Chuck", profile2[0], profile2[1], profile2[2]));
+        profiles.add(new Profile("Craig", profile3[0], profile3[1], profile3[2]));
+        profiles.add(new Profile("Charlie", profile4[0], profile4[1], profile4[2]));
+		
+//		profiles.add(new Profile("Indy",null,null,null));
+//		profiles.add(new Profile("Jeff",null,null,null));
+//		profiles.add(new Profile("Ed",null,null,null));
 		//Profile.getArrayListOfProfileInstances()
 		TableColumn<Profile, String> nameColumn = new TableColumn<>("Name");
 		TableColumn<Profile, Integer> winsColumn = new TableColumn<>("Wins");
@@ -64,10 +77,10 @@ public class ProfileWindow extends BorderPane {
 		
 		profileTable.setPlaceholder(new Label("No profiles to display"));
 		
-		nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
-		winsColumn.setCellValueFactory(new PropertyValueFactory<>("wins"));
-		lossesColumn.setCellValueFactory(new PropertyValueFactory<>("losses"));
-		gamesPlayedColumn.setCellValueFactory(new PropertyValueFactory<>("gamesPlayed"));
+        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+        winsColumn.setCellValueFactory(new PropertyValueFactory<>("totalWins"));
+        lossesColumn.setCellValueFactory(new PropertyValueFactory<>("totalLosses"));
+        gamesPlayedColumn.setCellValueFactory(new PropertyValueFactory<>("totalGamesPlayed"));
 		
 		profileTable.getColumns().add(nameColumn);
 		profileTable.getColumns().add(winsColumn);
@@ -87,7 +100,7 @@ public class ProfileWindow extends BorderPane {
     	
 	    createProfileButton.setOnAction(e -> {
 	    	String profileName = nameEntryField.getText();
-	    	profiles.add(new Profile(profileName,null,null,null));
+	    	profiles.add(new Profile(profileName, newProfile[0], newProfile[1], newProfile[2]));
 	    	profileTable.getItems().add(profiles.get(profiles.size() - 1));
 		});
 	    

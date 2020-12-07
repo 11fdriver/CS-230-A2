@@ -104,6 +104,9 @@ public class FloorTile extends Tile implements Subscriber {
 		this.loadHighlightSprite();
 	}
 	
+	/**
+	 * Uses list of valid enter/exit directions to calculate the tile type and the rotation of the tile
+	 */
 	private void calculateRotation() {
 		boolean n = DIRECTIONS.contains(Direction.NORTH);
 		boolean e = DIRECTIONS.contains(Direction.EAST);
@@ -113,52 +116,52 @@ public class FloorTile extends Tile implements Subscriber {
 		case 2:
 			if (n && e) {
 				// Draw Corner from North to East
-				this.loadSprite(TILE_IMG_DIR_PATH + "Corner_Tile_with_alligners.png");
+				this.loadSprite(TILE_IMG_DIR_PATH + "Corner-Tile-animated.gif");
 				this.rotation = 270;
 			} else if (n && s) {
 				// Draw Straight from North to South
-				this.loadSprite(TILE_IMG_DIR_PATH + "straight_tile_with_alligners.png");
+				this.loadSprite(TILE_IMG_DIR_PATH + "straight_tile.png");
 				this.rotation = 0;
 			} else if (n && w) {
 				// Draw Corner from North to West
-				this.loadSprite(TILE_IMG_DIR_PATH + "Corner_Tile_with_alligners.png");
+				this.loadSprite(TILE_IMG_DIR_PATH + "Corner-Tile-animated.gif");
 				this.rotation = 180;
 			} else if (e && s) {
 				// Draw Corner from East to South
-				this.loadSprite(TILE_IMG_DIR_PATH + "Corner_Tile_with_alligners.png");
+				this.loadSprite(TILE_IMG_DIR_PATH + "Corner-Tile-animated.gif");
 				this.rotation = 0;
 			} else if (e && w) {
 				// Draw Straight from East to West
-				this.loadSprite(TILE_IMG_DIR_PATH + "straight_tile_with_alligners.png");
+				this.loadSprite(TILE_IMG_DIR_PATH + "straight_tile.png");
 				this.rotation = 270;
 			} else if (s && w) {
 				// Draw Corner from South to West
-				this.loadSprite(TILE_IMG_DIR_PATH + "Corner_Tile_with_alligners.png");
+				this.loadSprite(TILE_IMG_DIR_PATH + "Corner-Tile-animated.gif");
 				this.rotation = 90;
 			}
 			break;
 		case 3:
 			if (n && e && s) {
 				// Draw T-Shaped with North, East, South
-				this.loadSprite(TILE_IMG_DIR_PATH + "T_Tile_With_alligners.png");
+				this.loadSprite(TILE_IMG_DIR_PATH + "T-Tile-animated.gif");
 				this.rotation = 270;
 			} else if (e && s && w) {
 				// Draw T-Shaped with East, South, West
-				this.loadSprite(TILE_IMG_DIR_PATH + "T_Tile_With_alligners.png");
+				this.loadSprite(TILE_IMG_DIR_PATH + "T-Tile-animated.gif");
 				this.rotation = 0;
 			} else if (s && w && n) {
 				// Draw T-Shaped with South, West, North
-				this.loadSprite(TILE_IMG_DIR_PATH + "T_Tile_With_alligners.png");
+				this.loadSprite(TILE_IMG_DIR_PATH + "T-Tile-animated.gif");
 				this.rotation = 90;
 			} else if (w && n && e) {
 				// Draw T-Shaped with West, North, East
-				this.loadSprite(TILE_IMG_DIR_PATH + "T_Tile_With_alligners.png");
+				this.loadSprite(TILE_IMG_DIR_PATH + "T-Tile-animated.gif");
 				this.rotation = 180;
 			}
 			break;
 		case 4:
 			 // Draw goal;
-			this.loadSprite(TILE_IMG_DIR_PATH + "X_tile_with_alligners.png");
+			this.loadSprite(TILE_IMG_DIR_PATH + "X-tile-animated.gif");
 			this.rotation = 0;
 		}
 	}

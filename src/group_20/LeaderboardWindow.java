@@ -11,8 +11,21 @@ import javafx.stage.*;
 import javafx.collections.transformation.*;
 import javafx.beans.property.*;
 
-public class LeaderboardWindow extends Application{
-    private int boardIDInput = 0;
+/**
+ * <p><b>Filename:</b> LeaderboardWindow</p>
+ * <p><b>Description:</b> Creates the leaderboard menu GUI.</p>
+ * <p><b>Creation date:</b> 06/12/2020</p>
+ * @since 07/12/2020
+ * @author Edward Kong - 1916234
+ * <p><b>Copyright:</b> no copyright</p>
+ */
+
+public class LeaderboardWindow extends BorderPane {
+    
+	/**
+	 * Determines the profiles displayed on the leaderboard depending on the board ID entered
+	 */
+	private int boardIDInput = 0;
 
     private int getBoardIDInput() {
         return boardIDInput;
@@ -21,12 +34,11 @@ public class LeaderboardWindow extends Application{
     private void setBoardIDInput(int boardIDInput) {
         this.boardIDInput = boardIDInput;
     }
-
-    public static void main(String[] args) {
-        launch(args);
-    }
-
-    public void start(Stage primaryStage) {
+    
+    /**
+	 * Creates a window for player profiles to be displayed on the leaderboard			
+	 */
+    public LeaderboardWindow() {
 
         //--------------------
         //creating test Profile instances
@@ -135,10 +147,7 @@ public class LeaderboardWindow extends Application{
 
         VBox vBox = new VBox();
         vBox.getChildren().addAll(toggleButton1,toggleButton2,textField,table);
-
-        Scene scene = new Scene(vBox);
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        this.setCenter(vBox);
 
     }
 
