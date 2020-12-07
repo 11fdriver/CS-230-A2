@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+
 import javafx.animation.Animation;
 import javafx.animation.Timeline;
 import javafx.geometry.Insets;
@@ -206,6 +208,12 @@ public class BoardWindow extends BorderPane {
 		saveAndExitButton.setOnMouseClicked(e -> {
 			if (this.board.isWaitingForExitOrContinue()) {
 				System.out.println("oh... bye then...");
+				try {
+					IO.saveGame(this.board.getFilename(), this.board);
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				System.exit(0);
 			}
 		});

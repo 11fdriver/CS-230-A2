@@ -65,7 +65,13 @@ public class Board extends Task<Void>{
 	 */
 	private boolean continueGame;
 	
-	public Board(int boardID, int width, int length, FloorTile[][] gameBoard, Player[] players, int startingPlayer) {
+	/**
+	 * Used when saving board
+	 */
+	private String filename;
+	
+	public Board(String filename, int boardID, int width, int length, FloorTile[][] gameBoard, Player[] players, int startingPlayer) {
+		this.filename = filename;
 		this.boardID = boardID;
 		this.length = length;
 		this.width = width;
@@ -404,9 +410,16 @@ public class Board extends Task<Void>{
 		return this.players;
 	}
 	
-	//Change order of players by giving a new list of players. Not sure this is needed?
-	public void changePlayerOrder(Player[] playerOrder) {
-		
+	public String getFilename() {
+		return this.filename;
+	}
+	
+	/**
+	 * Setter for filename
+	 * @param filename New filename
+	 */
+	public void setFilename(String filename) {
+		this.filename = filename;
 	}
 	
 	/**
@@ -415,12 +428,6 @@ public class Board extends Task<Void>{
 	 */
 	public boolean gameOver() {
 		return this.goalTile.hasPlayer();
-	}
-	
-	//Sets player of FloorTile at given location
-	//As in finds FloorTile at location and then sets the tile's player pointer
-	public void setPlayer(Player p, Location l) {
-		//Not sure if this is needed
 	}
 	
 	/**
@@ -496,15 +503,6 @@ public class Board extends Task<Void>{
 		this.currentPlayer++;
 		if (this.currentPlayer > 3) {
 			this.currentPlayer = 0;
-		}
-	}
-	
-	/**
-	 * Randomized all player locations
-	 */
-	public void randomizeAllPlayerLocations() {
-		for (Player p: this.players) {
-			p.randomizeLocation(this.width, this.length);
 		}
 	}
 	

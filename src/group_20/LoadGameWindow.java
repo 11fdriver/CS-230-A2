@@ -30,8 +30,6 @@ public class LoadGameWindow extends BorderPane{
 		Button backButton = new Button("Back");
 		Button startGameButton = new Button("Start Game");
 		startGameButton.setMinSize(BUTTON_MAX_WIDTH, BUTTON_MAX_HEIGHT);
-		//backButton.autosize();
-		//startGameButton.autosize();
 		bp.setRight(startGameButton);
 		bp.setLeft(backButton);
 		bp.setPadding(new Insets(10));
@@ -41,6 +39,11 @@ public class LoadGameWindow extends BorderPane{
 		
 		select.setOnMouseClicked(e -> {
 			System.out.println(savedGamesDropDown.getValue());
+		});
+		
+		backButton.setOnMouseClicked(e -> {
+			System.out.println("Going to main menu");
+			Main.setSceneToMainMenu();
 		});
 	}
 	
