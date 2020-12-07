@@ -1,3 +1,5 @@
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import java.util.*;
 import java.io.*;
 
@@ -5,38 +7,19 @@ public class Leaderboard {
 
 	public static ArrayList<Profile> arrayListOfProfileInstances = new ArrayList<Profile> ();
 
-	public static void main(String[] args) {
-		//test code removed
-	}
-
-	public static ArrayList<Profile> getLeaderboard(int boardID, boolean order) {
-		return sortedProfiles(boardID, order);
-	}
-
-	public static List<Profile> getLeaderboard(int boardID, boolean order, int limit) {
-		return (sortedProfiles(boardID, order).subList(0, limit));
-	}
-
-	public static List<Profile> getLeaderboard(int boardID, boolean order, int lower, int upper) {
-		return (sortedProfiles(boardID, order).subList(lower, upper));
-	}
-	
-	private static ArrayList<Profile> sortedProfiles(int boardID, boolean order) {
+	public static ObservableList<Profile> getProfilesByBoardID(int boardIDInput) {
 		
-		ArrayList<Profile> sortedProfiles = new ArrayList<Profile> ();
-		sortedProfiles = (ArrayList<Profile>)arrayListOfProfileInstances.clone();
-
-		if (order) {
-			//Collections.sort(sortedProfiles, new SortByWinsAscending(boardID));
-		} else {
-			//Collections.sort(sortedProfiles, new SortByWinsDescending(boardID));
-		}
-		
-		return sortedProfiles;
-	}
-
-	public static void draw() {
-		
-	}
+        ArrayList<Profile> filteredProfiles = new ArrayList<Profile> ();
+		filteredProfiles = (ArrayList<Profile>)arrayListOfProfileInstances.clone();
+        
+        for(int i = 0; i < filteredProfiles.size(); i++) {
+            if(filteredProfiles.get(i).getNumGamesPlayed(boardIDInput) == 0) {
+                filteredProfiles.remove(i);
+            }
+        }
+        
+        ObservableList<Profile> observableList = FXCollections.observableArrayList(filteredProfiles);
+        return observableList;
+    }
 
 }

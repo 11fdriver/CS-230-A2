@@ -9,8 +9,6 @@ public class Profile {
 	private int[] numWins;
 	private int[] numLosses;
 	private String[] lastGameDateTime;	//NOT implemented
-
-	public static int boardIDToShow;
 	
 	public static void main(String[] args) {
 		//test code removed
@@ -60,10 +58,6 @@ public class Profile {
 		return name;
 	}
 	
-	public int getNumGamesPlayed() {
-		return numGamesPlayed[boardIDToShow];
-	}
-	
 	/*public int[] getNumGamesPlayed() {
 		return numGamesPlayed;
 	}*/
@@ -72,29 +66,21 @@ public class Profile {
 		return numGamesPlayed[boardID];
 	}
 	
-	public int getNumWins() {
-		return numWins[boardIDToShow];
-	}
-	
 	/*public int[] getNumWins() {
 		return numWins;
-	}
+	}*/
 
 	public int getNumWins(int boardID) {
 		return numWins[boardID];
-	}*/
-	
-	public int getNumLosses() {
-		return numLosses[boardIDToShow];
 	}
 
 	/*public int[] getNumLosses() {
 		return numLosses;
-	}
+	}*/
 	
 	public int getNumLosses(int boardID) {
 		return numLosses[boardID];
-	}*/
+	}
 
 	public static int getNoOfBoard() {
 		return noOfBoard;
