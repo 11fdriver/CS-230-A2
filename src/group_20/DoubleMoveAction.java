@@ -16,5 +16,8 @@ public class DoubleMoveAction extends Action {
 	public void apply(Player p, Board b) {
 		p.addMoves(1);
 	}
-
+	
+	public String toString() {
+		return "This is a double move action tile";
+	}
 }

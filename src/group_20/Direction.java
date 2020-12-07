@@ -8,7 +8,7 @@ public enum Direction {
 	WEST;
 	
 	/**
-	 * Reverses a Direction. North -> South, East -> West.
+	 * Reverses a Direction. North <-> South, East <-> West.
 	 * @return Opposite direction
 	 */
 	Direction opposite() {

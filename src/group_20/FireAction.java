@@ -54,5 +54,4 @@ public class FireAction extends FloorAction {
 	public int getLifetime() {
 		return LIFETIME_ROUNDS + Player.amount();
 	}
-
 }

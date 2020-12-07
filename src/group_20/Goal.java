@@ -2,52 +2,49 @@ package group_20;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-
-import javafx.scene.SnapshotParameters;
+import java.util.ArrayList;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.paint.Color;
 
 public class Goal extends FloorTile {
+	private static final String IMG_FILEPATH = TILE_IMG_DIR_PATH + "Goal_Tile_Animated-with-carpet-noise.gif";
 	
-	public Goal(int side, boolean isFixed, int orientation, boolean onFire, boolean isFrozen, Location location, Player myPlayer, String shapeType) {
-		super(side, isFixed, orientation, onFire, isFrozen, location, myPlayer, shapeType) ;
-		this.loadSprite();
+	public Goal(Location location) {
+		super(new ArrayList<Direction>(), location, null, null, 0, true);
+		this.DIRECTIONS.add(Direction.NORTH);
+		this.DIRECTIONS.add(Direction.EAST);
+		this.DIRECTIONS.add(Direction.SOUTH);
+		this.DIRECTIONS.add(Direction.WEST);
+		this.loadSprite(IMG_FILEPATH);
+	}
+	
+	public Goal(ArrayList<Direction> directions, Location location, Player player, FloorAction state, int lifetime, boolean isFixed) {
+		super(directions, location, player, state, lifetime, isFixed);
+		this.loadSprite(IMG_FILEPATH);
 	}
 	
 	public String toString() {
-		String result = "";
+		String result = "This is a goal tile!\n";
 		result += super.toString();
 		return result;
 	}
 	
-//	public void draw(int x, int y, GraphicsContext g, int tileWidth) {
-//		g.strokeRect(x, y, tileWidth, tileWidth);
-//		g.strokeLine(x + tileWidth/2, y, x + tileWidth/2, y + tileWidth);
-//		g.strokeLine(x, y + tileWidth/2, x + tileWidth, y + tileWidth/2);
-//	}
-	
-	public void draw(int x, int y, GraphicsContext gc, int tileWidth) {
-		gc.drawImage(sprite, x, y);
+	public void draw(GraphicsContext gc, int x, int y) {
+		gc.drawImage(this.getSprite(), x, y);
 	}
 	
-	public static void main(String args[]) {
-		Goal g1 = new Goal (5, true, 90, false, false, new Location (0,0), null, "Goal");
-		System.out.println(g1.toString());
-		System.out.println(g1.isValidMove(Direction.NORTH));
-		System.out.println(g1.isValidMove(Direction.SOUTH));
-		System.out.println(g1.isValidMove(Direction.EAST));
-		System.out.println(g1.isValidMove(Direction.WEST));
-	}
-	
-	public void loadSprite() {
+	/**
+	 * Sets value for this.sprite to image at file location
+	 * @param fileLocation File location of sprite image
+	 */
+	@Override
+	public void loadSprite(String fileLocation) {
 		Image image = null;
 		try {
-			//image = new Image(new FileInputStream("X_tile.png"),this.TILE_WIDTH, this.TILE_WIDTH,true,true);
-			image = new Image(new FileInputStream("Goal_Tile_Animated-with-carpet-noise.gif"),this.TILE_WIDTH, this.TILE_WIDTH,true,true);
+			image = new Image(new FileInputStream(fileLocation),Main.TILE_WIDTH, Main.TILE_WIDTH,true,true);
 		} catch (IOException e) {
+			//TODO add code
 		}
-		this.sprite = image;
+		this.setSprite(image);
 	}
 }

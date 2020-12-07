@@ -4,59 +4,34 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class SilkBag {
-	
 	int numberOfTiles;
 	
-//	public SilkBag(ArrayList<Tile> tiles) {
-//		numberOfTiles = (tiles.length);	
+//	public SilkBag(int TILE_WIDTH) {
+//		this.TILE_WIDTH = TILE_WIDTH;
 //	}
-//	
-//	public boolean isEmpty() {
-//		if (numberOfTiles == 0) {
-//			return true;
-//		} else {
-//			return false;
-//		}
-//	}
-//	
-//	public FloorTile drawFloorTile() {
-//		x = math.random(0,2);
-//		
-//		if (x = 0) {
-//			return Straight;
-//		}
-//		if (x = 1) {
-//			return Corner;
-//		}
-//		if (x = 2) {
-//			return T-Shaped;
-//		}
-//	}
-//	
-//	public Tile drawTile() {
-//		return(tiles.get(0));
-//		tiles.remove(0);
-//		numberOfTiles = (tiles.Length);
-//	}
-//	
-//	public void returnTile(Tile t) {
-//		tiles.add (t);
-//		numberOfTiles = (tiles.Length);
-//	}
-	
-//===========================================================================================================//	
-	private int TILE_WIDTH;
-	
-	public SilkBag(int TILE_WIDTH) {
-		this.TILE_WIDTH = TILE_WIDTH;
-	}
 	
 	/**
 	 * returns floor tiles AND action tiles
 	 * @return
 	 */
-	public Tile drawTile() {
-		return this.drawFloorTile();
+	public static Tile drawTile() {
+		Random r = new Random();
+		int rnd = r.nextInt(9);
+		
+		switch (rnd) {
+		case 1:
+			return new ActionTile(new FireAction());
+		case 2:
+			return new ActionTile(new IceAction());
+		case 3:
+			return new ActionTile(new DoubleMoveAction());
+		case 4:
+			return new ActionTile(new BacktrackAction());
+		default:
+			return drawFloorTile();
+		}
+		
+		//return this.drawFloorTile();
 		//return new ActionTile();
 	}
 	
@@ -64,55 +39,146 @@ public class SilkBag {
 	 * Used by board class to get random floor tiles (Specifically floor tiles -> not action tiles)
 	 * @return random FloorTile object from silk bag
 	 */
-	public FloorTile drawFloorTile() {
+	public static FloorTile drawFloorTile() {
 		Random r = new Random();
 		int tileID = r.nextInt(5);//ie x < 5
 		int orientationID = r.nextInt(5);//ie x < 5
-		int orientation = 0;
+		Direction orientation;
 		
 		switch (orientationID) {
 		case 1:
-			orientation = 0;
+			orientation = Direction.NORTH;
 			break;
 		case 2:
-			orientation = 90;
+			orientation = Direction.EAST;
 			break;
 		case 3:
-			orientation = 180;
+			orientation = Direction.SOUTH;
 			break;
 		case 4:
-			orientation = 270;
+			orientation = Direction.WEST;
 			break;
 		default:
-			orientation = 0;
+			orientation = Direction.NORTH;
 		}
 		
 		//Random orientation
+		ArrayList<Direction> directions = new ArrayList<Direction>();
 		switch (tileID) {
 		case 1:
-			return new Straight(this.TILE_WIDTH,false,orientation,false,false,new Location(0,0),null,"Straight");
+			switch (orientation) {
+			case NORTH:
+				directions.add(Direction.EAST);
+				directions.add(Direction.WEST);
+				break;
+			case EAST:
+				directions.add(Direction.NORTH);
+				directions.add(Direction.SOUTH);
+				break;
+			case SOUTH:
+				directions.add(Direction.EAST);
+				directions.add(Direction.WEST);
+				break;
+			case WEST:
+				directions.add(Direction.NORTH);
+				directions.add(Direction.SOUTH);
+				break;
+			}
+			return new FloorTile(directions, null, null, null, 0, false);
 		case 2:
-			return new Corner(this.TILE_WIDTH,false,orientation,false,false,new Location(0,0),null,"Corner");
+			switch (orientation) {
+			case NORTH:
+				directions.add(Direction.EAST);
+				directions.add(Direction.SOUTH);
+				break;
+			case EAST:
+				directions.add(Direction.SOUTH);
+				directions.add(Direction.WEST);
+				break;
+			case SOUTH:
+				directions.add(Direction.WEST);
+				directions.add(Direction.NORTH);
+				break;
+			case WEST:
+				directions.add(Direction.NORTH);
+				directions.add(Direction.EAST);
+				break;
+			}
+			return new FloorTile(directions, null, null, null, 0, false);
 		case 3:
-			return new TShaped(this.TILE_WIDTH,false,orientation,false,false,new Location(0,0),null,"TShaped");
+			switch (orientation) {
+			case NORTH:
+				directions.add(Direction.NORTH);
+				directions.add(Direction.EAST);
+				directions.add(Direction.WEST);
+				break;
+			case EAST:
+				directions.add(Direction.NORTH);
+				directions.add(Direction.EAST);
+				directions.add(Direction.SOUTH);
+				break;
+			case SOUTH:
+				directions.add(Direction.EAST);
+				directions.add(Direction.SOUTH);
+				directions.add(Direction.WEST);
+				break;
+			case WEST:
+				directions.add(Direction.NORTH);
+				directions.add(Direction.SOUTH);
+				directions.add(Direction.WEST);
+				break;
+			}
+			return new FloorTile(directions, null, null, null, 0, false);
 		case 4:
-			return new Goal(this.TILE_WIDTH,false,orientation,false,false,new Location(0,0),null,"Goal");
+			directions.add(Direction.NORTH);
+			directions.add(Direction.EAST);
+			directions.add(Direction.SOUTH);
+			directions.add(Direction.WEST);
+			return new FloorTile(directions, null, null, null, 0, false);
 		default:
-			return new Straight(this.TILE_WIDTH,false,orientation,false,false,new Location(0,0),null,"Straight");
+			switch (orientation) {
+			case NORTH:
+				directions.add(Direction.EAST);
+				directions.add(Direction.WEST);
+				break;
+			case EAST:
+				directions.add(Direction.NORTH);
+				directions.add(Direction.SOUTH);
+				break;
+			case SOUTH:
+				directions.add(Direction.EAST);
+				directions.add(Direction.WEST);
+				break;
+			case WEST:
+				directions.add(Direction.NORTH);
+				directions.add(Direction.SOUTH);
+				break;
+			}
+			return new FloorTile(directions, null, null, null, 0, false);
 		}
-		
-		//Fixed orientation
-//		switch (tileID) {
-//		case 1:
-//			return new Straight(0,false,0,false,false,new Location(0,0),null,"Straight");
-//		case 2:
-//			return new Corner(0,false,0,false,false,new Location(0,0),null,"Corner");
-//		case 3:
-//			return new TShaped(0,false,0,false,false,new Location(0,0),null,"TShaped");
-//		case 4:
-//			return new Goal(0,false,0,false,false,new Location(0,0),null,"Goal");
-//		default:
-//			return new Straight(0,false,0,false,false,new Location(0,0),null,"Straight");
+	}
+	
+	public static void main(String[] args) {
+//		ArrayList<Direction> directions = new ArrayList<Direction>();
+//		directions.add(Direction.SOUTH);
+//		directions.add(Direction.WEST);
+//		Direction orientation = Direction.EAST;
+//		
+//		FloorTile t = new Straight(120, "straight_tile_with_alligners.png", directions, orientation, null, null, null, 0, false);
+//		System.out.println(t.getRotation());
+//		switch (t.getOrientation()) {
+//		case NORTH:
+//			System.out.println("Facing NORTH");
+//			break;
+//		case EAST:
+//			System.out.println("Facing EAST");
+//			break;
+//		case SOUTH:
+//			System.out.println("Facing SOUTH");
+//			break;
+//		case WEST:
+//			System.out.println("Facing WEST");
+//			break;
 //		}
 	}
 	//===========================================================================================================//

@@ -32,5 +32,8 @@ public class BacktrackAction extends Action {
 		// TODO: Change name to 'backtrackable' or 'hasBacktracked' maybe
 		opponent.setHasBeenBacktracked(true);
 	}
-
+	
+	public String toString() {
+		return "This is a backtrack action tile";
+	}
 }

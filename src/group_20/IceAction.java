@@ -51,5 +51,4 @@ public class IceAction extends FloorAction {
 	public int getLifetime() {
 		return LIFETIME_ROUNDS * Player.amount();
 	}
-
 }
