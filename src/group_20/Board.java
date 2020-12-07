@@ -202,7 +202,7 @@ public class Board extends Task<Void>{
 		if (l.getX() == 0 || l.getX() == this.width-1) {
 			int y = l.getY();
 			for (int i = 0; i < this.width; i++) {
-				if (this.gameBoard[i][y].isFixed()) {
+				if (!this.gameBoard[i][y].canShift()) {
 					return true;
 				}
 			}
@@ -210,7 +210,7 @@ public class Board extends Task<Void>{
 		} else if (l.getY() == 0 || l.getY() == this.length-1) {
 			int x = l.getX();
 			for (int i = 0; i < this.length; i++) {
-				if (this.gameBoard[x][i].isFixed()) {
+				if (!this.gameBoard[x][i].canShift()) {
 					return true;
 				}
 			}
@@ -519,6 +519,7 @@ public class Board extends Task<Void>{
 	 */
 	public FloorTile getTileAtClick() {
 		this.getLocationAtClick();
+		System.out.println("Returning a tile");
 		return this.getTileAt(this.lastClickLocation);
 	}
 	
@@ -540,6 +541,7 @@ public class Board extends Task<Void>{
 			}
 			System.out.println("You clicked!");
 		}
+		System.out.println("I'm about to return a location");
 		return this.lastClickLocation;
 	}
 	
@@ -565,10 +567,13 @@ public class Board extends Task<Void>{
 	 */
 	public FloorTile getTileAtClickMatching(Function<FloorTile, Boolean> f) {
 		highlightTilesMatching(f);
-		FloorTile t;
-		do {
+		FloorTile t = null;
+//		do {
+//			t = getTileAtClick();
+//		} while (!f.apply(t));
+		while (t == null || !f.apply(t)) {
 			t = getTileAtClick();
-		} while (!f.apply(t));
+		}
 		// draw(); // Reset the board visuals
 		return t;
 	}

@@ -32,12 +32,14 @@ public class FireAction extends FloorAction {
 
 	@Override
 	public void apply(Player p, Board b) {
+		System.out.println("Started apply");
 		FloorTile chosen = b.getTileAtClick();
 		for (FloorTile tile : getTilesAround(chosen, b)) {
 			if (null != tile) {
 				tile.setState(this);
 			}
 		}
+		System.out.println("Finished apply");
 	}
 
 	@Override

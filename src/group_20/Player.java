@@ -190,10 +190,10 @@ public class Player {
 			this.selectTileFromInventory();
 			if (!(chosenActionTile.getAction() == null)) {
 				System.out.println("'Playing' " + chosenActionTile.toString());
+				chosenActionTile.play(this, this.board);
 			} else {
 				System.out.println("Oh I guess you wanted to skip your turn.. fine by me");
 			}
-			chosenActionTile.play(this, this.board);
 		} else {
 			System.out.println("My inventory is empty -> Can't play an action tile :(");
 		}

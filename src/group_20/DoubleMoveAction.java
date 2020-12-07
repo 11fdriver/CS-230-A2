@@ -14,7 +14,9 @@ public class DoubleMoveAction extends Action {
 
 	@Override
 	public void apply(Player p, Board b) {
+		System.out.println("Started apply");
 		p.addMoves(1);
+		System.out.println("Finished apply");
 	}
 	
 	public String toString() {
