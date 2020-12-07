@@ -115,7 +115,7 @@ public class MainWindow extends BorderPane {
         
         titleScreenImageView.setFitHeight(1000);
         titleScreenImageView.setFitWidth(1000); 
-        titleScreenImageView.setPreserveRatio(true); 
+        titleScreenImageView.setPreserveRatio(false); 
         titleScreen.getChildren().add(titleScreenImageView);
     	
         titleScreen.getChildren().addAll(createGameButton, leaderboardsButton, loadGameButton, exitGameButton, profilesButton);

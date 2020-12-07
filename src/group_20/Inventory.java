@@ -136,13 +136,13 @@ public class Inventory{
 	 */
 	public String saveFormat() {
 		if (this.isEmpty()) {
-			return "{Inventory,empty,Inventory}";
+			return "[empty]";
 		} else {
-			String str = "{Inventory,";
+			String str = "[";
 			for (int i = 0; i < this.inv.size()-1; i++) {
-				str += this.inv.get(i).saveFormat() + ",";
+				str += this.inv.get(i).getAction().saveFormat() + ",";
 			}
-			str += this.inv.get(this.inv.size()-1).saveFormat() + ",Inventory}";
+			str += this.inv.get(this.inv.size()-1).getAction().saveFormat() + "]";
 			return str;
 		}
 	}

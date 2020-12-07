@@ -74,7 +74,8 @@ public class BoardWindow extends BorderPane {
 	private int fireInventoryAmount = 0;
 	private int iceInventoryAmount = 0;
 	private int doubleMoveInventoryAmount = 0;
-	//==
+	
+	//== YOSHAN
 //	private Button backTrackActionButton = new Button("Backtrack Action");
 //	private Button fireActionButton = new Button("Fire Action");
 //	private Button iceActionButton = new Button("Ice Action");
