@@ -1,6 +1,7 @@
 package group_20;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
@@ -103,7 +104,15 @@ public class CreateGameWindow extends BorderPane{
 							System.out.println("Player 4's Profile: " + playerProfiles[3]);
 						}
 						//IO.loadNewGame(numPlayers,templatesDropdown.getValue(),filenameTextbox.getText(), playerProfiles);
-						IO.loadNewGame(numPlayers,templatesDropdown.getValue(),filenameTextbox.getText(), new Profile[4]);
+						try {
+							Board b = IO.loadNewGame(templatesDropdown.getValue(), filenameTextbox.getText(), numPlayers, new Profile[4]);
+							//System.out.println(b.saveFormat());
+							Main.setSceneToBoardWindow(b);
+						} catch (FileNotFoundException | FileParseException e5) {
+							// TODO Auto-generated catch block
+							e5.printStackTrace();
+						}
+						//IO.loadNewGame(numPlayers,templatesDropdown.getValue(),filenameTextbox.getText(), new Profile[4]);
 					} else {
 						System.out.println("Invalid selection");
 					}
@@ -206,7 +215,7 @@ public class CreateGameWindow extends BorderPane{
 	}
 	
 	public void loadSavedGameNames() {
-		File folder = new File("templates/");
+		File folder = new File(TEMPLATES_DIR_PATH);
 		File[] listOfFiles = folder.listFiles();
 		
 		for (File f: listOfFiles) {
@@ -216,7 +225,7 @@ public class CreateGameWindow extends BorderPane{
 	}
 	
 	public void loadProfileNames() {
-		File folder = new File(TEMPLATES_DIR_PATH);
+		File folder = new File("templates/");
 		File[] listOfFiles = folder.listFiles();
 		
 		for (File f: listOfFiles) {

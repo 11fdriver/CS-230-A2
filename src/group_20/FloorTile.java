@@ -336,7 +336,14 @@ public class FloorTile extends Tile implements Subscriber {
 			str += "null,";
 		}
 		
-		str += String.valueOf(stateLifetime) + "}";
+		str += String.valueOf(stateLifetime) + ",";// + "}";
+		
+		if (this.location == null) {
+			str += "null location}";
+		} else {
+			str += this.location.toString() + "}";
+		}
+		
 		return str ;
 	}
 	
@@ -347,6 +354,9 @@ public class FloorTile extends Tile implements Subscriber {
 	 * @param gc GraphicsContext to draw onto
 	 */
 	public void highlight(GraphicsContext gc, Image img) {
+//		if (this.location == null) {
+//			System.out.println("null location in tile");
+//		}
 		int x = this.location.getX()*Main.TILE_WIDTH;
 		int y = this.location.getY()*Main.TILE_WIDTH;
 		if (img == null) {

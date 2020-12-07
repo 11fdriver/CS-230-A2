@@ -241,7 +241,8 @@ public class IO {
 		case "DoubleMove":
 			return new DoubleMoveAction();
 		default:
-			return null; // TODO: Change to exception
+			System.out.print(str);
+			throw new IllegalArgumentException(); // TODO: Change to exception
 		}
 	}
 	
@@ -422,11 +423,12 @@ public class IO {
 			for (int y = 0; height > y; y++) {
 				if (null == b[x][y]) {
 					b[x][y] = SilkBag.removeFloorTile();
+					b[x][y].setLocation(new Location(x, y));
 				}
 			}
 		}
 		
-		return new Board(fname, boardID, width, height, b, players.toArray(new Player[4]), height);
+		return new Board(fname, boardID, width, height, b, players.toArray(new Player[4]), 0);
 	}
 	
 	/**
@@ -449,7 +451,7 @@ public class IO {
 		
 		nextItem();
 		
-		return new Player(playerNum, startLocation, profiles[playerNum]);
+		return new Player(playerNum, startLocation, profiles[playerNum-1]);
 	}
 	
 	/**
