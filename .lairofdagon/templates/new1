@@ -1,7 +1,11 @@
-{Board, 5, 5,
+{Board, 001, 5, 5,
 	{FloorTile, 0, 0, [NORTH, SOUTH, EAST], start, FloorTile},
 	{FloorTile, 3, 0, [SOUTH, EAST, WEST], start, FloorTile},
 	{FloorTile, 0, 3, [EAST, WEST, NORTH], start, FloorTile},
 	{FloorTile, 3, 3, [NORTH, SOUTH, EAST], start, FloorTile},
 	{Goal, 2, 2, Goal},
+        {Player, 0, (0,0), 001, Player},
+        {Player, 1, (3,0), 001, Player},
+        {Player, 2, (0,3), 001, Player},
+        {Player, 3, (3,3), 001, Player},
 Board}

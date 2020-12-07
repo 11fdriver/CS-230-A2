@@ -31,6 +31,17 @@ public class SilkBag implements Saveable {
 	}
 	
 	/**
+	 * @return A randomly-chosen {@link FloorTile} for use in populating new boards.
+	 */
+	public static FloorTile removeFloorTile() {
+		int i;
+		do {
+			i = RAND.nextInt(TILES.size() - 1);
+		} while (!(TILES.get(i) instanceof FloorTile));
+		return (FloorTile) TILES.remove(i);
+	}
+
+	/**
 	 * Used either when constructing the SilkBag,
 	 * <br>
 	 * or returning a tile after inserting to {@link Board}.
