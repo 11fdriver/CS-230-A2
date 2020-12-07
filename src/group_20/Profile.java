@@ -8,6 +8,9 @@ public class Profile {
 	private int[] numGamesPlayed;
 	private int[] numWins;
 	private int[] numLosses;
+	private int totalGamesPlayed;
+	private int totalWins;
+	private int totalLosses;
 	private String[] lastGameDateTime;	//NOT implemented
 	
 	public static void main(String[] args) {
@@ -80,6 +83,18 @@ public class Profile {
 	
 	public int getNumLosses(int boardID) {
 		return numLosses[boardID];
+	}
+
+	public int getTotalGamesPlayed() {
+		return Arrays.stream(numGamesPlayed).sum();
+	}
+
+	public int getTotalWins() {
+		return Arrays.stream(numWins).sum();
+	}
+
+	public int getTotalLosses() {
+		return Arrays.stream(numLosses).sum();
 	}
 
 	public static int getNoOfBoard() {

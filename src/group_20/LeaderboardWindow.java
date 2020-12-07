@@ -48,28 +48,29 @@ public class LeaderboardWindow extends Application{
         table.setItems(Leaderboard.getProfilesByBoardID(getBoardIDInput()));
 
         TableColumn<Profile, String> nameColumn = new TableColumn<>("Name");
-        nameColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getName()));
-        
         TableColumn<Profile, Integer> winColumn = new TableColumn<>("Wins");
-        winColumn.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getNumWins(getBoardIDInput())).asObject());
-
         TableColumn<Profile, Integer> lossColumn = new TableColumn<>("Losses");
-        lossColumn.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getNumLosses(getBoardIDInput())).asObject());
-
         TableColumn<Profile, Integer> gameColumn = new TableColumn<>("Games Played");
+
+        nameColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getName()));
+        winColumn.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getNumWins(getBoardIDInput())).asObject());
+        lossColumn.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getNumLosses(getBoardIDInput())).asObject());
         gameColumn.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getNumGamesPlayed(getBoardIDInput())).asObject());
         
         table.getColumns().addAll(nameColumn,winColumn,lossColumn,gameColumn);
         winColumn.setSortType(TableColumn.SortType.DESCENDING);
         table.getSortOrder().add(winColumn);
 
+        //ToggleButton in a ToggleGroup
         ToggleButton toggleButton1 = new ToggleButton("Wins Ascending");
         ToggleButton toggleButton2 = new ToggleButton("Wins Descending");
+
         ToggleGroup toggleGroup = new ToggleGroup();
+
         toggleButton1.setToggleGroup(toggleGroup);
         toggleButton2.setToggleGroup(toggleGroup);
 
-        toggleButton1.setOnAction(actionEvent -> {
+        toggleButton1.setOnAction(actionEvent -> {  //event handler for toggleButton1
             table.getItems().clear();
             table.setItems(Leaderboard.getProfilesByBoardID(getBoardIDInput()));
            
@@ -79,7 +80,7 @@ public class LeaderboardWindow extends Application{
             winColumn.setSortType(TableColumn.SortType.ASCENDING);
         });
 
-        toggleButton2.setOnAction(actionEvent -> {
+        toggleButton2.setOnAction(actionEvent -> {  //event handler for toggleButton2
             table.getItems().clear();
             table.setItems(Leaderboard.getProfilesByBoardID(getBoardIDInput()));
 
