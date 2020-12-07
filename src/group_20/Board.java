@@ -179,7 +179,7 @@ public class Board extends Task<Void>{
 				System.out.println("Invalid tile insertion location");
 			}
 			
-			//Adds ejected tile to silk bag
+			//Returns ejected tile to silk bag
 			SilkBag.addTile(ejectedTile);
 			
 			if (ejectedPlayer != null) {
@@ -216,6 +216,11 @@ public class Board extends Task<Void>{
 		return false;
 	}
 	
+	/**
+	 * Checks if you can insert a tile at a given location
+	 * @param l Location to insert at
+	 * @return True if can insert a tile at location
+	 */
 	public Boolean canInsertAt(Location l) {
 		//Is in bounds
 		if ((this.isInBounds(l)) && //And isn't a corner
@@ -232,11 +237,6 @@ public class Board extends Task<Void>{
 		} else {
 			return false;
 		}
-	}
-	
-	//TODO
-	public void returnToBag(FloorTile t) {
-		//this.silkBag.returnTile(t);//TODO change returnTile(Tile t) to returnTile(FloorTile t) in silkbag class
 	}
 	
 	/**
@@ -272,96 +272,7 @@ public class Board extends Task<Void>{
 			return false;
 		}
 	}
-	
-	//For testing
-	public FloorTile[] tempTestCalculateArea() {
-		return this.calculateArea(this.gameBoard[0][0]);
-	}
-	
-	/**
-	 * Find a given tile on the board and then calculates the 3x3 around it
-	 * @param t Tile on board
-	 * @return 3x3 of tiles around the tile
-	 */
-	public FloorTile[] calculateArea(FloorTile t) {
-		Location l = null;
-		for (int i = 0; i < this.width; i++) {
-			for (int j = 0; j < this.length; j++) {
-				FloorTile currentTile = this.gameBoard[i][j];
-				if (currentTile == t) {
-					l = new Location(i,j);
-				}
-			}
-		}
-		return calculateArea(l);
-	}
-	
-	/**
-	 * Very bad method for calculating 3x3 area around a given tile
-	 * Think Finn implemented a better one in the action tile classes
-	 * @param l Location of center tile
-	 * @return All tiles in bounds of board in a 3x3 area around l
-	 */
-	public FloorTile[] calculateArea(Location l) {
-		if (this.isInBounds(l)) {
-			ArrayList<FloorTile> tilesInBounds = new ArrayList<FloorTile>();
-			Location temp = l.copy();
-			if (this.isInBounds(temp)) {
-				System.out.println(temp.toString());
-				tilesInBounds.add(this.getTileAt(temp));
-			}
-			temp.update(Direction.NORTH);
-			if (this.isInBounds(temp)) {
-				System.out.println(temp.toString());
-				tilesInBounds.add(this.getTileAt(temp));
-			}
-			temp.update(Direction.EAST);
-			if (this.isInBounds(temp)) {
-				System.out.println(temp.toString());
-				tilesInBounds.add(this.getTileAt(temp));
-			}
-			temp.update(Direction.SOUTH);
-			if (this.isInBounds(temp)) {
-				System.out.println(temp.toString());
-				tilesInBounds.add(this.getTileAt(temp));
-			}
-			temp.update(Direction.SOUTH);
-			if (this.isInBounds(temp)) {
-				System.out.println(temp.toString());
-				tilesInBounds.add(this.getTileAt(temp));
-			}
-			temp.update(Direction.WEST);
-			if (this.isInBounds(temp)) {
-				System.out.println(temp.toString());
-				tilesInBounds.add(this.getTileAt(temp));
-			}
-			temp.update(Direction.WEST);
-			if (this.isInBounds(temp)) {
-				System.out.println(temp.toString());
-				tilesInBounds.add(this.getTileAt(temp));
-			}
-			temp.update(Direction.NORTH);
-			if (this.isInBounds(temp)) {
-				System.out.println(temp.toString());
-				tilesInBounds.add(this.getTileAt(temp));
-			}
-			temp.update(Direction.NORTH);
-			if (this.isInBounds(temp)) {
-				System.out.println(temp.toString());
-				tilesInBounds.add(this.getTileAt(temp));
-			}
-			
-			FloorTile[] arr = new FloorTile[tilesInBounds.size()];
-			for (int i = 0; i < arr.length; i++) {
-				arr[i] = (FloorTile) tilesInBounds.get(i);
-			}
-			return arr;
-			//return (FloorTile[]) tilesInBounds.toArray(); //TODO can't cast Object[] to FloorTile[]
-		} else {
-			return null;
-		}
-	}
-	
+
 	/**
 	 * Setter for length of board
 	 * @param length New length of board
@@ -511,32 +422,40 @@ public class Board extends Task<Void>{
 	 */
 	public void highlightValidMoves() {
 		Location playerLocation = this.getCurrentPlayer().getLocation();
-		//FloorTile currentTile = this.getTileAt(playerLocation);
 		
-		if (this.canMove(playerLocation, Direction.NORTH)) {
-			Location lNorth = playerLocation.check(Direction.NORTH);
-			FloorTile tNorth = this.getTileAt(lNorth);
-			tNorth.highlight(this.gc, null);
-			//System.out.println("Valid move at: " + lNorth.toString());
+		Direction[] directions = {Direction.NORTH,Direction.EAST,Direction.SOUTH,Direction.WEST};
+		for (Direction d: directions) {
+			if (this.canMove(playerLocation, d)) {
+				Location l = playerLocation.check(d);
+				FloorTile tileAtL = this.getTileAt(l);
+				tileAtL.highlight(this.gc,null);
+			}
 		}
-		if (this.canMove(playerLocation, Direction.EAST)) {
-			Location lEast = playerLocation.check(Direction.EAST);
-			FloorTile tEast = this.getTileAt(lEast);
-			tEast.highlight(this.gc, null);
-			//System.out.println("Valid move at: " + lEast.toString());
-		}
-		if (this.canMove(playerLocation, Direction.SOUTH)) {
-			Location lSouth = playerLocation.check(Direction.SOUTH);
-			FloorTile tSouth = this.getTileAt(lSouth);
-			tSouth.highlight(this.gc, null);
-			//System.out.println("Valid move at: " + lSouth.toString());
-		}
-		if (this.canMove(playerLocation, Direction.WEST)) {
-			Location lWest = playerLocation.check(Direction.WEST);
-			FloorTile tWest = this.getTileAt(lWest);
-			tWest.highlight(this.gc, null);
-			//System.out.println("Valid move at: " + lWest.toString());
-		}
+		
+//		if (this.canMove(playerLocation, Direction.NORTH)) {
+//			Location lNorth = playerLocation.check(Direction.NORTH);
+//			FloorTile tNorth = this.getTileAt(lNorth);
+//			tNorth.highlight(this.gc, null);
+//			//System.out.println("Valid move at: " + lNorth.toString());
+//		}
+//		if (this.canMove(playerLocation, Direction.EAST)) {
+//			Location lEast = playerLocation.check(Direction.EAST);
+//			FloorTile tEast = this.getTileAt(lEast);
+//			tEast.highlight(this.gc, null);
+//			//System.out.println("Valid move at: " + lEast.toString());
+//		}
+//		if (this.canMove(playerLocation, Direction.SOUTH)) {
+//			Location lSouth = playerLocation.check(Direction.SOUTH);
+//			FloorTile tSouth = this.getTileAt(lSouth);
+//			tSouth.highlight(this.gc, null);
+//			//System.out.println("Valid move at: " + lSouth.toString());
+//		}
+//		if (this.canMove(playerLocation, Direction.WEST)) {
+//			Location lWest = playerLocation.check(Direction.WEST);
+//			FloorTile tWest = this.getTileAt(lWest);
+//			tWest.highlight(this.gc, null);
+//			//System.out.println("Valid move at: " + lWest.toString());
+//		}
 	}
 	
 	/**
@@ -651,15 +570,27 @@ public class Board extends Task<Void>{
 		// draw(); // Reset the board visuals
 		return t;
 	}
-
+	
+	/**
+	 * Check if board is waiting for exit or continue input
+	 * @return True if board is waiting
+	 */
 	public boolean isWaitingForExitOrContinue() {
 		return this.waitingForExitOrContinue;
 	}
 	
+	/**
+	 * Setter for continueGame state
+	 * @param b New value
+	 */
 	public void setContinueGame(boolean b) {
 		this.continueGame = true;
 	}
 	
+	/**
+	 * Sets the game into a waiting state until either the game is exited or 
+	 * the current player ends their turn
+	 */
 	public void checkForExitGame() {
 		synchronized (this) {
 			this.continueGame = false;
@@ -678,6 +609,10 @@ public class Board extends Task<Void>{
 		}
 	}
 	
+	/**
+	 * Returns an instructional message relevant to the current player's state
+	 * @return Message
+	 */
 	public String getCurrentStepMessage() {
 		String msg = "Player " + (this.currentPlayer+1) + "'s turn: ";
 		switch (this.getCurrentPlayer().getCurrentStageOfTurn()) {
@@ -733,6 +668,10 @@ public class Board extends Task<Void>{
 		}
 	}
 	
+	/**
+	 * Converts object into saveable string
+	 * @return Object as saveable string
+	 */
 	public String saveFormat() {
 		//(int boardID, int width, int length, FloorTile[][] gameBoard, Player[] players, int startingPlayer)
 		String str = "{Board," +

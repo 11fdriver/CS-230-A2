@@ -26,7 +26,7 @@ public class LoadGameWindow extends BorderPane{
 	/**
 	 * 
 	 */
-	private static final String TEMPLATES_DIR_PATH = CONFIG_DIR_PATH + "templates" + SEP;
+	private static final String TEMPLATES_DIR_PATH = CONFIG_DIR_PATH + "saved" + SEP;
 	
 	private final int BUTTON_MAX_WIDTH = 100;
 	private final int BUTTON_MAX_HEIGHT = 60;
@@ -65,7 +65,7 @@ public class LoadGameWindow extends BorderPane{
 		startGameButton.setOnMouseClicked(e -> {
 			if (savedGamesDropDown.getValue() != null) {
 				String filename = savedGamesDropDown.getValue();
-				System.out.println("Loading game");
+				System.out.println("Loading game: " + filename);
 				try {
 					Board b = IO.loadSavedGame(filename);
 					Main.setSceneToBoardWindow(b);
