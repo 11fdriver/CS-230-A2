@@ -197,6 +197,8 @@ public class MainWindow extends BorderPane {
         profilesButton.setOnAction(e -> {
         	Main.profileGameButtonFunctionality();
 		});
-	
+        leaderboardsButton.setOnAction(e -> {
+        	Main.leaderboardGameButtonFunctionality();
+		});
 	}
 }

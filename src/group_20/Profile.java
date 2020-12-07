@@ -2,63 +2,122 @@ package group_20;
 
 import java.util.*;
 
+/**
+ * <p><b>Filename:</b> Profile</p>
+ * <p><b>Description:</b> Creates a profile.</p>
+ * <p><b>Creation date:</b> 06/12/2020</p>
+ * @since 07/12/2020
+ * @author Inderpreet Sandhu - 852298, Edward Kong - 1916234
+ * <p><b>Copyright:</b> no copyright</p>
+ */
+
 public class Profile {
-	private static int noOfBoard;	//final modifier NOT yet implemented
-	private static int nextProfileID = 1;	//profileID starts at 1, for profileID "empty" check
-	private int profileID;
-	private String name;
-	private Integer[] gamesPlayed;
-	private Integer[] wins;
-	private Integer[] losses;
-	private String[] lastGameDateTime;	//NOT yet implemented
-
-	//----------------------------------------------------------------------------------------------------
-	//for TESTING Leaderboard class
-
-	private static ArrayList<Profile> arrayListOfProfileInstances;
-
-	public static ArrayList<Profile> getArrayListOfProfileInstances() {	//for TESTING Leaderboard class
-		return arrayListOfProfileInstances;
-	}
-	//----------------------------------------------------------------------------------------------------
 	
+	/**
+	 * Determining number of board
+	 */
+	private static int noOfBoard;
+	
+	/**
+	 * The next profile ID to use for the constructor 
+	 */
+	private static int nextProfileID = 1;	//profileID starts at 1, for profileID "empty" check
+	
+	/**
+	 * Unique identifier for a profile
+	 */
+	private int profileID;
+	
+	/**
+	 * Profile username
+	 */
+	private String name;
+	
+	/**
+	 * Stores amount of games played on a persons profile
+	 */
+	private int[] numGamesPlayed;
+	
+	/**
+	 * Stores number of wins on a persons profile
+	 */
+	private int[] numWins;
+	
+	/**
+	 * Stores number of losses on a persons profile
+	 */
+	private int[] numLosses;
+	
+	/**
+	 * Sum of number of games played 
+	 */
+	private int totalGamesPlayed;
+    
+	/**
+	 * Sum of wins
+	 */
+	private int totalWins;
+    
+	/**
+	 * Sum of losses
+	 */
+	private int totalLosses;
+	
+	/**
+	 * Creates a profile with a given username
+	 * 
+	 * @param name 				Takes in a username for a profile		
+	 */
 	public Profile(String name) {
 		setProfileID();
 		setName(name);
-		gamesPlayed = new Integer[noOfBoard];
-		wins = new Integer[noOfBoard];
-		losses = new Integer[noOfBoard];
+		numGamesPlayed = new int[noOfBoard];
+		numWins = new int[noOfBoard];
+		numLosses = new int[noOfBoard];
 
-		arrayListOfProfileInstances.add(this);	
-	}
-
-	public Profile(String name,Integer[] gamesPlayed, Integer[] wins, Integer[] losses) {
-		setProfileID();
-		setName(name);
-		setGamesPlayed(gamesPlayed);
-		setWins(wins);
-		setLosses(losses);
-
-		arrayListOfProfileInstances.add(this);	//for TESTING Leaderboard class
+		Leaderboard.arrayListOfProfileInstances.add(this);	//for TESTING Leaderboard class
 	}
 	
+	/**
+	 * Creates a profile with a given username, number of games played, number of wins and number of losses
+	 * 
+	 * @param name 				Takes in a username for a profile	
+	 * @param numGamesPlayed    Takes in number of games played
+	 * @param numWins			Takes in number of wins
+	 * @param numLosses	        Takes in number of losses
+	 */
+	public Profile(String name, int[] numGamesPlayed, int[] numWins, int[] numLosses) {
+		setProfileID();
+		setName(name);
+		setNumGamesPlayed(numGamesPlayed);
+		setNumWins(numWins);
+		setNumLosses(numLosses);
+
+		Leaderboard.arrayListOfProfileInstances.add(this);	//for TESTING Leaderboard class
+	}
+	
+	/**
+	 * Updates profile wins and losses
+	 * 
+	 * @param boardID			ID of the board that was played on	
+	 * @param winLoss           Boolean value determining win/loss, if true = win, if false = loss
+	 */
 	public void updateProfile(int boardID, boolean winLoss) {
-		gamesPlayed[boardID] ++;
-		
-		//somehow update lastGameDateTime
+		numGamesPlayed[boardID] ++;
 		
 		if (winLoss) {
-			wins[boardID] ++;
+			numWins[boardID] ++;
 		} else {
-			losses[boardID] ++;
+			numLosses[boardID] ++;
 		}
+	}
+
+	public String toString() {
+		return String.valueOf(profileID) + ", " + name + ", " + Arrays.toString(numGamesPlayed) + ", " + Arrays.toString(numWins) + ", " + Arrays.toString(numLosses);
 	}
 	
 	//Getters
-	public List<Object> getStats(int boardID) {
-		return Arrays.asList(name, gamesPlayed[boardID], wins[boardID], losses[boardID]);
-	}
-	
+
 	public int getProfileID() {
 		return profileID;
 	}
@@ -67,35 +126,48 @@ public class Profile {
 		return name;
 	}
 	
-	public Integer[] getGamesPlayed() {
-		return gamesPlayed;
+	public int[] getNumGamesPlayed() {
+		return numGamesPlayed;
 	}
 
-	public Integer getGamesPlayed(int boardID) {
-		return gamesPlayed[boardID];
+	public int getNumGamesPlayed(int boardID) {
+		return numGamesPlayed[boardID];
 	}
 	
-	public Integer[] getWins() {
-		return wins;
+	public int[] getNumWins() {
+		return numWins;
 	}
 
-	public Integer getWins(int boardID) {
-		return wins[boardID];
+	public int getNumWins(int boardID) {
+		return numWins[boardID];
+	}
+
+	public int[] getNumLosses() {
+		return numLosses;
 	}
 	
-	public Integer[] getLosses() {
-		return losses;
+	public int getNumLosses(int boardID) {
+		return numLosses[boardID];
+	}
+
+	public static int getNoOfBoard() {
+		return noOfBoard;
 	}
 	
-	public Integer getLosses(int boardID) {
-		return losses[boardID];
-	}
-	
-	public String[] getLastGameDateTime() {
-		return null;
-	}
+	public int getTotalGamesPlayed() {
+        return Arrays.stream(numGamesPlayed).sum();
+    }
+
+    public int getTotalWins() {
+        return Arrays.stream(numWins).sum();
+    }
+
+    public int getTotalLosses() {
+        return Arrays.stream(numLosses).sum();
+    }
 	
 	//Setters
+
 	public static void setNoOfBoard(int noOfBoard) {
 		Profile.noOfBoard = noOfBoard;
 	}
@@ -121,24 +193,16 @@ public class Profile {
 		this.name = name;
 	}
 	
-	public void setGamesPlayed(Integer[] gamesPlayed) {
-		this.gamesPlayed = gamesPlayed;
+	public void setNumGamesPlayed(int[] numGamesPlayed) {
+		this.numGamesPlayed = numGamesPlayed;
 	}
 
-	public void setWins(Integer[] wins) {
-		this.wins = wins;
+	public void setNumWins(int[] numWins) {
+		this.numWins = numWins;
 	}
 
-	public void setLosses(Integer[] losses) {
-		this.losses = losses;
+	public void setNumLosses(int[] numLosses) {
+		this.numLosses = numLosses;
 	}
-
-	public void setLastGameDateTime(String[] lastGameDateTime) {
-		this.lastGameDateTime = lastGameDateTime;
-	}
-
-	public static Object getAll() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
 }

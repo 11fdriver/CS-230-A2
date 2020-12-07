@@ -1,49 +1,39 @@
 package group_20;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import java.util.*;
 import java.io.*;
 
+/**
+ * <p><b>Filename:</b> Leaderboard</p>
+ * <p><b>Description:</b> Creates the leaderboard.</p>
+ * <p><b>Creation date:</b> 06/12/2020</p>
+ * @since 07/12/2020
+ * @author Edward Kong - 1916234
+ * <p><b>Copyright:</b> no copyright</p>
+ */
+
 public class Leaderboard {
-	private static int boardIDToCompare;
-
-	private static ArrayList<Profile> getLeaderboard(int boardID, boolean order) {
-		return sortedProfiles(boardID, order);
-	}
-
-	private static List<Profile> getLeaderboard(int boardID, boolean order, int limit) {
-		return (sortedProfiles(boardID, order).subList(0, limit));
-	}
-
-	private static List<Profile> getLeaderboard(int boardID, boolean order, int lower, int upper) {
-		return (sortedProfiles(boardID, order).subList(lower, upper));
-	}
 	
-	private static ArrayList<Profile> sortedProfiles(int boardID, boolean order) {
-		Leaderboard.boardIDToCompare = boardIDToCompare;
+	/**
+	 * Contains a list of profile instances
+	 */
+	public static ArrayList<Profile> arrayListOfProfileInstances = new ArrayList<Profile> ();
+
+	public static ObservableList<Profile> getProfilesByBoardID(int boardIDInput) {
 		
-		ArrayList<Profile> sortedProfiles = new ArrayList<Profile>();
-		Profile.getArrayListOfProfileInstances().clone();
+        ArrayList<Profile> filteredProfiles = new ArrayList<Profile> ();
+		filteredProfiles = (ArrayList<Profile>)arrayListOfProfileInstances.clone();
+        
+        for(int i = 0; i < filteredProfiles.size(); i++) {
+            if(filteredProfiles.get(i).getNumGamesPlayed(boardIDInput) == 0) {
+                filteredProfiles.remove(i);
+            }
+        }
+        
+        ObservableList<Profile> observableList = FXCollections.observableArrayList(filteredProfiles);
+        return observableList;
+    }
 
-		if (order) {
-			Collections.sort(sortedProfiles, new SortByWinsAscending());
-		} else {
-			Collections.sort(sortedProfiles, new SortByWinsDescending());
-		}
-		
-		return sortedProfiles;
-	}
-
-	public static int getBoardIDToCompare() {
-		return boardIDToCompare;
-	}
-
-	public static void draw() {
-		//Canvas NOT yet implemented
-		for(Profile n : getLeaderboard(0, true)) {
-			System.out.print(n.getName());
-			System.out.print("\t\t");
-			System.out.println(n.getWins(0));
-			System.out.println();
-		}
-	}
 }

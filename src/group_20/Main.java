@@ -167,13 +167,15 @@ public class Main extends Application {
 	public void start(Stage primaryStage) throws FileNotFoundException {
 		//==Yoshan
 		Main.primaryStage = primaryStage;
-		//Scene leaderboard = new Scene(new leaderboardWindow(),WINDOW_WIDTH, WINDOW_HEIGHT);
+		Scene leaderboard = new Scene(new LeaderboardWindow(),WINDOW_WIDTH, WINDOW_HEIGHT);
 		//Scene createGame = new Scene(new CreateGameWindow(), WINDOW_WIDTH, WINDOW_HEIGHT);
 		//Scene loadGame = new Scene(new LoadGameWindow(), WINDOW_WIDTH, WINDOW_HEIGHT);
 		
+		//Scene profileMenu = new Scene(new ProfileWindow(), WINDOW_WIDTH, WINDOW_HEIGHT);
+		
 		//Creates a game session scene which contains an instance of a game board
-		Scene game = new Scene(new BoardWindow(currentBoard), WINDOW_WIDTH, WINDOW_HEIGHT);
-		primaryStage.setScene(game);
+		//Scene game = new Scene(new BoardWindow(currentBoard), WINDOW_WIDTH, WINDOW_HEIGHT);
+		primaryStage.setScene(leaderboard);
 		primaryStage.show();
 		
 		//==
@@ -248,6 +250,15 @@ public class Main extends Application {
 	public static void profileGameButtonFunctionality() {
 		Scene profileMenu = new Scene(new ProfileWindow(), WINDOW_WIDTH, WINDOW_HEIGHT);
     	primaryStage.setScene(profileMenu);
+    	primaryStage.show();
+	}
+	
+	/**
+	 * Implements a leaderboard button and its functionality for use on the game main menu.						
+	 */
+	public static void leaderboardGameButtonFunctionality() {
+		Scene leaderboardMenu = new Scene(new LeaderboardWindow(), WINDOW_WIDTH, WINDOW_HEIGHT);
+    	primaryStage.setScene(leaderboardMenu);
     	primaryStage.show();
 	}
 	
