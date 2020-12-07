@@ -27,7 +27,7 @@ public class FireAction extends FloorAction {
 
 	@Override
 	public String saveFormat() {
-		return "FireAction";
+		return "Fire";
 	}
 
 	@Override

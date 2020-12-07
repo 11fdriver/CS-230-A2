@@ -23,7 +23,7 @@ public class IceAction extends FloorAction {
 
 	@Override
 	public String saveFormat() {
-		return "IceAction";
+		return "Ice";
 	}
 
 	
